@@ -130,18 +130,40 @@ npm start
 
 ## Deployment
 
-### Netlify (Frontend)
-1. Build the frontend:
+### Option 1: Vercel (Recommended - Both Frontend & Backend)
+1. Install Vercel CLI:
 ```bash
-cd frontend
-npm run build
+npm i -g vercel
 ```
 
-2. Deploy the `build` folder to Netlify
+2. Deploy from project root:
+```bash
+cd /Applications/school
+vercel
+```
 
-### Heroku/Railway (Backend)
-1. Set environment variables in your hosting platform
-2. Deploy the backend folder
+3. Set environment variables in Vercel dashboard:
+   - `MONGODB_URI` - Your MongoDB connection string
+   - `JWT_SECRET` - Your JWT secret
+   - `JWT_EXPIRE` - 7d
+
+### Option 2: Netlify + Railway
+1. **Frontend (Netlify):**
+   - Connect GitHub repository
+   - Build command: `cd frontend && npm run build`
+   - Publish directory: `frontend/build`
+
+2. **Backend (Railway):**
+   - Connect GitHub repository
+   - Set environment variables
+   - Deploy backend folder
+
+### Option 3: Render (Both Frontend & Backend)
+1. Create two services on Render:
+   - **Web Service** for frontend
+   - **Web Service** for backend
+2. Connect GitHub repository for both
+3. Set environment variables for backend
 
 ## Contributing
 
