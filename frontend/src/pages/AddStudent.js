@@ -104,6 +104,9 @@ const AddStudent = () => {
     }
 
     try {
+      // Debug: Log form data before sending
+      console.log('Form data before sending:', formData);
+      
       // Create FormData for file upload
       const formDataToSend = new FormData();
       
@@ -119,15 +122,31 @@ const AddStudent = () => {
         }
       });
       
+      // Debug: Log FormData contents
+      console.log('FormData contents:');
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, ':', value);
+      }
+      
       // Add photo if selected
       if (photo) {
         formDataToSend.append('photo', photo);
       }
       
-      await studentsAPI.create(formDataToSend);
+      const response = await studentsAPI.create(formDataToSend);
+      console.log('Student created successfully:', response.data);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Error creating student');
+      console.error('Error creating student:', err);
+      console.error('Error response:', err.response?.data);
+      
+      if (err.response?.data?.errors) {
+        // Handle validation errors
+        const errorMessages = err.response.data.errors.map(error => `${error.path}: ${error.msg}`).join(', ');
+        setError(`Validation errors: ${errorMessages}`);
+      } else {
+        setError(err.response?.data?.message || 'Error creating student');
+      }
     } finally {
       setLoading(false);
     }
