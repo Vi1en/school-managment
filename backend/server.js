@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 require('dotenv').config({ path: './config.env' });
 
 const app = express();
@@ -38,40 +37,41 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Connect to MongoDB and start server
-const PORT = process.env.PORT || 5000;
+// Connect to MongoDB
+let isConnected = false;
 
-async function startServer() {
+async function connectDB() {
+  if (isConnected) {
+    return;
+  }
+  
   try {
-    let mongoUri;
-    
-    // Check if MONGODB_URI is provided (for production)
-    if (process.env.MONGODB_URI) {
-      mongoUri = process.env.MONGODB_URI;
-      console.log('Using provided MongoDB URI');
-    } else {
-      // Use in-memory database for development/testing
-      console.log('Starting in-memory MongoDB server...');
-      const mongoServer = await MongoMemoryServer.create();
-      mongoUri = mongoServer.getUri();
-      console.log('In-memory MongoDB server started');
-    }
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/school-management';
     
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     
+    isConnected = true;
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    process.exit(1);
   }
 }
 
-startServer();
+// Connect to database on first request
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
