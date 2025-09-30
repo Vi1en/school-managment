@@ -83,8 +83,8 @@ const AddStudent = () => {
       // Add all form fields
       Object.keys(formData).forEach(key => {
         if (key === 'feeDetails') {
-          formDataToSend.append('feeDetails.totalFee', formData.feeDetails.totalFee === '' ? 0 : formData.feeDetails.totalFee);
-          formDataToSend.append('feeDetails.amountPaid', formData.feeDetails.amountPaid === '' ? 0 : formData.feeDetails.amountPaid);
+          formDataToSend.append('feeDetails.totalFee', formData.feeDetails.totalFee || 0);
+          formDataToSend.append('feeDetails.amountPaid', formData.feeDetails.amountPaid || 0);
         } else {
           // Convert empty strings to 0 for number fields
           const value = formData[key];
@@ -321,6 +321,7 @@ const AddStudent = () => {
                   id="totalFee"
                   min="0"
                   step="0.01"
+                  required
                   value={formData.feeDetails.totalFee}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -337,6 +338,7 @@ const AddStudent = () => {
                   id="amountPaid"
                   min="0"
                   step="0.01"
+                  required
                   value={formData.feeDetails.amountPaid}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

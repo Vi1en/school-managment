@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Test Login</h1>
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" value="admin@test.com" required>
+        <input type="password" id="password" placeholder="Password" value="password123" required>
+        <button type="submit">Login</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const data = { email, password };
+            
+            console.log('Sending data:', data);
+            
+            try {
+                const response = await fetch('https://backend-87qq6l5ya-manab-mallicks-projects.vercel.app/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                const result = await response.text();
+                console.log('Response body:', result);
+                
+                document.getElementById('result').innerHTML = `
+                    <h3>Status: ${response.status}</h3>
+                    <pre>${result}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
