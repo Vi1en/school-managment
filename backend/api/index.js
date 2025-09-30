@@ -4,8 +4,18 @@ const cors = require('cors');
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// CORS configuration
+app.use(cors({
+  origin: [
+    'https://frontend-6hyh264xm-manab-mallicks-projects.vercel.app',
+    'https://frontend-maqnijuta-manab-mallicks-projects.vercel.app',
+    'https://frontend-h7290e37f-manab-mallicks-projects.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:3001'
+  ],
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Connect to MongoDB
@@ -38,17 +48,22 @@ app.use(async (req, res, next) => {
 });
 
 // Routes
-app.use('/auth', require('../routes/auth'));
-app.use('/students', require('../routes/students'));
-app.use('/settings', require('../routes/settings'));
-app.use('/fee-deposits', require('../routes/feeDeposits'));
-app.use('/class-fees', require('../routes/classFees'));
-app.use('/marks', require('../routes/marks'));
-app.use('/marksheets', require('../routes/marksheets'));
+app.use('/api/auth', require('../routes/auth'));
+app.use('/api/students', require('../routes/students'));
+app.use('/api/settings', require('../routes/settings'));
+app.use('/api/fee-deposits', require('../routes/feeDeposits'));
+app.use('/api/class-fees', require('../routes/classFees'));
+app.use('/api/marks', require('../routes/marks'));
+app.use('/api/marksheets', require('../routes/marksheets'));
 
 // Health check route
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running' });
+});
+
+// Root route
+app.get('/', (req, res) => {
+  res.json({ message: 'School Management API is running' });
 });
 
 // Error handling middleware
