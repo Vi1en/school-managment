@@ -7,13 +7,18 @@ const app = express();
 // CORS configuration
 app.use(cors({
   origin: [
+    'https://frontend-kaks7hnc7-manab-mallicks-projects.vercel.app',
     'https://frontend-6hyh264xm-manab-mallicks-projects.vercel.app',
     'https://frontend-maqnijuta-manab-mallicks-projects.vercel.app',
     'https://frontend-h7290e37f-manab-mallicks-projects.vercel.app',
+    'https://frontend-og324zom2-manab-mallicks-projects.vercel.app',
+    'https://frontend-ogh754sn7-manab-mallicks-projects.vercel.app',
     'http://localhost:3000',
     'http://localhost:3001'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
