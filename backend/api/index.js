@@ -73,6 +73,16 @@ app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running' });
 });
 
+// Debug route to check environment variables
+app.get('/api/debug', (req, res) => {
+  res.json({ 
+    message: 'Debug info',
+    hasMongoUri: !!process.env.MONGODB_URI,
+    mongoUriLength: process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0,
+    nodeEnv: process.env.NODE_ENV
+  });
+});
+
 // Root route
 app.get('/', (req, res) => {
   res.json({ message: 'School Management API is running' });
