@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test School App</title>
+</head>
+<body>
+    <h1>Testing School Management App</h1>
+    <div id="status">Testing...</div>
+    <div id="students"></div>
+
+    <script>
+        const API_URL = 'https://backend-87qq6l5ya-manab-mallicks-projects.vercel.app/api';
+        
+        async function testApp() {
+            const statusDiv = document.getElementById('status');
+            const studentsDiv = document.getElementById('students');
+            
+            try {
+                // Test health endpoint
+                statusDiv.innerHTML = 'Testing health endpoint...';
+                const healthResponse = await fetch(`${API_URL}/health`);
+                const healthData = await healthResponse.json();
+                statusDiv.innerHTML = `Health: ${healthData.message}<br>`;
+                
+                // Test login
+                statusDiv.innerHTML += 'Testing login...<br>';
+                const loginResponse = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@test.com',
+                        password: 'password123'
+                    })
+                });
+                
+                if (!loginResponse.ok) {
+                    throw new Error(`Login failed: ${loginResponse.status}`);
+                }
+                
+                const loginData = await loginResponse.json();
+                statusDiv.innerHTML += `Login successful! Token: ${loginData.token.substring(0, 20)}...<br>`;
+                
+                // Test students endpoint
+                statusDiv.innerHTML += 'Testing students endpoint...<br>';
+                const studentsResponse = await fetch(`${API_URL}/students`, {
+                    headers: {
+                        'Authorization': `Bearer ${loginData.token}`
+                    }
+                });
+                
+                if (!studentsResponse.ok) {
+                    throw new Error(`Students fetch failed: ${studentsResponse.status}`);
+                }
+                
+                const studentsData = await studentsResponse.json();
+                statusDiv.innerHTML += `Students loaded: ${studentsData.students.length} students<br>`;
+                
+                // Display students
+                studentsDiv.innerHTML = '<h3>Students:</h3>';
+                studentsData.students.forEach(student => {
+                    studentsDiv.innerHTML += `
+                        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+                            <strong>${student.studentName}</strong> (${student.admissionNumber})<br>
+                            Class: ${student.currentClass}<br>
+                            Fee: ₹${student.feeDetails.totalFee} (Paid: ₹${student.feeDetails.amountPaid})
+                        </div>
+                    `;
+                });
+                
+            } catch (error) {
+                statusDiv.innerHTML = `Error: ${error.message}`;
+                console.error('Error:', error);
+            }
+        }
+        
+        testApp();
+    </script>
+</body>
+</html>

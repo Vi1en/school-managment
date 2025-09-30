@@ -290,12 +290,21 @@ router.post('/', [
   body('admissionNumber').notEmpty().trim(),
   body('studentName').notEmpty().trim(),
   body('currentClass').notEmpty().trim(),
-  body('feeDetails.totalFee').isNumeric(),
-  body('feeDetails.amountPaid').isNumeric()
+  body('feeDetails.totalFee').isNumeric().withMessage('Total fee must be a number'),
+  body('feeDetails.amountPaid').isNumeric().withMessage('Amount paid must be a number')
 ], async (req, res) => {
   try {
+    // Convert FormData string values to numbers for fee fields
+    if (req.body['feeDetails.totalFee']) {
+      req.body['feeDetails.totalFee'] = parseFloat(req.body['feeDetails.totalFee']);
+    }
+    if (req.body['feeDetails.amountPaid']) {
+      req.body['feeDetails.amountPaid'] = parseFloat(req.body['feeDetails.amountPaid']);
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
