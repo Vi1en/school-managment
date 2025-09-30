@@ -101,8 +101,8 @@ const Login = () => {
               <button
                 type="button"
                 onClick={() => {
-                  // For demo purposes, we'll create a default admin
-                  setFormData({ email: 'admin@school.com', password: 'admin123' });
+                  // Use the working admin credentials
+                  setFormData({ email: 'admin@test.com', password: 'password123' });
                 }}
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
