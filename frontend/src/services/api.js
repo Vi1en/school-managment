@@ -1,6 +1,10 @@
 import axios from 'axios';
 
+// Updated backend URL with file upload fixes
 const API_URL = process.env.REACT_APP_API_URL || 'https://backend-cjxvqeyx1-manab-mallicks-projects.vercel.app/api';
+
+// Debug: Log the API URL being used
+console.log('Using API URL:', API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
