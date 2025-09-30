@@ -59,6 +59,21 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Apply CORS to all routes
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
+
 // Routes
 app.use('/api/auth', require('../routes/auth'));
 app.use('/api/students', require('../routes/students'));
