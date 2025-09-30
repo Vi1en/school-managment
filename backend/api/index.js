@@ -1,0 +1,65 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) {
+    return;
+  }
+  
+  try {
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/school-management';
+    
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    isConnected = true;
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+  }
+}
+
+// Connect to database on first request
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+// Routes
+app.use('/auth', require('../routes/auth'));
+app.use('/students', require('../routes/students'));
+app.use('/settings', require('../routes/settings'));
+app.use('/fee-deposits', require('../routes/feeDeposits'));
+app.use('/class-fees', require('../routes/classFees'));
+app.use('/marks', require('../routes/marks'));
+app.use('/marksheets', require('../routes/marksheets'));
+
+// Health check route
+app.get('/health', (req, res) => {
+  res.json({ message: 'Server is running' });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+module.exports = app;
