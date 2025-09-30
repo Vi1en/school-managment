@@ -4,29 +4,20 @@ const cors = require('cors');
 
 const app = express();
 
-// CORS configuration
-const corsOptions = {
-  origin: [
-    'https://frontend-kaks7hnc7-manab-mallicks-projects.vercel.app',
-    'https://frontend-6hyh264xm-manab-mallicks-projects.vercel.app',
-    'https://frontend-maqnijuta-manab-mallicks-projects.vercel.app',
-    'https://frontend-h7290e37f-manab-mallicks-projects.vercel.app',
-    'https://frontend-og324zom2-manab-mallicks-projects.vercel.app',
-    'https://frontend-ogh754sn7-manab-mallicks-projects.vercel.app',
-    'https://frontend-6mongcf82-manab-mallicks-projects.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// Apply CORS immediately - before any other middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
 
 app.use(express.json());
 
@@ -59,20 +50,6 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Apply CORS to all routes
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  
-  next();
-});
 
 // Routes
 app.use('/api/auth', require('../routes/auth'));
