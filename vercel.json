@@ -1,18 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    },
-    {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/build",
+  "installCommand": "cd frontend && npm install",
+  "framework": "create-react-app",
+  "functions": {
+    "backend/server.js": {
+      "runtime": "nodejs18.x"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/(.*)",
