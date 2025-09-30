@@ -105,3 +105,4 @@ frontend/public/uploads/
 # Temporary files
 tmp/
 temp/
+.vercel
