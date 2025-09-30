@@ -76,6 +76,33 @@ const AddStudent = () => {
     setLoading(true);
     setError('');
 
+    // Client-side validation
+    if (!formData.admissionNumber.trim()) {
+      setError('Admission Number is required');
+      setLoading(false);
+      return;
+    }
+    if (!formData.studentName.trim()) {
+      setError('Student Name is required');
+      setLoading(false);
+      return;
+    }
+    if (!formData.currentClass.trim()) {
+      setError('Current Class is required');
+      setLoading(false);
+      return;
+    }
+    if (!formData.feeDetails.totalFee || formData.feeDetails.totalFee <= 0) {
+      setError('Total Fee must be greater than 0');
+      setLoading(false);
+      return;
+    }
+    if (!formData.feeDetails.amountPaid || formData.feeDetails.amountPaid < 0) {
+      setError('Amount Paid must be 0 or greater');
+      setLoading(false);
+      return;
+    }
+
     try {
       // Create FormData for file upload
       const formDataToSend = new FormData();
