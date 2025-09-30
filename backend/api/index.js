@@ -31,6 +31,8 @@ async function connectDB() {
   
   try {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/school-management';
+    console.log('Attempting to connect to MongoDB...');
+    console.log('MongoDB URI exists:', !!process.env.MONGODB_URI);
     
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
@@ -38,16 +40,22 @@ async function connectDB() {
     });
     
     isConnected = true;
-    console.log('Connected to MongoDB');
+    console.log('Successfully connected to MongoDB');
   } catch (error) {
     console.error('MongoDB connection error:', error);
+    throw error; // Re-throw to see the error in logs
   }
 }
 
 // Connect to database on first request
 app.use(async (req, res, next) => {
-  await connectDB();
-  next();
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    res.status(500).json({ message: 'Database connection failed', error: error.message });
+  }
 });
 
 
