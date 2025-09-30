@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 require('dotenv').config({ path: './config.env' });
 
 const app = express();
@@ -40,19 +41,37 @@ app.use((req, res) => {
 // Connect to MongoDB and start server
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Connected to MongoDB');
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-})
-.catch((error) => {
-  console.error('MongoDB connection error:', error);
-  process.exit(1);
-});
+async function startServer() {
+  try {
+    let mongoUri;
+    
+    // Check if MONGODB_URI is provided (for production)
+    if (process.env.MONGODB_URI) {
+      mongoUri = process.env.MONGODB_URI;
+      console.log('Using provided MongoDB URI');
+    } else {
+      // Use in-memory database for development/testing
+      console.log('Starting in-memory MongoDB server...');
+      const mongoServer = await MongoMemoryServer.create();
+      mongoUri = mongoServer.getUri();
+      console.log('In-memory MongoDB server started');
+    }
+    
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    console.log('Connected to MongoDB');
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;
