@@ -317,10 +317,11 @@ router.post('/', [
     // Prepare student data
     const studentData = { ...req.body };
     
-    // Handle photo upload
+    // Handle photo upload - convert to base64 for database storage
     if (req.file) {
-      // Store the file path relative to the backend
-      studentData.photo = `/uploads/${req.file.filename}`;
+      // Convert buffer to base64 string
+      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      studentData.photo = base64Image;
     }
 
     const student = new Student(studentData);
@@ -360,10 +361,11 @@ router.put('/:admissionNumber', [
     // Prepare update data
     const updateData = { ...req.body };
     
-    // Handle photo upload
+    // Handle photo upload - convert to base64 for database storage
     if (req.file) {
-      // Store the file path relative to the backend
-      updateData.photo = `/uploads/${req.file.filename}`;
+      // Convert buffer to base64 string
+      const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      updateData.photo = base64Image;
     }
 
     const student = await Student.findOneAndUpdate(
