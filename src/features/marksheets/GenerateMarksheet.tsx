@@ -229,7 +229,10 @@ const GenerateMarksheet: React.FC = () => {
           return;
         }
 
-        const student = students.find(s => s.id === selectedStudent);
+        const student = students.find(s => {
+          const studentId = s.id || s._id || s.admissionNumber;
+          return studentId === selectedStudent;
+        });
         if (!student) {
           setLocalError('Selected student not found');
           return;
@@ -392,11 +395,14 @@ const GenerateMarksheet: React.FC = () => {
               }}
             >
               <option value="" style={{ color: '#6b7280' }}>Select Student</option>
-              {students.map((student) => (
-                <option key={student.id} value={student.id} style={{ color: '#000' }}>
-                  {student.studentName} ({student.admissionNumber})
-                </option>
-              ))}
+              {students.map((student) => {
+                const studentId = student.id || student._id || student.admissionNumber;
+                return (
+                  <option key={studentId} value={studentId} style={{ color: '#000' }}>
+                    {student.studentName} ({student.admissionNumber})
+                  </option>
+                );
+              })}
             </select>
           </div>
         )}
