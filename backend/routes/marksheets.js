@@ -11,7 +11,6 @@ const Student = require('../models/Student');
 // @access  Private
 router.post('/', [
   auth,
-  handleUpload,
   body('rollNumber').notEmpty().trim(),
   body('studentName').notEmpty().trim(),
   body('class').notEmpty().trim(),
@@ -32,11 +31,6 @@ router.post('/', [
 
     console.log('Creating marksheet with data:', req.body);
     const marksheetData = { ...req.body };
-    
-    // Handle uploaded files (only for photo if needed)
-    if (req.file && req.file.fieldname === 'photo') {
-      marksheetData.photo = `/uploads/${req.file.filename}`;
-    }
 
     // Check if marksheet already exists for this roll number, exam type, and academic year
     const existingMarksheet = await Marksheet.findOne({ 
