@@ -76,6 +76,19 @@ export interface MarksData {
   };
 }
 
+export interface MarkInput {
+  UT1: number;
+  UT2: number;
+  UT3: number;
+  UT4: number;
+  halfYearly: number;
+  annual: number;
+}
+
+export interface SubjectMarksData {
+  [subjectName: string]: MarkInput;
+}
+
 export interface DashboardStats {
   totalStudents: number;
   paidStudents: number;

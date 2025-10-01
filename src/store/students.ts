@@ -41,7 +41,7 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
       const response = await studentsAPI.getAll(searchParams);
       
       set({
-        students: response.data.students || response.data,
+        students: Array.isArray(response.data) ? response.data : (response.data as any).students || [],
         isLoading: false,
         pagination: searchParams,
       });
@@ -77,21 +77,13 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
     try {
       const response = await studentsAPI.create(studentData);
       
-      if (response.success) {
-        // Add new student to the list
-        const newStudent = response.data;
-        set((state) => ({
-          students: [newStudent, ...state.students],
-          isLoading: false,
-        }));
-        return { success: true };
-      } else {
-        set({
-          isLoading: false,
-          error: response.error || 'Failed to create student',
-        });
-        return { success: false, error: response.error };
-      }
+      // Add new student to the list
+      const newStudent = response.data;
+      set((state) => ({
+        students: [newStudent, ...state.students],
+        isLoading: false,
+      }));
+      return { success: true };
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to create student';
       set({
@@ -108,24 +100,16 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
     try {
       const response = await studentsAPI.update(id, studentData);
       
-      if (response.success) {
-        // Update student in the list
-        const updatedStudent = response.data;
-        set((state) => ({
-          students: state.students.map((student) =>
-            student.id === id ? updatedStudent : student
-          ),
-          selectedStudent: state.selectedStudent?.id === id ? updatedStudent : state.selectedStudent,
-          isLoading: false,
-        }));
-        return { success: true };
-      } else {
-        set({
-          isLoading: false,
-          error: response.error || 'Failed to update student',
-        });
-        return { success: false, error: response.error };
-      }
+      // Update student in the list
+      const updatedStudent = response.data;
+      set((state) => ({
+        students: state.students.map((student) =>
+          student.id === id ? updatedStudent : student
+        ),
+        selectedStudent: state.selectedStudent?.id === id ? updatedStudent : state.selectedStudent,
+        isLoading: false,
+      }));
+      return { success: true };
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to update student';
       set({
@@ -142,21 +126,13 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
     try {
       const response = await studentsAPI.delete(id);
       
-      if (response.success) {
-        // Remove student from the list
-        set((state) => ({
-          students: state.students.filter((student) => student.id !== id),
-          selectedStudent: state.selectedStudent?.id === id ? null : state.selectedStudent,
-          isLoading: false,
-        }));
-        return { success: true };
-      } else {
-        set({
-          isLoading: false,
-          error: response.error || 'Failed to delete student',
-        });
-        return { success: false, error: response.error };
-      }
+      // Remove student from the list
+      set((state) => ({
+        students: state.students.filter((student) => student.id !== id),
+        selectedStudent: state.selectedStudent?.id === id ? null : state.selectedStudent,
+        isLoading: false,
+      }));
+      return { success: true };
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to delete student';
       set({
@@ -174,7 +150,7 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
       const response = await studentsAPI.getAll({ search: query });
       
       set({
-        students: response.data.students || response.data,
+        students: Array.isArray(response.data) ? response.data : (response.data as any).students || [],
         isLoading: false,
         pagination: { ...get().pagination, search: query },
       });

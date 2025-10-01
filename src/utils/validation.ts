@@ -91,3 +91,8 @@ export const validateForm = (data: Record<string, any>, rules: Record<string, Va
 
   return errors;
 };
+
+export const validateMarksData = (marksData: any): boolean => {
+  // Basic validation for marks data
+  return typeof marksData === 'object' && marksData !== null;
+};

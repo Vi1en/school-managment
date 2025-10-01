@@ -93,7 +93,7 @@ function Table<T = any>({
                 >
                   {column.render
                     ? column.render(record[column.dataIndex], record, rowIndex)
-                    : record[column.dataIndex]}
+                    : String(record[column.dataIndex] || '')}
                 </td>
               ))}
             </tr>

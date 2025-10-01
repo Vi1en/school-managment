@@ -110,9 +110,9 @@ const Dashboard: React.FC = () => {
       render: (value) => `Class ${value}`,
     },
     {
-      key: 'paymentStatus',
+      key: 'feeDetails' as keyof Student,
       title: 'Payment Status',
-      dataIndex: 'feeDetails',
+      dataIndex: 'feeDetails' as keyof Student,
       render: (value) => (
         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
           value.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
@@ -124,9 +124,9 @@ const Dashboard: React.FC = () => {
       ),
     },
     {
-      key: 'actions',
+      key: 'id' as keyof Student,
       title: 'Actions',
-      dataIndex: 'id',
+      dataIndex: 'id' as keyof Student,
       render: (_, record) => (
         <Link
           to={`/student/${record.admissionNumber}`}

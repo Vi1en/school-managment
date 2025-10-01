@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStudentsStore } from '@/store/students';
 import { useUIStore } from '@/store/ui';
 import { marksheetsAPI } from '@/services/api';
-import { Student, MarksData, Subject, MarksheetForm } from '@/types';
+import { Student, MarksData, Subject, MarksheetForm, MarkInput, SubjectMarksData } from '@/types';
 import { validateMarksData } from '@/utils/validation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
@@ -27,10 +27,10 @@ const GenerateMarksheet: React.FC = () => {
     { id: '5', name: 'SOCIAL SCIENCE', code: '084', marks: 0, maxMarks: 100 },
   ]);
   const [currentSubject, setCurrentSubject] = useState(0);
-  const [marksData, setMarksData] = useState<MarksData>({});
+  const [marksData, setMarksData] = useState<Record<string, SubjectMarksData>>({});
   const [generationMode, setGenerationMode] = useState<'bulk' | 'individual'>('bulk');
   const [selectedStudent, setSelectedStudent] = useState('');
-  const [individualMarksData, setIndividualMarksData] = useState<MarksData>({});
+  const [individualMarksData, setIndividualMarksData] = useState<SubjectMarksData>({});
   const [showPreview, setShowPreview] = useState(false);
   const [previewData, setPreviewData] = useState<any>(null);
   const [showAddSubject, setShowAddSubject] = useState(false);
@@ -44,7 +44,7 @@ const GenerateMarksheet: React.FC = () => {
   // Initialize individual marks data when student is selected
   useEffect(() => {
     if (selectedStudent && generationMode === 'individual') {
-      const initialMarksData: MarksData = {};
+      const initialMarksData: SubjectMarksData = {};
       subjects.forEach(subject => {
         initialMarksData[subject.name] = {
           UT1: 0,
@@ -53,7 +53,6 @@ const GenerateMarksheet: React.FC = () => {
           UT4: 0,
           halfYearly: 0,
           annual: 0,
-          marks: 0,
         };
       });
       setIndividualMarksData(initialMarksData);
@@ -67,7 +66,7 @@ const GenerateMarksheet: React.FC = () => {
       // Filter students by class
       const classStudents = students.filter(student => student.currentClass === className);
       // Update marks data for bulk generation
-      const initialMarksData: MarksData = {};
+      const initialMarksData: Record<string, SubjectMarksData> = {};
       classStudents.forEach(student => {
         initialMarksData[student.id] = {};
         subjects.forEach(subject => {
@@ -78,7 +77,6 @@ const GenerateMarksheet: React.FC = () => {
             UT4: 0,
             halfYearly: 0,
             annual: 0,
-            marks: 0,
           };
         });
       });
@@ -91,7 +89,7 @@ const GenerateMarksheet: React.FC = () => {
     setSelectedStudent(studentId);
   };
 
-  const handleMarkChange = (studentId: string, markType: string, value: string, subjectName?: string) => {
+  const handleMarkChange = (studentId: string, markType: keyof MarkInput, value: string, subjectName?: string) => {
     const numericValue = parseFloat(value) || 0;
     const targetSubject = subjectName || subjects[currentSubject]?.name;
     
@@ -117,19 +115,13 @@ const GenerateMarksheet: React.FC = () => {
     }
   };
 
-  const calculateTotalMarks = (subjectData: any, examType: string): number => {
+  const calculateTotalMarks = (subjectData: MarkInput, examType: string): number => {
     if (examType === 'Half-Yearly') {
-      return (parseFloat(subjectData.UT1) || 0) + 
-             (parseFloat(subjectData.UT2) || 0) + 
-             (parseFloat(subjectData.halfYearly) || 0);
+      return subjectData.UT1 + subjectData.UT2 + subjectData.halfYearly;
     } else if (examType === 'Annual') {
-      return (parseFloat(subjectData.UT1) || 0) + 
-             (parseFloat(subjectData.UT2) || 0) + 
-             (parseFloat(subjectData.UT3) || 0) + 
-             (parseFloat(subjectData.UT4) || 0) + 
-             (parseFloat(subjectData.annual) || 0);
+      return subjectData.UT1 + subjectData.UT2 + subjectData.UT3 + subjectData.UT4 + subjectData.annual;
     } else {
-      return parseFloat(subjectData.marks) || 0;
+      return subjectData.UT1 + subjectData.UT2 + subjectData.UT3 + subjectData.UT4;
     }
   };
 
@@ -153,6 +145,7 @@ const GenerateMarksheet: React.FC = () => {
             const totalMarks = calculateTotalMarks(subjectData, examType);
             
             return {
+              id: subject.id,
               name: subject.name,
               code: subject.code,
               marks: totalMarks,
@@ -179,7 +172,15 @@ const GenerateMarksheet: React.FC = () => {
 
         // Create marksheets
         for (const marksheetData of marksheetsToCreate) {
-          await marksheetsAPI.create(marksheetData);
+          const marksheetForm: MarksheetForm = {
+            examType: marksheetData.examType,
+            academicYear: marksheetData.academicYear,
+            generationMode: 'bulk',
+            selectedClass: selectedClass,
+            subjects: marksheetData.subjects,
+            marksData: marksData as any,
+          };
+          await marksheetsAPI.create(marksheetForm);
         }
 
         alert(`${marksheetsToCreate.length} marksheets generated successfully!`);
@@ -201,6 +202,7 @@ const GenerateMarksheet: React.FC = () => {
           const totalMarks = calculateTotalMarks(subjectData, examType);
           
           return {
+            id: subject.id,
             name: subject.name,
             code: subject.code,
             marks: totalMarks,
@@ -224,14 +226,18 @@ const GenerateMarksheet: React.FC = () => {
           subjects: subjectMarks,
         };
 
-        const response = await marksheetsAPI.create(marksheetData);
+        const marksheetForm: MarksheetForm = {
+          examType: marksheetData.examType,
+          academicYear: marksheetData.academicYear,
+          generationMode: 'individual',
+          selectedStudent: selectedStudent,
+          subjects: marksheetData.subjects,
+          marksData: individualMarksData as any,
+        };
         
-        if (response.success) {
-          setPreviewData(response.data);
-          setShowPreview(true);
-        } else {
-          setLocalError(response.error || 'Failed to generate marksheet');
-        }
+        const response = await marksheetsAPI.create(marksheetForm);
+        setPreviewData(response.data);
+        setShowPreview(true);
       }
     } catch (error: any) {
       setLocalError(error.message || 'Failed to generate marksheets');
