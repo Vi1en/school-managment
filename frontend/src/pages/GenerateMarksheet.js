@@ -193,6 +193,8 @@ const GenerateMarksheet = () => {
               totalMarks = parseFloat(subjectData.marks) || 0;
             }
             
+            console.log(`Subject: ${subject.name}, SubjectData:`, subjectData, `TotalMarks: ${totalMarks}`);
+            
             return {
               name: subject.name,
               code: subject.code,
@@ -272,28 +274,30 @@ const GenerateMarksheet = () => {
           return;
         }
 
-        const subjectMarks = subjects.map(subject => {
-          const subjectData = individualMarksData[subject.name] || {};
-          // Calculate total marks based on exam type
-          let totalMarks = 0;
-          let maxMarks = 100; // Default max marks per subject
-          
-          if (examType === 'half-yearly') {
-            totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.halfYearly) || 0);
-          } else if (examType === 'annual') {
-            totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.UT3) || 0) + (parseFloat(subjectData.UT4) || 0) + (parseFloat(subjectData.annual) || 0);
-          } else {
-            // For other exam types, use the marks field
-            totalMarks = parseFloat(subjectData.marks) || 0;
-          }
-          
-          return {
-            name: subject.name,
-            code: subject.code,
-            marks: totalMarks,
-            maxMarks: maxMarks
-          };
-        });
+          const subjectMarks = subjects.map(subject => {
+            const subjectData = individualMarksData[subject.name] || {};
+            // Calculate total marks based on exam type
+            let totalMarks = 0;
+            let maxMarks = 100; // Default max marks per subject
+            
+            if (examType === 'half-yearly') {
+              totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.halfYearly) || 0);
+            } else if (examType === 'annual') {
+              totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.UT3) || 0) + (parseFloat(subjectData.UT4) || 0) + (parseFloat(subjectData.annual) || 0);
+            } else {
+              // For other exam types, use the marks field
+              totalMarks = parseFloat(subjectData.marks) || 0;
+            }
+            
+            console.log(`Individual Subject: ${subject.name}, SubjectData:`, subjectData, `TotalMarks: ${totalMarks}`);
+            
+            return {
+              name: subject.name,
+              code: subject.code,
+              marks: totalMarks,
+              maxMarks: maxMarks
+            };
+          });
 
         const marksheetData = {
           rollNumber: student.admissionNumber,
