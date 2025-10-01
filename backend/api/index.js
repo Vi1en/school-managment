@@ -90,8 +90,19 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  console.error('Global error handler:', err);
+  console.error('Error stack:', err.stack);
+  
+  // If response was already sent, don't send another
+  if (res.headersSent) {
+    return next(err);
+  }
+  
+  res.status(500).json({ 
+    message: 'Something went wrong!',
+    error: err.message,
+    details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
 });
 
 // 404 handler
