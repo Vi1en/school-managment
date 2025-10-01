@@ -1,112 +1,56 @@
-const express = require('express');
-const mongoose = require('mongoose');
+exports.handler = async (event, context) => {
+  // Set CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Content-Type': 'application/json'
+  };
 
-const app = express();
-
-// Apply CORS immediately - before any other middleware
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+  // Handle preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
   }
+
+  // Handle different routes
+  const path = event.path;
   
-  next();
-});
-
-app.use(express.json());
-
-// Connect to MongoDB
-let isConnected = false;
-
-async function connectDB() {
-  if (isConnected) {
-    return;
+  if (path === '/api/health') {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        message: 'Server is running',
+        timestamp: new Date().toISOString(),
+        mongodb: 'checking...'
+      })
+    };
   }
-  
-  try {
-    const mongoUri = process.env.MONGODB_URI;
-    console.log('Attempting to connect to MongoDB...');
-    console.log('MongoDB URI exists:', !!process.env.MONGODB_URI);
-    
-    if (!mongoUri) {
-      throw new Error('MONGODB_URI environment variable is not set');
-    }
-    
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    
-    isConnected = true;
-    console.log('Successfully connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    // Don't throw error, just log it
+
+  if (path === '/api/debug') {
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        message: 'Debug info',
+        hasMongoUri: !!process.env.MONGODB_URI,
+        mongoUriLength: process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0,
+        nodeEnv: process.env.NODE_ENV
+      })
+    };
   }
-}
 
-// Health check route
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-    mongodb: isConnected ? 'connected' : 'disconnected'
-  });
-});
-
-// Debug route to check environment variables
-app.get('/api/debug', (req, res) => {
-  res.json({ 
-    message: 'Debug info',
-    hasMongoUri: !!process.env.MONGODB_URI,
-    mongoUriLength: process.env.MONGODB_URI ? process.env.MONGODB_URI.length : 0,
-    nodeEnv: process.env.NODE_ENV
-  });
-});
-
-// Root route
-app.get('/', (req, res) => {
-  res.json({ message: 'School Management API is running' });
-});
-
-// Connect to database on first request
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    console.error('Database connection failed:', error);
-    // Don't block the request, just log the error
-    next();
-  }
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Global error handler:', err);
-  console.error('Error stack:', err.stack);
-  
-  // If response was already sent, don't send another
-  if (res.headersSent) {
-    return next(err);
-  }
-  
-  res.status(500).json({ 
-    message: 'Something went wrong!',
-    error: err.message,
-    details: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
-
-// Netlify Functions handler
-exports.handler = app;
+  // Default response
+  return {
+    statusCode: 200,
+    headers,
+    body: JSON.stringify({
+      message: 'School Management API is running',
+      path: path
+    })
+  };
+};
