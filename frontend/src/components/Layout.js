@@ -11,7 +11,9 @@ const Layout = () => {
   // Check if mobile on mount and resize
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
+      const isMobileView = window.innerWidth < 1024;
+      console.log('Screen width:', window.innerWidth, 'Is mobile:', isMobileView);
+      setIsMobile(isMobileView);
       if (window.innerWidth >= 1024) {
         setSidebarOpen(false);
       }
@@ -135,6 +137,12 @@ const Layout = () => {
         transition-transform duration-300 ease-in-out
         modern-sidebar
       `}>
+        {/* Debug info */}
+        {isMobile && (
+          <div className="absolute top-0 right-0 bg-red-500 text-white text-xs p-1 z-50">
+            Mobile: {isMobile ? 'Yes' : 'No'}, Open: {sidebarOpen ? 'Yes' : 'No'}
+          </div>
+        )}
         {/* Logo Section */}
         <div className="flex items-center justify-between px-6 py-6 border-b border-gray-700">
           <div className="flex items-center">
@@ -149,8 +157,9 @@ const Layout = () => {
           {isMobile && (
             <button
               onClick={() => {
-                console.log('Close button clicked');
+                console.log('Close button clicked, current sidebarOpen:', sidebarOpen);
                 setSidebarOpen(false);
+                console.log('Sidebar should now be closed');
               }}
               className="text-gray-400 hover:text-white transition-colors duration-200 p-2 rounded-lg hover:bg-gray-700"
               aria-label="Close sidebar"
@@ -209,7 +218,11 @@ const Layout = () => {
             <button
               type="button"
               className="px-4 text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-black transition-colors duration-200"
-              onClick={() => setSidebarOpen(true)}
+              onClick={() => {
+                console.log('Hamburger clicked, current sidebarOpen:', sidebarOpen);
+                setSidebarOpen(true);
+                console.log('Sidebar should now be open');
+              }}
             >
               <span className="sr-only">Open sidebar</span>
               <div className="hamburger">
