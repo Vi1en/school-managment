@@ -594,131 +594,278 @@ const GenerateMarksheet: React.FC = () => {
         {previewData && (
           <div className="max-w-4xl mx-auto">
             {/* Print-friendly marksheet */}
-            <div className="bg-white shadow-lg print:shadow-none print:bg-white" id="marksheet-print">
+            <div className="bg-white shadow-lg print:shadow-none print:bg-white" id="marksheet-print" style={{ fontFamily: 'Arial, sans-serif' }}>
               {/* Header with Logo */}
-              <div className="border-b-4 border-blue-600 p-6 print:p-4">
+              <div style={{ 
+                borderBottom: '4px solid #1e40af', 
+                padding: '20px',
+                backgroundColor: '#f8fafc'
+              }}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <img 
                       src="/image.png" 
                       alt="School Logo" 
-                      className="h-16 w-16 mr-4 print:h-12 print:w-12"
-                      style={{ marginLeft: '-8px' }}
+                      style={{ 
+                        height: '60px', 
+                        width: '60px', 
+                        marginRight: '15px',
+                        marginLeft: '-5px'
+                      }}
                     />
                     <div>
-                      <h1 className="text-2xl font-bold text-blue-800 print:text-xl">SHINDE ACADEMY</h1>
-                      <p className="text-sm text-gray-600 print:text-xs">Academic Excellence Since 1995</p>
+                      <h1 style={{ 
+                        fontSize: '24px', 
+                        fontWeight: 'bold', 
+                        color: '#1e40af',
+                        margin: 0,
+                        letterSpacing: '1px'
+                      }}>SHINDE ACADEMY</h1>
+                      <p style={{ 
+                        fontSize: '12px', 
+                        color: '#64748b',
+                        margin: '2px 0 0 0'
+                      }}>Academic Excellence Since 1995</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <h2 className="text-xl font-bold text-gray-800 print:text-lg">REPORT CARD</h2>
-                    <p className="text-sm text-gray-600 print:text-xs">{previewData.academicYear}</p>
+                  <div style={{ textAlign: 'right' }}>
+                    <h2 style={{ 
+                      fontSize: '20px', 
+                      fontWeight: 'bold', 
+                      color: '#1f2937',
+                      margin: 0
+                    }}>REPORT CARD</h2>
+                    <p style={{ 
+                      fontSize: '12px', 
+                      color: '#64748b',
+                      margin: '2px 0 0 0'
+                    }}>{previewData.academicYear}</p>
                   </div>
                 </div>
               </div>
 
               {/* Student Information Section */}
-              <div className="p-6 print:p-4">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex-1">
-                    <div className="grid grid-cols-2 gap-4 text-sm print:text-xs">
-                      <div>
-                        <span className="font-semibold">Student Name:</span> {previewData.studentName}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Roll Number:</span> {previewData.rollNumber}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Father's Name:</span> {previewData.fatherName}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Class:</span> {previewData.currentClass}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Mother's Name:</span> {previewData.motherName}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Blood Group:</span> {previewData.bloodGroup}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Date of Birth:</span> {previewData.dob}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Exam Type:</span> {previewData.examType}
-                      </div>
+              <div style={{ padding: '20px' }}>
+                <div className="flex justify-between items-start" style={{ marginBottom: '20px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: '1fr 1fr', 
+                      gap: '12px',
+                      fontSize: '13px'
+                    }}>
+                      <div><strong>Student Name:</strong> {previewData.studentName}</div>
+                      <div><strong>Roll Number:</strong> {previewData.rollNumber}</div>
+                      <div><strong>Father's Name:</strong> {previewData.fatherName}</div>
+                      <div><strong>Class:</strong> {previewData.currentClass}</div>
+                      <div><strong>Mother's Name:</strong> {previewData.motherName}</div>
+                      <div><strong>Blood Group:</strong> {previewData.bloodGroup}</div>
+                      <div><strong>Date of Birth:</strong> {previewData.dob}</div>
+                      <div><strong>Exam Type:</strong> {previewData.examType}</div>
                     </div>
                   </div>
-                  <div className="ml-6">
+                  <div style={{ marginLeft: '20px' }}>
                     {previewData.photo ? (
                       <img 
                         src={previewData.photo} 
                         alt="Student Photo" 
-                        className="h-24 w-20 object-cover border-2 border-gray-300 print:h-20 print:w-16"
+                        style={{
+                          height: '80px',
+                          width: '70px',
+                          objectFit: 'cover',
+                          border: '2px solid #d1d5db',
+                          borderRadius: '4px'
+                        }}
                       />
                     ) : (
-                      <div className="h-24 w-20 border-2 border-gray-300 flex items-center justify-center bg-gray-100 print:h-20 print:w-16">
-                        <span className="text-xs text-gray-500">Photo</span>
+                      <div style={{
+                        height: '80px',
+                        width: '70px',
+                        border: '2px solid #d1d5db',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#f3f4f6'
+                      }}>
+                        <span style={{ fontSize: '10px', color: '#6b7280' }}>Photo</span>
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* Marks Table */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-bold text-center mb-4 print:text-base">ACADEMIC PERFORMANCE</h3>
-                  <table className="w-full border-collapse border border-gray-400 print:text-xs">
+                <div style={{ marginBottom: '20px' }}>
+                  <h3 style={{ 
+                    fontSize: '16px', 
+                    fontWeight: 'bold', 
+                    textAlign: 'center',
+                    marginBottom: '15px',
+                    color: '#1f2937'
+                  }}>ACADEMIC PERFORMANCE</h3>
+                  <table style={{ 
+                    width: '100%', 
+                    borderCollapse: 'collapse',
+                    fontSize: '12px',
+                    border: '1px solid #374151'
+                  }}>
                     <thead>
-                      <tr className="bg-blue-50 print:bg-gray-100">
-                        <th className="border border-gray-400 px-3 py-2 text-left font-semibold">SUBJECT</th>
-                        <th className="border border-gray-400 px-3 py-2 text-center font-semibold">CODE</th>
-                        <th className="border border-gray-400 px-3 py-2 text-center font-semibold">MARKS OBTAINED</th>
-                        <th className="border border-gray-400 px-3 py-2 text-center font-semibold">MAX MARKS</th>
+                      <tr style={{ backgroundColor: '#e5e7eb' }}>
+                        <th style={{ 
+                          border: '1px solid #374151', 
+                          padding: '8px', 
+                          textAlign: 'left',
+                          fontWeight: 'bold',
+                          backgroundColor: '#d1d5db'
+                        }}>SUBJECT</th>
+                        <th style={{ 
+                          border: '1px solid #374151', 
+                          padding: '8px', 
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                          backgroundColor: '#d1d5db'
+                        }}>CODE</th>
+                        <th style={{ 
+                          border: '1px solid #374151', 
+                          padding: '8px', 
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                          backgroundColor: '#d1d5db'
+                        }}>MARKS OBTAINED</th>
+                        <th style={{ 
+                          border: '1px solid #374151', 
+                          padding: '8px', 
+                          textAlign: 'center',
+                          fontWeight: 'bold',
+                          backgroundColor: '#d1d5db'
+                        }}>MAX MARKS</th>
                       </tr>
                     </thead>
                     <tbody>
                       {previewData.subjects?.map((subject: any, index: number) => (
-                        <tr key={subject.id || index} className={index % 2 === 0 ? 'bg-gray-50 print:bg-white' : 'bg-white'}>
-                          <td className="border border-gray-400 px-3 py-2 font-medium">{subject.name}</td>
-                          <td className="border border-gray-400 px-3 py-2 text-center">{subject.code}</td>
-                          <td className="border border-gray-400 px-3 py-2 text-center font-semibold">{subject.marks}</td>
-                          <td className="border border-gray-400 px-3 py-2 text-center">{subject.maxMarks}</td>
+                        <tr key={subject.id || index} style={{ 
+                          backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff'
+                        }}>
+                          <td style={{ 
+                            border: '1px solid #374151', 
+                            padding: '8px',
+                            fontWeight: '500'
+                          }}>{subject.name}</td>
+                          <td style={{ 
+                            border: '1px solid #374151', 
+                            padding: '8px',
+                            textAlign: 'center'
+                          }}>{subject.code}</td>
+                          <td style={{ 
+                            border: '1px solid #374151', 
+                            padding: '8px',
+                            textAlign: 'center',
+                            fontWeight: 'bold'
+                          }}>{subject.marks}</td>
+                          <td style={{ 
+                            border: '1px solid #374151', 
+                            padding: '8px',
+                            textAlign: 'center'
+                          }}>{subject.maxMarks}</td>
                         </tr>
                       ))}
-                      <tr className="bg-blue-100 print:bg-gray-200 font-bold">
-                        <td className="border border-gray-400 px-3 py-2" colSpan={2}>TOTAL</td>
-                        <td className="border border-gray-400 px-3 py-2 text-center">{previewData.totalMarks}</td>
-                        <td className="border border-gray-400 px-3 py-2 text-center">{previewData.maxTotalMarks}</td>
+                      <tr style={{ 
+                        backgroundColor: '#bfdbfe',
+                        fontWeight: 'bold'
+                      }}>
+                        <td style={{ 
+                          border: '1px solid #374151', 
+                          padding: '8px'
+                        }} colSpan={2}>TOTAL</td>
+                        <td style={{ 
+                          border: '1px solid #374151', 
+                          padding: '8px',
+                          textAlign: 'center'
+                        }}>{previewData.totalMarks}</td>
+                        <td style={{ 
+                          border: '1px solid #374151', 
+                          padding: '8px',
+                          textAlign: 'center'
+                        }}>{previewData.maxTotalMarks}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
 
                 {/* Summary Section */}
-                <div className="grid grid-cols-3 gap-4 mb-6 print:text-xs">
-                  <div className="text-center border border-gray-300 p-3 print:p-2">
-                    <div className="text-lg font-bold text-blue-600 print:text-base">{previewData.percentage}%</div>
-                    <div className="text-sm text-gray-600">PERCENTAGE</div>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: '1fr 1fr 1fr', 
+                  gap: '15px',
+                  marginBottom: '20px',
+                  fontSize: '12px'
+                }}>
+                  <div style={{ 
+                    textAlign: 'center', 
+                    border: '1px solid #d1d5db', 
+                    padding: '12px',
+                    backgroundColor: '#f8fafc'
+                  }}>
+                    <div style={{ 
+                      fontSize: '16px', 
+                      fontWeight: 'bold', 
+                      color: '#1e40af'
+                    }}>{previewData.percentage}%</div>
+                    <div style={{ 
+                      fontSize: '11px', 
+                      color: '#6b7280',
+                      marginTop: '4px'
+                    }}>PERCENTAGE</div>
                   </div>
-                  <div className="text-center border border-gray-300 p-3 print:p-2">
-                    <div className="text-lg font-bold text-green-600 print:text-base">
+                  <div style={{ 
+                    textAlign: 'center', 
+                    border: '1px solid #d1d5db', 
+                    padding: '12px',
+                    backgroundColor: '#f8fafc'
+                  }}>
+                    <div style={{ 
+                      fontSize: '16px', 
+                      fontWeight: 'bold', 
+                      color: '#059669'
+                    }}>
                       {previewData.rank ? `#${previewData.rank}` : 'N/A'}
                     </div>
-                    <div className="text-sm text-gray-600">RANK</div>
+                    <div style={{ 
+                      fontSize: '11px', 
+                      color: '#6b7280',
+                      marginTop: '4px'
+                    }}>RANK</div>
                   </div>
-                  <div className="text-center border border-gray-300 p-3 print:p-2">
-                    <div className={`text-lg font-bold print:text-base ${
-                      previewData.promotionStatus === 'Promoted' ? 'text-green-600' : 'text-red-600'
-                    }`}>
+                  <div style={{ 
+                    textAlign: 'center', 
+                    border: '1px solid #d1d5db', 
+                    padding: '12px',
+                    backgroundColor: '#f8fafc'
+                  }}>
+                    <div style={{ 
+                      fontSize: '16px', 
+                      fontWeight: 'bold',
+                      color: previewData.promotionStatus === 'Promoted' ? '#059669' : '#dc2626'
+                    }}>
                       {previewData.promotionStatus}
                     </div>
-                    <div className="text-sm text-gray-600">STATUS</div>
+                    <div style={{ 
+                      fontSize: '11px', 
+                      color: '#6b7280',
+                      marginTop: '4px'
+                    }}>STATUS</div>
                   </div>
                 </div>
 
                 {/* Footer */}
-                <div className="text-center text-xs text-gray-600 print:text-xs">
-                  <p>This is a computer generated report card and does not require signature.</p>
-                  <p className="mt-2">Generated on: {new Date().toLocaleDateString('en-IN')}</p>
+                <div style={{ 
+                  textAlign: 'center', 
+                  fontSize: '10px', 
+                  color: '#6b7280',
+                  marginTop: '20px'
+                }}>
+                  <p style={{ margin: '0 0 5px 0' }}>This is a computer generated report card and does not require signature.</p>
+                  <p style={{ margin: 0 }}>Generated on: {new Date().toLocaleDateString('en-IN')}</p>
                 </div>
               </div>
             </div>
