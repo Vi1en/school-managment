@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Updated backend URL - using Netlify Functions (direct URLs)
-const API_URL = process.env.REACT_APP_API_URL || '/.netlify/functions/api';
+// Updated backend URL - using Netlify Functions (simple API)
+const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 // Debug: Log the API URL being used
 console.log('Using API URL:', API_URL);
