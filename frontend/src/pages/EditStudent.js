@@ -51,9 +51,9 @@ const EditStudent = () => {
         },
       });
       
-      // Set photo preview if photo exists
+      // Set photo preview if photo exists (base64 or URL)
       if (student.photo) {
-        setPhotoPreview(`http://localhost:5001${student.photo}`);
+        setPhotoPreview(student.photo);
       }
     } catch (err) {
       setError('Error fetching student data');

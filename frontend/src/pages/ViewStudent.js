@@ -84,7 +84,7 @@ const ViewStudent = () => {
             {student.photo ? (
               <img
                 className="h-16 w-12 object-cover border border-gray-300"
-                src={`http://localhost:5001${student.photo}`}
+                src={student.photo}
                 alt={student.studentName}
                 onError={(e) => {
                   e.target.style.display = 'none';

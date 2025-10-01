@@ -151,7 +151,7 @@ const Marksheet = () => {
                     <>
                       <img
                         className="w-16 h-20 object-cover"
-                        src={`http://localhost:5001${marksheet.student.photo}`}
+                        src={marksheet.student.photo}
                         alt={marksheet.student.name}
                         style={{ maxWidth: '64px', maxHeight: '80px', width: '64px', height: '80px' }}
                         onError={(e) => {

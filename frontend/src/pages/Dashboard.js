@@ -23,7 +23,6 @@ const Dashboard = () => {
     
     try {
       console.log('Fetching dashboard stats...');
-      console.log('API URL:', process.env.REACT_APP_API_URL || 'http://localhost:5001/api');
       console.log('Token:', token);
       
       const response = await studentsAPI.getStats();
