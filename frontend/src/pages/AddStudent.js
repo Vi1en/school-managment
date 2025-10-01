@@ -107,33 +107,40 @@ const AddStudent = () => {
       // Debug: Log form data before sending
       console.log('Form data before sending:', formData);
       
-      // Create FormData for file upload
-      const formDataToSend = new FormData();
+      let response;
       
-      // Add all form fields
-      Object.keys(formData).forEach(key => {
-        if (key === 'feeDetails') {
-          formDataToSend.append('feeDetails.totalFee', formData.feeDetails.totalFee || 0);
-          formDataToSend.append('feeDetails.amountPaid', formData.feeDetails.amountPaid || 0);
-        } else {
-          // Convert empty strings to 0 for number fields
-          const value = formData[key];
-          formDataToSend.append(key, value);
-        }
-      });
-      
-      // Debug: Log FormData contents
-      console.log('FormData contents:');
-      for (let [key, value] of formDataToSend.entries()) {
-        console.log(key, ':', value);
-      }
-      
-      // Add photo if selected
       if (photo) {
+        // Create FormData for file upload
+        const formDataToSend = new FormData();
+        
+        // Add all form fields
+        Object.keys(formData).forEach(key => {
+          if (key === 'feeDetails') {
+            formDataToSend.append('feeDetails.totalFee', formData.feeDetails.totalFee || 0);
+            formDataToSend.append('feeDetails.amountPaid', formData.feeDetails.amountPaid || 0);
+          } else {
+            const value = formData[key];
+            formDataToSend.append(key, value);
+          }
+        });
+        
+        // Add photo
         formDataToSend.append('photo', photo);
+        
+        response = await studentsAPI.create(formDataToSend);
+      } else {
+        // Send as JSON when no photo
+        const jsonData = {
+          ...formData,
+          feeDetails: {
+            totalFee: parseFloat(formData.feeDetails.totalFee) || 0,
+            amountPaid: parseFloat(formData.feeDetails.amountPaid) || 0
+          }
+        };
+        
+        console.log('Sending JSON data:', jsonData);
+        response = await studentsAPI.create(jsonData);
       }
-      
-      const response = await studentsAPI.create(formDataToSend);
       console.log('Student created successfully:', response.data);
       navigate('/');
     } catch (err) {
