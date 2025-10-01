@@ -223,7 +223,23 @@ exports.handler = async (event, context) => {
         return createResponse(401, { message: 'Access token required' });
       }
 
-      const students = await Student.find().sort({ createdAt: -1 });
+      // Handle search query parameter
+      const searchQuery = event.queryStringParameters?.search;
+      let query = {};
+      
+      if (searchQuery) {
+        query = {
+          $or: [
+            { studentName: { $regex: searchQuery, $options: 'i' } },
+            { admissionNumber: { $regex: searchQuery, $options: 'i' } },
+            { currentClass: { $regex: searchQuery, $options: 'i' } },
+            { fatherName: { $regex: searchQuery, $options: 'i' } },
+            { motherName: { $regex: searchQuery, $options: 'i' } }
+          ]
+        };
+      }
+
+      const students = await Student.find(query).sort({ createdAt: -1 });
       return createResponse(200, students);
     }
 
@@ -269,6 +285,97 @@ exports.handler = async (event, context) => {
         console.error('Error creating student:', error);
         return createResponse(500, { 
           message: 'Error creating student',
+          error: error.message 
+        });
+      }
+    }
+
+    // Get student by admission number
+    if (path.startsWith('/api/students/') && method === 'GET' && !path.includes('/stats/')) {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const admissionNumber = path.split('/').pop();
+      const student = await Student.findOne({ admissionNumber });
+      
+      if (!student) {
+        return createResponse(404, { message: 'Student not found' });
+      }
+
+      return createResponse(200, student);
+    }
+
+    // Update student
+    if (path.startsWith('/api/students/') && method === 'PUT') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const admissionNumber = path.split('/').pop();
+      
+      try {
+        const { studentName, currentClass, feeDetails } = body;
+        
+        if (!studentName || !currentClass) {
+          return createResponse(400, { message: 'Student name and class are required' });
+        }
+
+        const studentData = { ...body };
+        
+        // Convert fee fields to numbers if they exist
+        if (studentData.feeDetails) {
+          studentData.feeDetails.totalFee = parseFloat(studentData.feeDetails.totalFee) || 0;
+          studentData.feeDetails.amountPaid = parseFloat(studentData.feeDetails.amountPaid) || 0;
+          studentData.feeDetails.remainingAmount = studentData.feeDetails.totalFee - studentData.feeDetails.amountPaid;
+        }
+
+        const student = await Student.findOneAndUpdate(
+          { admissionNumber },
+          studentData,
+          { new: true, runValidators: true }
+        );
+
+        if (!student) {
+          return createResponse(404, { message: 'Student not found' });
+        }
+
+        return createResponse(200, {
+          message: 'Student updated successfully',
+          student
+        });
+      } catch (error) {
+        console.error('Error updating student:', error);
+        return createResponse(500, { 
+          message: 'Error updating student',
+          error: error.message 
+        });
+      }
+    }
+
+    // Delete student
+    if (path.startsWith('/api/students/') && method === 'DELETE') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const admissionNumber = path.split('/').pop();
+      
+      try {
+        const student = await Student.findOneAndDelete({ admissionNumber });
+        
+        if (!student) {
+          return createResponse(404, { message: 'Student not found' });
+        }
+
+        return createResponse(200, { message: 'Student deleted successfully' });
+      } catch (error) {
+        console.error('Error deleting student:', error);
+        return createResponse(500, { 
+          message: 'Error deleting student',
           error: error.message 
         });
       }
