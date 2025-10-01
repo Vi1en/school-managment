@@ -515,8 +515,10 @@ exports.handler = async (event, context) => {
       const { rollNumber, studentName, examType, academicYear, subjects } = body;
       
       console.log('Creating marksheet with data:', { rollNumber, studentName, examType, academicYear, subjects });
+      console.log('Body received:', JSON.stringify(body, null, 2));
       
       if (!rollNumber || !studentName || !examType || !academicYear || !subjects) {
+        console.log('Missing required fields:', { rollNumber: !!rollNumber, studentName: !!studentName, examType: !!examType, academicYear: !!academicYear, subjects: !!subjects });
         return createResponse(400, { message: 'Required fields missing' });
       }
 
@@ -546,22 +548,41 @@ exports.handler = async (event, context) => {
 
       if (existingMarksheet) {
         console.log('Updating existing marksheet for:', rollNumber, examType, academicYear);
-        // Update existing marksheet instead of creating new one
-        const updatedMarksheet = await Marksheet.findOneAndUpdate(
-          { rollNumber, examType, academicYear },
-          marksheetData,
-          { new: true, runValidators: true }
-        );
-        return createResponse(200, { message: 'Marksheet updated successfully', marksheet: updatedMarksheet });
+        try {
+          // Update existing marksheet instead of creating new one
+          const updatedMarksheet = await Marksheet.findOneAndUpdate(
+            { rollNumber, examType, academicYear },
+            marksheetData,
+            { new: true, runValidators: true }
+          );
+          console.log('Marksheet updated successfully:', updatedMarksheet._id);
+          return createResponse(200, { message: 'Marksheet updated successfully', marksheet: updatedMarksheet });
+        } catch (error) {
+          console.error('Error updating marksheet:', error);
+          return createResponse(500, {
+            message: 'Error updating marksheet',
+            error: error.message
+          });
+        }
       }
 
-      const marksheet = new Marksheet(marksheetData);
-      await marksheet.save();
+      try {
+        console.log('Creating new marksheet with data:', JSON.stringify(marksheetData, null, 2));
+        const marksheet = new Marksheet(marksheetData);
+        await marksheet.save();
+        console.log('Marksheet created successfully:', marksheet._id);
 
-      return createResponse(201, {
-        message: 'Marksheet created successfully',
-        marksheet
-      });
+        return createResponse(201, {
+          message: 'Marksheet created successfully',
+          marksheet
+        });
+      } catch (error) {
+        console.error('Error creating marksheet:', error);
+        return createResponse(500, {
+          message: 'Error creating marksheet',
+          error: error.message
+        });
+      }
     }
 
     // Get marksheet by roll number
