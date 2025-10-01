@@ -74,7 +74,7 @@ const GenerateMarksheet: React.FC = () => {
       // Filter students by class
       const classStudents = students.filter(student => student.currentClass === className);
       console.log('GenerateMarksheet: Found', classStudents.length, 'students in class', className);
-      // Update marks data for bulk generation
+      // Update marks data for bulk generation - each student gets their own marks object
       const initialMarksData: Record<string, SubjectMarksData> = {};
       classStudents.forEach(student => {
         initialMarksData[student.id] = {};
@@ -89,7 +89,10 @@ const GenerateMarksheet: React.FC = () => {
           };
         });
       });
+      console.log('GenerateMarksheet: Initialized marks data for', Object.keys(initialMarksData).length, 'students');
       setMarksData(initialMarksData);
+    } else {
+      setMarksData({});
     }
   };
 
@@ -102,17 +105,31 @@ const GenerateMarksheet: React.FC = () => {
     const numericValue = parseFloat(value) || 0;
     const targetSubject = subjectName || subjects[currentSubject]?.name;
     
+    console.log('Mark change:', { studentId, markType, value, targetSubject, generationMode });
+    
     if (generationMode === 'bulk') {
-      setMarksData(prev => ({
-        ...prev,
-        [studentId]: {
-          ...prev[studentId],
-          [targetSubject]: {
-            ...prev[studentId]?.[targetSubject],
-            [markType]: numericValue,
-          },
-        },
-      }));
+      setMarksData(prev => {
+        const newData = { ...prev };
+        if (!newData[studentId]) {
+          newData[studentId] = {};
+        }
+        if (!newData[studentId][targetSubject]) {
+          newData[studentId][targetSubject] = {
+            UT1: 0,
+            UT2: 0,
+            UT3: 0,
+            UT4: 0,
+            halfYearly: 0,
+            annual: 0,
+          };
+        }
+        newData[studentId][targetSubject] = {
+          ...newData[studentId][targetSubject],
+          [markType]: numericValue,
+        };
+        console.log('Updated marks data for student:', studentId, newData[studentId][targetSubject]);
+        return newData;
+      });
     } else {
       setIndividualMarksData(prev => ({
         ...prev,
@@ -566,50 +583,115 @@ const GenerateMarksheet: React.FC = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Input
-                  label="UT1 (10 marks)"
-                  type="number"
-                  min="0"
-                  max="10"
-                  value={individualMarksData[subjects[currentSubject].name]?.UT1 || ''}
-                  onChange={(e) => handleMarkChange('', 'UT1', e.target.value)}
-                />
-                <Input
-                  label="UT2 (10 marks)"
-                  type="number"
-                  min="0"
-                  max="10"
-                  value={individualMarksData[subjects[currentSubject].name]?.UT2 || ''}
-                  onChange={(e) => handleMarkChange('', 'UT2', e.target.value)}
-                />
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
+                    UT1 (10 marks)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    value={individualMarksData[subjects[currentSubject].name]?.UT1 || ''}
+                    onChange={(e) => handleMarkChange('', 'UT1', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      color: '#000',
+                      backgroundColor: '#fff'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
+                    UT2 (10 marks)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    value={individualMarksData[subjects[currentSubject].name]?.UT2 || ''}
+                    onChange={(e) => handleMarkChange('', 'UT2', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      color: '#000',
+                      backgroundColor: '#fff'
+                    }}
+                  />
+                </div>
                 {examType === 'Annual' && (
                   <>
-                    <Input
-                      label="UT3 (10 marks)"
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={individualMarksData[subjects[currentSubject].name]?.UT3 || ''}
-                      onChange={(e) => handleMarkChange('', 'UT3', e.target.value)}
-                    />
-                    <Input
-                      label="UT4 (10 marks)"
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={individualMarksData[subjects[currentSubject].name]?.UT4 || ''}
-                      onChange={(e) => handleMarkChange('', 'UT4', e.target.value)}
-                    />
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
+                        UT3 (10 marks)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={individualMarksData[subjects[currentSubject].name]?.UT3 || ''}
+                        onChange={(e) => handleMarkChange('', 'UT3', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          color: '#000',
+                          backgroundColor: '#fff'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
+                        UT4 (10 marks)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={individualMarksData[subjects[currentSubject].name]?.UT4 || ''}
+                        onChange={(e) => handleMarkChange('', 'UT4', e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          color: '#000',
+                          backgroundColor: '#fff'
+                        }}
+                      />
+                    </div>
                   </>
                 )}
-                <Input
-                  label={examType === 'Half-Yearly' ? 'Half-Yearly (80 marks)' : 'Annual (80 marks)'}
-                  type="number"
-                  min="0"
-                  max="80"
-                  value={individualMarksData[subjects[currentSubject].name]?.[examType === 'Half-Yearly' ? 'halfYearly' : 'annual'] || ''}
-                  onChange={(e) => handleMarkChange('', examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value)}
-                />
+                <div>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500', color: '#374151' }}>
+                    {examType === 'Half-Yearly' ? 'Half-Yearly (80 marks)' : 'Annual (80 marks)'}
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="80"
+                    value={individualMarksData[subjects[currentSubject].name]?.[examType === 'Half-Yearly' ? 'halfYearly' : 'annual'] || ''}
+                    onChange={(e) => handleMarkChange('', examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      color: '#000',
+                      backgroundColor: '#fff'
+                    }}
+                  />
+                </div>
               </div>
             )}
           </div>
