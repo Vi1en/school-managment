@@ -113,6 +113,9 @@ export const useAuthStore = create<AuthStore>()(
       },
       onRehydrateStorage: () => (state) => {
         console.log('Auth store: Rehydrating from storage:', state);
+        if (state) {
+          console.log('Auth store: Rehydrated state - isAuthenticated:', state.isAuthenticated, 'token:', !!state.token);
+        }
       },
     }
   )

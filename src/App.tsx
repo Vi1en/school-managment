@@ -18,7 +18,19 @@ const ViewMarksheet = React.lazy(() => import('@/features/marksheets/ViewMarkshe
 const Settings = React.lazy(() => import('@/features/settings/Settings'));
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isLoading } = useAuthStore();
+  
+  console.log('ProtectedRoute: isAuthenticated:', isAuthenticated, 'isLoading:', isLoading);
+  
+  // Show loading while authentication state is being determined
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      </div>
+    );
+  }
+  
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
