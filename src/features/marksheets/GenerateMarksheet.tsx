@@ -49,6 +49,9 @@ const GenerateMarksheet: React.FC = () => {
     if (students.length > 0) {
       console.log('GenerateMarksheet: First student structure:', students[0]);
       console.log('GenerateMarksheet: First student ID:', students[0].id);
+      console.log('GenerateMarksheet: First student _id:', students[0]._id);
+      console.log('GenerateMarksheet: First student admissionNumber:', students[0].admissionNumber);
+      console.log('GenerateMarksheet: All student keys:', Object.keys(students[0]));
     }
   }, [students]);
 
@@ -81,10 +84,12 @@ const GenerateMarksheet: React.FC = () => {
       // Update marks data for bulk generation - each student gets their own marks object
       const initialMarksData: Record<string, SubjectMarksData> = {};
       classStudents.forEach(student => {
-        console.log('GenerateMarksheet: Processing student:', student.studentName, 'ID:', student.id);
-        initialMarksData[student.id] = {};
+        // Use admissionNumber as the unique identifier since id might be undefined
+        const studentId = student.id || student._id || student.admissionNumber;
+        console.log('GenerateMarksheet: Processing student:', student.studentName, 'ID:', studentId, 'Original ID:', student.id, 'Admission Number:', student.admissionNumber);
+        initialMarksData[studentId] = {};
         subjects.forEach(subject => {
-          initialMarksData[student.id][subject.name] = {
+          initialMarksData[studentId][subject.name] = {
             UT1: 0,
             UT2: 0,
             UT3: 0,
@@ -171,7 +176,8 @@ const GenerateMarksheet: React.FC = () => {
 
         const classStudents = students.filter(student => student.currentClass === selectedClass);
         const marksheetsToCreate = classStudents.map(student => {
-          const studentMarks = marksData[student.id] || {};
+          const studentId = student.id || student._id || student.admissionNumber;
+          const studentMarks = marksData[studentId] || {};
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
             const totalMarks = calculateTotalMarks(subjectData, examType);
@@ -503,8 +509,10 @@ const GenerateMarksheet: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200" style={{ backgroundColor: '#fff' }}>
-                    {classStudents.map((student) => (
-                      <tr key={student.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                    {classStudents.map((student) => {
+                      const studentId = student.id || student._id || student.admissionNumber;
+                      return (
+                      <tr key={studentId} style={{ borderBottom: '1px solid #e5e7eb' }}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" style={{ padding: '16px 24px', whiteSpace: 'nowrap', fontSize: '14px', fontWeight: '500', color: '#111827' }}>
                           {student.studentName}
                         </td>
@@ -513,10 +521,10 @@ const GenerateMarksheet: React.FC = () => {
                             type="number"
                             min="0"
                             max="10"
-                            value={marksData[student.id]?.[subjects[currentSubject].name]?.UT1 || ''}
+                            value={marksData[studentId]?.[subjects[currentSubject].name]?.UT1 || ''}
                             onChange={(e) => {
-                              console.log('UT1 input changed for student:', student.id, 'value:', e.target.value);
-                              handleMarkChange(student.id, 'UT1', e.target.value);
+                              console.log('UT1 input changed for student:', studentId, 'value:', e.target.value);
+                              handleMarkChange(studentId, 'UT1', e.target.value);
                             }}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                             style={{ 
@@ -536,10 +544,10 @@ const GenerateMarksheet: React.FC = () => {
                             type="number"
                             min="0"
                             max="10"
-                            value={marksData[student.id]?.[subjects[currentSubject].name]?.UT2 || ''}
+                            value={marksData[studentId]?.[subjects[currentSubject].name]?.UT2 || ''}
                             onChange={(e) => {
-                              console.log('UT2 input changed for student:', student.id, 'value:', e.target.value);
-                              handleMarkChange(student.id, 'UT2', e.target.value);
+                              console.log('UT2 input changed for student:', studentId, 'value:', e.target.value);
+                              handleMarkChange(studentId, 'UT2', e.target.value);
                             }}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                             style={{ 
@@ -556,24 +564,50 @@ const GenerateMarksheet: React.FC = () => {
                         </td>
                         {examType === 'Annual' && (
                           <>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-6 py-4 whitespace-nowrap" style={{ padding: '16px 24px', whiteSpace: 'nowrap' }}>
                               <input
                                 type="number"
                                 min="0"
                                 max="10"
-                                value={marksData[student.id]?.[subjects[currentSubject].name]?.UT3 || ''}
-                                onChange={(e) => handleMarkChange(student.id, 'UT3', e.target.value)}
+                                value={marksData[studentId]?.[subjects[currentSubject].name]?.UT3 || ''}
+                                onChange={(e) => {
+                                  console.log('UT3 input changed for student:', studentId, 'value:', e.target.value);
+                                  handleMarkChange(studentId, 'UT3', e.target.value);
+                                }}
                                 className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                style={{ 
+                                  width: '100%', 
+                                  padding: '4px 8px', 
+                                  textAlign: 'center', 
+                                  border: '1px solid #d1d5db', 
+                                  borderRadius: '4px',
+                                  fontSize: '14px',
+                                  color: '#000',
+                                  backgroundColor: '#fff'
+                                }}
                               />
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
+                            <td className="px-6 py-4 whitespace-nowrap" style={{ padding: '16px 24px', whiteSpace: 'nowrap' }}>
                               <input
                                 type="number"
                                 min="0"
                                 max="10"
-                                value={marksData[student.id]?.[subjects[currentSubject].name]?.UT4 || ''}
-                                onChange={(e) => handleMarkChange(student.id, 'UT4', e.target.value)}
+                                value={marksData[studentId]?.[subjects[currentSubject].name]?.UT4 || ''}
+                                onChange={(e) => {
+                                  console.log('UT4 input changed for student:', studentId, 'value:', e.target.value);
+                                  handleMarkChange(studentId, 'UT4', e.target.value);
+                                }}
                                 className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                style={{ 
+                                  width: '100%', 
+                                  padding: '4px 8px', 
+                                  textAlign: 'center', 
+                                  border: '1px solid #d1d5db', 
+                                  borderRadius: '4px',
+                                  fontSize: '14px',
+                                  color: '#000',
+                                  backgroundColor: '#fff'
+                                }}
                               />
                             </td>
                           </>
@@ -583,10 +617,10 @@ const GenerateMarksheet: React.FC = () => {
                             type="number"
                             min="0"
                             max="80"
-                            value={marksData[student.id]?.[subjects[currentSubject].name]?.[examType === 'Half-Yearly' ? 'halfYearly' : 'annual'] || ''}
+                            value={marksData[studentId]?.[subjects[currentSubject].name]?.[examType === 'Half-Yearly' ? 'halfYearly' : 'annual'] || ''}
                             onChange={(e) => {
-                              console.log('Half-Yearly/Annual input changed for student:', student.id, 'value:', e.target.value);
-                              handleMarkChange(student.id, examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value);
+                              console.log('Half-Yearly/Annual input changed for student:', studentId, 'value:', e.target.value);
+                              handleMarkChange(studentId, examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value);
                             }}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                             style={{ 
@@ -602,7 +636,8 @@ const GenerateMarksheet: React.FC = () => {
                           />
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

@@ -9,7 +9,8 @@ export interface User {
 }
 
 export interface Student {
-  id: string;
+  id?: string;
+  _id?: string;
   admissionNumber: string;
   studentName: string;
   fatherName: string;
