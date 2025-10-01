@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Updated backend URL - using main project's backend (v2)
-const API_URL = process.env.REACT_APP_API_URL || 'https://school-g9si9j1t3-manab-mallicks-projects.vercel.app/api';
+// Updated backend URL - using current deployment
+const API_URL = process.env.REACT_APP_API_URL || 'https://school-3xgojg51e-manab-mallicks-projects.vercel.app/api';
 
 // Debug: Log the API URL being used
 console.log('Using API URL:', API_URL);
