@@ -14,6 +14,11 @@ const createApiInstance = (): AxiosInstance => {
   // Request interceptor to add auth token
   instance.interceptors.request.use(
     (config) => {
+      // Don't add auth token to login or register endpoints
+      if (config.url && (config.url.includes('/auth/login') || config.url.includes('/auth/register'))) {
+        return config;
+      }
+      
       const token = localStorage.getItem('auth-token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -40,10 +45,13 @@ const createApiInstance = (): AxiosInstance => {
 
       // Handle specific error cases
       if (error.response?.status === 401) {
-        // Clear auth data and redirect to login
-        localStorage.removeItem('auth-token');
-        localStorage.removeItem('auth-storage');
-        window.location.href = '/login';
+        // Don't redirect to login if the error is from the login endpoint itself
+        if (error.config?.url && !error.config.url.includes('/auth/login')) {
+          // Clear auth data and redirect to login
+          localStorage.removeItem('auth-token');
+          localStorage.removeItem('auth-storage');
+          window.location.href = '/login';
+        }
       }
 
       return Promise.reject(apiError);
