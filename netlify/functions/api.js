@@ -132,13 +132,52 @@ exports.handler = async (event, context) => {
   let body = {};
   try {
     if (event.body) {
-      body = JSON.parse(event.body);
+      // Check if it's FormData (multipart) or JSON
+      if (event.body.startsWith('------WebKitFormBoundary') || event.body.includes('multipart/form-data')) {
+        console.log('Received FormData, parsing manually...');
+        // For FormData, we'll parse it manually
+        // This is a simplified parser - in production you'd want to use a proper multipart parser
+        const lines = event.body.split('\r\n');
+        const parsedData = {};
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (line.startsWith('Content-Disposition: form-data; name=')) {
+            const nameMatch = line.match(/name="([^"]+)"/);
+            if (nameMatch && i + 2 < lines.length) {
+              const fieldName = nameMatch[1];
+              const fieldValue = lines[i + 2];
+              if (fieldValue && !fieldValue.startsWith('------')) {
+                if (fieldName.includes('.')) {
+                  // Handle nested objects like feeDetails.totalFee
+                  const [parent, child] = fieldName.split('.');
+                  if (!parsedData[parent]) parsedData[parent] = {};
+                  parsedData[parent][child] = fieldValue;
+                } else {
+                  parsedData[fieldName] = fieldValue;
+                }
+              }
+            }
+          }
+        }
+        
+        // Convert numeric fields
+        if (parsedData.feeDetails) {
+          parsedData.feeDetails.totalFee = parseFloat(parsedData.feeDetails.totalFee) || 0;
+          parsedData.feeDetails.amountPaid = parseFloat(parsedData.feeDetails.amountPaid) || 0;
+        }
+        
+        body = parsedData;
+        console.log('Parsed FormData:', body);
+      } else {
+        body = JSON.parse(event.body);
+      }
     }
   } catch (error) {
-    console.error('JSON parse error:', error);
+    console.error('Body parse error:', error);
     console.error('Body content:', event.body?.substring(0, 100));
     return createResponse(400, { 
-      message: 'Invalid JSON in request body',
+      message: 'Invalid request body format',
       error: error.message 
     });
   }

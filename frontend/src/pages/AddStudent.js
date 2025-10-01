@@ -106,10 +106,13 @@ const AddStudent = () => {
     try {
       // Debug: Log form data before sending
       console.log('Form data before sending:', formData);
+      console.log('Photo selected:', photo);
+      console.log('Photo type:', photo ? typeof photo : 'no photo');
       
       let response;
       
       if (photo) {
+        console.log('Sending FormData (with photo)');
         // Create FormData for file upload
         const formDataToSend = new FormData();
         
@@ -129,6 +132,7 @@ const AddStudent = () => {
         
         response = await studentsAPI.create(formDataToSend);
       } else {
+        console.log('Sending JSON data (no photo)');
         // Send as JSON when no photo
         const jsonData = {
           ...formData,
