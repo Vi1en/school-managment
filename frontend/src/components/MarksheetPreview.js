@@ -244,7 +244,7 @@ const MarksheetPreview = ({ marksheetData, onBack, onSubmit, loading, isViewOnly
             }}>
               {marksheetData.photo ? (
                 <img
-                  src={`http://localhost:5001${marksheetData.photo}`}
+                  src={marksheetData.photo}
                   alt=""
                   style={{ 
                     width: '100%', 
