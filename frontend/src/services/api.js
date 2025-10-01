@@ -5,6 +5,7 @@ const API_URL = process.env.REACT_APP_API_URL || '/api';
 
 // Debug: Log the API URL being used
 console.log('Using API URL:', API_URL);
+console.log('API Version: 2.0 - Fixed JSON Parse Error');
 
 const api = axios.create({
   baseURL: API_URL,
@@ -27,10 +28,18 @@ api.interceptors.request.use(
   }
 );
 
-// Handle auth errors
+// Handle auth errors and JSON parse errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error);
+    
+    // Handle JSON parse errors
+    if (error.message && error.message.includes('JSON.parse')) {
+      console.error('JSON Parse Error - Response was not valid JSON:', error.response?.data);
+      return Promise.reject(new Error('Server returned invalid response format'));
+    }
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('admin');
