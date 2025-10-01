@@ -250,10 +250,13 @@ exports.handler = async (event, context) => {
       const totalStudents = await Student.countDocuments();
       const paidStudents = await Student.countDocuments({ 'feeDetails.remainingAmount': 0 });
       const partialPaidStudents = await Student.countDocuments({ 
-        'feeDetails.remainingAmount': { $gt: 0, $lt: { $expr: '$feeDetails.totalFee' } }
+        $and: [
+          { 'feeDetails.remainingAmount': { $gt: 0 } },
+          { $expr: { $lt: ['$feeDetails.remainingAmount', '$feeDetails.totalFee'] } }
+        ]
       });
       const unpaidStudents = await Student.countDocuments({ 
-        'feeDetails.remainingAmount': { $eq: { $expr: '$feeDetails.totalFee' } }
+        $expr: { $eq: ['$feeDetails.remainingAmount', '$feeDetails.totalFee'] }
       });
 
       return createResponse(200, {
