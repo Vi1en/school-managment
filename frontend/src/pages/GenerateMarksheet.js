@@ -223,6 +223,8 @@ const GenerateMarksheet = () => {
         navigate('/marksheets');
       } catch (err) {
         console.error('Error creating marksheets:', err);
+        console.error('Error response data:', err.response?.data);
+        console.error('Error status:', err.response?.status);
         const errorMessage = err.response?.data?.message || err.response?.data?.errors || 'Error creating marksheets';
         setError(Array.isArray(errorMessage) ? errorMessage.map(e => e.msg).join(', ') : errorMessage);
       } finally {
