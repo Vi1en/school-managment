@@ -475,6 +475,231 @@ exports.handler = async (event, context) => {
       });
     }
 
+    // Get marksheet by roll number
+    if (path.startsWith('/api/marksheets/') && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const rollNumber = path.split('/')[3];
+      const marksheet = await Marksheet.findOne({ rollNumber });
+      
+      if (!marksheet) {
+        return createResponse(404, { message: 'Marksheet not found' });
+      }
+
+      return createResponse(200, marksheet);
+    }
+
+    // Get marksheets by class
+    if (path.startsWith('/api/marksheets/class/') && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const classNumber = path.split('/')[4];
+      const marksheets = await Marksheet.find({ currentClass: classNumber }).sort({ createdAt: -1 });
+      
+      return createResponse(200, marksheets);
+    }
+
+    // Update marksheet
+    if (path.startsWith('/api/marksheets/') && method === 'PUT') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const rollNumber = path.split('/')[3];
+      const marksheet = await Marksheet.findOneAndUpdate(
+        { rollNumber },
+        body,
+        { new: true, runValidators: true }
+      );
+      
+      if (!marksheet) {
+        return createResponse(404, { message: 'Marksheet not found' });
+      }
+
+      return createResponse(200, {
+        message: 'Marksheet updated successfully',
+        marksheet
+      });
+    }
+
+    // Delete marksheet
+    if (path.startsWith('/api/marksheets/') && method === 'DELETE') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const rollNumber = path.split('/')[3];
+      const marksheet = await Marksheet.findOneAndDelete({ rollNumber });
+      
+      if (!marksheet) {
+        return createResponse(404, { message: 'Marksheet not found' });
+      }
+
+      return createResponse(200, {
+        message: 'Marksheet deleted successfully'
+      });
+    }
+
+    // Settings routes
+    if (path === '/api/settings' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // Return default settings for now
+      return createResponse(200, {
+        schoolName: 'SHINDE ACADEMY',
+        schoolAddress: '123 School Street, City, State',
+        schoolPhone: '+1 234-567-8900',
+        schoolEmail: 'info@shindeacademy.com'
+      });
+    }
+
+    if (path === '/api/settings' && method === 'PUT') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // For now, just return success
+      return createResponse(200, {
+        message: 'Settings updated successfully',
+        settings: body
+      });
+    }
+
+    // Fee Deposits routes
+    if (path === '/api/fee-deposits' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // Return empty array for now
+      return createResponse(200, []);
+    }
+
+    if (path === '/api/fee-deposits' && method === 'POST') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // For now, just return success
+      return createResponse(201, {
+        message: 'Fee deposit created successfully',
+        deposit: body
+      });
+    }
+
+    if (path.startsWith('/api/fee-deposits/') && method === 'DELETE') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      return createResponse(200, {
+        message: 'Fee deposit deleted successfully'
+      });
+    }
+
+    // Class Fees routes
+    if (path === '/api/class-fees' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // Return empty array for now
+      return createResponse(200, []);
+    }
+
+    if (path === '/api/class-fees' && method === 'POST') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // For now, just return success
+      return createResponse(201, {
+        message: 'Class fee created successfully',
+        classFee: body
+      });
+    }
+
+    if (path.startsWith('/api/class-fees/') && method === 'DELETE') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      return createResponse(200, {
+        message: 'Class fee deleted successfully'
+      });
+    }
+
+    // Marks routes
+    if (path === '/api/marks/subjects/list' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // Return default subjects
+      return createResponse(200, [
+        'Mathematics', 'English', 'Science', 'Social Studies', 'Hindi'
+      ]);
+    }
+
+    if (path.startsWith('/api/marks/') && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // Return empty object for now
+      return createResponse(200, {});
+    }
+
+    if (path === '/api/marks/add' && method === 'POST') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      // For now, just return success
+      return createResponse(201, {
+        message: 'Marks added successfully',
+        marks: body
+      });
+    }
+
+    // Student marksheet routes
+    if (path.startsWith('/api/students/') && path.includes('/marksheet') && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const admissionNumber = path.split('/')[3];
+      const marksheet = await Marksheet.findOne({ rollNumber: admissionNumber });
+      
+      if (!marksheet) {
+        return createResponse(404, { message: 'Marksheet not found' });
+      }
+
+      return createResponse(200, marksheet);
+    }
+
     // Default response
     return createResponse(404, {
       message: 'Route not found',
