@@ -21,6 +21,15 @@ const Dashboard = () => {
       return;
     }
     
+    // Check if using mock token and force logout
+    if (token === 'mock-jwt-token') {
+      console.log('Detected mock token, forcing logout...');
+      localStorage.removeItem('token');
+      localStorage.removeItem('admin');
+      window.location.href = '/login';
+      return;
+    }
+    
     try {
       console.log('Fetching dashboard stats...');
       console.log('Token:', token);
@@ -33,6 +42,14 @@ const Dashboard = () => {
       console.error('Error details:', error.response?.data);
       console.error('Error status:', error.response?.status);
       console.error('Error headers:', error.response?.headers);
+      
+      // If 401 error, clear session and redirect to login
+      if (error.response?.status === 401) {
+        console.log('401 error detected, clearing session...');
+        localStorage.removeItem('token');
+        localStorage.removeItem('admin');
+        window.location.href = '/login';
+      }
     } finally {
       setLoading(false);
     }

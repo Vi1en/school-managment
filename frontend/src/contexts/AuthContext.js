@@ -55,6 +55,14 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     const admin = localStorage.getItem('admin');
     
+    // Check if using mock token and clear it
+    if (token === 'mock-jwt-token') {
+      console.log('Detected mock token in localStorage, clearing...');
+      localStorage.removeItem('token');
+      localStorage.removeItem('admin');
+      return;
+    }
+    
     if (token && admin) {
       try {
         const parsedAdmin = JSON.parse(admin);
