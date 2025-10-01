@@ -30,7 +30,7 @@ export const useAuthStore = create<AuthStore>()(
         try {
           const response = await authAPI.login(credentials);
           
-          if (response.success) {
+          if (response.success && response.data) {
             set({
               user: response.data.user,
               token: response.data.token,

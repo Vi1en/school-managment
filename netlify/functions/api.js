@@ -193,7 +193,7 @@ exports.handler = async (event, context) => {
       return createResponse(200, {
         message: 'Login successful',
         token,
-        admin: {
+        user: {
           id: admin._id,
           name: admin.name,
           email: admin.email,
@@ -213,7 +213,7 @@ exports.handler = async (event, context) => {
         return createResponse(404, { message: 'Admin not found' });
       }
 
-      return createResponse(200, { admin });
+      return createResponse(200, { user: admin });
     }
 
     // Students routes
