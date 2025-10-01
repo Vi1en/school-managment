@@ -520,18 +520,7 @@ exports.handler = async (event, context) => {
         return createResponse(400, { message: 'Required fields missing' });
       }
 
-      // Check for duplicate
-      const existingMarksheet = await Marksheet.findOne({
-        rollNumber,
-        examType,
-        academicYear
-      });
-
-      if (existingMarksheet) {
-        return createResponse(400, { message: 'Marksheet with this roll number, exam type, and academic year already exists' });
-      }
-
-      // Calculate totals and percentage
+      // Calculate totals and percentage first
       let totalMarks = 0;
       let maxTotalMarks = 0;
       
@@ -547,6 +536,24 @@ exports.handler = async (event, context) => {
         percentage: maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0,
         promotionStatus: (maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0) >= 40 ? 'Promoted' : 'Not Promoted'
       };
+
+      // Check for existing marksheet
+      const existingMarksheet = await Marksheet.findOne({
+        rollNumber,
+        examType,
+        academicYear
+      });
+
+      if (existingMarksheet) {
+        console.log('Updating existing marksheet for:', rollNumber, examType, academicYear);
+        // Update existing marksheet instead of creating new one
+        const updatedMarksheet = await Marksheet.findOneAndUpdate(
+          { rollNumber, examType, academicYear },
+          marksheetData,
+          { new: true, runValidators: true }
+        );
+        return createResponse(200, { message: 'Marksheet updated successfully', marksheet: updatedMarksheet });
+      }
 
       const marksheet = new Marksheet(marksheetData);
       await marksheet.save();

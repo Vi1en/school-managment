@@ -229,7 +229,7 @@ const GenerateMarksheet: React.FC = () => {
           await marksheetsAPI.create(marksheetData);
         }
 
-        alert(`${marksheetsToCreate.length} marksheets generated successfully!`);
+        alert(`${marksheetsToCreate.length} marksheets generated/updated successfully!`);
         navigate('/marksheets');
       } else {
         if (!selectedStudent) {
