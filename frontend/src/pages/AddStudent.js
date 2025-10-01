@@ -138,7 +138,7 @@ const AddStudent = () => {
       }
       
       console.log('Sending JSON data:', jsonData);
-      response = await studentsAPI.create(jsonData);
+      const response = await studentsAPI.create(jsonData);
       console.log('Student created successfully:', response.data);
       navigate('/');
     } catch (err) {
