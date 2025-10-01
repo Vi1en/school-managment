@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 
 const app = express();
 
@@ -34,6 +33,10 @@ async function connectDB() {
     console.log('Attempting to connect to MongoDB...');
     console.log('MongoDB URI exists:', !!process.env.MONGODB_URI);
     
+    if (!mongoUri) {
+      throw new Error('MONGODB_URI environment variable is not set');
+    }
+    
     await mongoose.connect(mongoUri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -43,30 +46,9 @@ async function connectDB() {
     console.log('Successfully connected to MongoDB');
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    throw error; // Re-throw to see the error in logs
+    // Don't throw error, just log it
   }
 }
-
-// Connect to database on first request
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    console.error('Database connection failed:', error);
-    // Don't block the request, just log the error
-    next();
-  }
-});
-
-// Routes
-app.use('/api/auth', require('../../backend/routes/auth'));
-app.use('/api/students', require('../../backend/routes/students'));
-app.use('/api/settings', require('../../backend/routes/settings'));
-app.use('/api/fee-deposits', require('../../backend/routes/feeDeposits'));
-app.use('/api/class-fees', require('../../backend/routes/classFees'));
-app.use('/api/marks', require('../../backend/routes/marks'));
-app.use('/api/marksheets', require('../../backend/routes/marksheets'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -90,6 +72,18 @@ app.get('/api/debug', (req, res) => {
 // Root route
 app.get('/', (req, res) => {
   res.json({ message: 'School Management API is running' });
+});
+
+// Connect to database on first request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('Database connection failed:', error);
+    // Don't block the request, just log the error
+    next();
+  }
 });
 
 // Error handling middleware
