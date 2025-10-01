@@ -257,7 +257,7 @@ export const marksheetsAPI = {
     return apiWrapper(() => api.get(`/marksheets/class/${classNumber}`));
   },
 
-  create: async (marksheetData: MarksheetForm): Promise<ApiResponse<Marksheet>> => {
+  create: async (marksheetData: any): Promise<ApiResponse<Marksheet>> => {
     return apiWrapper(() => api.post('/marksheets', marksheetData));
   },
 

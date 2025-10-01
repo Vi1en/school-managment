@@ -210,15 +210,8 @@ const GenerateMarksheet: React.FC = () => {
 
         // Create marksheets
         for (const marksheetData of marksheetsToCreate) {
-          const marksheetForm: MarksheetForm = {
-            examType: marksheetData.examType,
-            academicYear: marksheetData.academicYear,
-            generationMode: 'bulk',
-            selectedClass: selectedClass,
-            subjects: marksheetData.subjects,
-            marksData: marksData as any,
-          };
-          await marksheetsAPI.create(marksheetForm);
+          console.log('Creating marksheet with data:', marksheetData);
+          await marksheetsAPI.create(marksheetData);
         }
 
         alert(`${marksheetsToCreate.length} marksheets generated successfully!`);
@@ -267,16 +260,8 @@ const GenerateMarksheet: React.FC = () => {
           subjects: subjectMarks,
         };
 
-        const marksheetForm: MarksheetForm = {
-          examType: marksheetData.examType,
-          academicYear: marksheetData.academicYear,
-          generationMode: 'individual',
-          selectedStudent: selectedStudent,
-          subjects: marksheetData.subjects,
-          marksData: individualMarksData as any,
-        };
-        
-        const response = await marksheetsAPI.create(marksheetForm);
+        console.log('Creating individual marksheet with data:', marksheetData);
+        const response = await marksheetsAPI.create(marksheetData);
         setPreviewData(response.data);
         setShowPreview(true);
       }
