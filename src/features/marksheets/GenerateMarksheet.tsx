@@ -832,7 +832,7 @@ const GenerateMarksheet: React.FC = () => {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
                   <img 
-                    src="/image.png" 
+                    src="./image.png" 
                     alt="School Logo" 
                     style={{ 
                       height: '60px', 
@@ -841,7 +841,7 @@ const GenerateMarksheet: React.FC = () => {
                     }}
                     onError={(e) => {
                       console.log('Logo image failed to load, trying alternative path');
-                      e.currentTarget.src = './image.png';
+                      e.currentTarget.src = '/image.png';
                     }}
                   />
                   <div>
