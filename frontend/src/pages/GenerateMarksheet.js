@@ -193,6 +193,10 @@ const GenerateMarksheet = () => {
           console.log(`Student ${student.studentName} (${student._id}) marks:`, studentMarks);
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
+            console.log(`Bulk - Processing subject: ${subject.name}`);
+            console.log(`Bulk - Subject data from studentMarks:`, subjectData);
+            console.log(`Bulk - Full studentMarks:`, studentMarks);
+            
             // Calculate total marks based on exam type
             let totalMarks = 0;
             let maxMarks = 100; // Default max marks per subject
@@ -206,7 +210,7 @@ const GenerateMarksheet = () => {
               totalMarks = parseFloat(subjectData.marks) || 0;
             }
             
-            console.log(`Subject: ${subject.name}, SubjectData:`, subjectData, `TotalMarks: ${totalMarks}`);
+            console.log(`Bulk - Subject: ${subject.name}, SubjectData:`, subjectData, `TotalMarks: ${totalMarks}`);
             
             return {
               name: subject.name,
@@ -293,6 +297,10 @@ const GenerateMarksheet = () => {
 
           const subjectMarks = subjects.map(subject => {
             const subjectData = individualMarksData[subject.name] || {};
+            console.log(`Processing subject: ${subject.name}`);
+            console.log(`Subject data from individualMarksData:`, subjectData);
+            console.log(`Full individualMarksData:`, individualMarksData);
+            
             // Calculate total marks based on exam type
             let totalMarks = 0;
             let maxMarks = 100; // Default max marks per subject
