@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Updated backend URL with marksheet creation fix
-const API_URL = process.env.REACT_APP_API_URL || 'https://backend-er8pdvpv1-manab-mallicks-projects.vercel.app/api';
+// Updated backend URL - using main project's backend
+const API_URL = process.env.REACT_APP_API_URL || 'https://school-kappa-liart.vercel.app/api';
 
 // Debug: Log the API URL being used
 console.log('Using API URL:', API_URL);
