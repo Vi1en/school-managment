@@ -66,6 +66,7 @@ export const truncateText = (text: string, maxLength: number): string => {
 };
 
 export const capitalizeFirst = (text: string): string => {
+  if (!text || typeof text !== 'string') return '';
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 };
 
@@ -93,6 +94,8 @@ export const formatGrade = (percentage: number): string => {
 };
 
 export const formatStatus = (status: string): string => {
+  if (!status || typeof status !== 'string') return 'Unknown';
+  
   const statusMap: Record<string, string> = {
     paid: 'Paid',
     partial: 'Partial',
@@ -107,6 +110,8 @@ export const formatStatus = (status: string): string => {
 };
 
 export const getStatusColor = (status: string): string => {
+  if (!status || typeof status !== 'string') return 'text-gray-600 bg-gray-100';
+  
   const colorMap: Record<string, string> = {
     paid: 'text-green-600 bg-green-100',
     partial: 'text-yellow-600 bg-yellow-100',
