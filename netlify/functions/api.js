@@ -434,6 +434,8 @@ exports.handler = async (event, context) => {
 
       const { rollNumber, studentName, examType, academicYear, subjects } = body;
       
+      console.log('Creating marksheet with data:', { rollNumber, studentName, examType, academicYear, subjects });
+      
       if (!rollNumber || !studentName || !examType || !academicYear || !subjects) {
         return createResponse(400, { message: 'Required fields missing' });
       }

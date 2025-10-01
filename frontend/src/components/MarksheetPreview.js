@@ -7,6 +7,12 @@ const MarksheetPreview = ({ marksheetData, onBack, onSubmit, loading, isViewOnly
   // Debug: Log marksheet data
   console.log('MarksheetPreview received data:', marksheetData);
   console.log('Photo field:', marksheetData?.photo);
+  console.log('Subjects array:', marksheetData?.subjects);
+  if (marksheetData?.subjects) {
+    marksheetData.subjects.forEach((subject, index) => {
+      console.log(`Subject ${index}:`, subject);
+    });
+  }
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
