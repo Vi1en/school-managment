@@ -107,6 +107,8 @@ const AddStudent = () => {
       // Debug: Log form data before sending
       console.log('Form data before sending:', formData);
       console.log('Photo selected:', photo);
+      console.log('Photo type:', photo ? typeof photo : 'no photo');
+      console.log('Photo instanceof File:', photo instanceof File);
       
       // Always send as JSON - convert photo to base64 if present
       const jsonData = {
@@ -127,6 +129,7 @@ const AddStudent = () => {
           reader.onload = (e) => {
             jsonData.photo = e.target.result;
             console.log('Photo converted to base64, length:', jsonData.photo.length);
+            console.log('Photo base64 preview:', jsonData.photo.substring(0, 50));
             resolve();
           };
           reader.readAsDataURL(photo);
@@ -134,6 +137,8 @@ const AddStudent = () => {
       }
       
       console.log('Sending JSON data:', jsonData);
+      console.log('Data type being sent:', typeof jsonData);
+      console.log('Is FormData?', jsonData instanceof FormData);
       const response = await studentsAPI.create(jsonData);
       console.log('Student created successfully:', response.data);
       navigate('/');
