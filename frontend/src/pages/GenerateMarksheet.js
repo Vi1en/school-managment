@@ -178,7 +178,6 @@ const GenerateMarksheet = () => {
       try {
         const marksheetsToCreate = students.map(student => {
           const studentMarks = marksData[student._id] || {};
-          const studentSetting = studentSettings[student._id] || {};
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
             // Calculate total marks based on exam type
@@ -186,12 +185,12 @@ const GenerateMarksheet = () => {
             let maxMarks = 100; // Default max marks per subject
             
             if (examType === 'half-yearly') {
-              totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.halfYearly || 0);
+              totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.halfYearly) || 0);
             } else if (examType === 'annual') {
-              totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.UT3 || 0) + (subjectData.UT4 || 0) + (subjectData.annual || 0);
+              totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.UT3) || 0) + (parseFloat(subjectData.UT4) || 0) + (parseFloat(subjectData.annual) || 0);
             } else {
               // For other exam types, use the marks field
-              totalMarks = subjectData.marks || 0;
+              totalMarks = parseFloat(subjectData.marks) || 0;
             }
             
             return {
@@ -222,8 +221,26 @@ const GenerateMarksheet = () => {
         // Create marksheets for all students
         for (const marksheetData of marksheetsToCreate) {
           console.log('Creating marksheet for:', marksheetData.rollNumber);
-          const response = await marksheetsAPI.create(marksheetData);
-          console.log('Marksheet created successfully:', response.data);
+          try {
+            const response = await marksheetsAPI.create(marksheetData);
+            console.log('Marksheet created successfully:', response.data);
+          } catch (err) {
+            if (err.response?.status === 400 && err.response?.data?.message?.includes('already exists')) {
+              console.log(`Marksheet for ${marksheetData.rollNumber} already exists, deleting and recreating...`);
+              try {
+                // Delete existing marksheet
+                await marksheetsAPI.delete(marksheetData.rollNumber);
+                // Create new marksheet
+                const response = await marksheetsAPI.create(marksheetData);
+                console.log('Marksheet recreated successfully:', response.data);
+              } catch (deleteErr) {
+                console.error('Error deleting/recreating marksheet:', deleteErr);
+                throw deleteErr;
+              }
+            } else {
+              throw err;
+            }
+          }
         }
 
         // Show success message and navigate
@@ -262,12 +279,12 @@ const GenerateMarksheet = () => {
           let maxMarks = 100; // Default max marks per subject
           
           if (examType === 'half-yearly') {
-            totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.halfYearly || 0);
+            totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.halfYearly) || 0);
           } else if (examType === 'annual') {
-            totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.UT3 || 0) + (subjectData.UT4 || 0) + (subjectData.annual || 0);
+            totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.UT3) || 0) + (parseFloat(subjectData.UT4) || 0) + (parseFloat(subjectData.annual) || 0);
           } else {
             // For other exam types, use the marks field
-            totalMarks = subjectData.marks || 0;
+            totalMarks = parseFloat(subjectData.marks) || 0;
           }
           
           return {
@@ -295,12 +312,35 @@ const GenerateMarksheet = () => {
         };
 
         console.log('Creating individual marksheet for:', marksheetData.rollNumber);
-        const response = await marksheetsAPI.create(marksheetData);
-        console.log('Marksheet created successfully:', response.data);
-
-        // Show success message and navigate
-        alert('Marksheet generated successfully!');
-        navigate('/marksheets');
+        try {
+          const response = await marksheetsAPI.create(marksheetData);
+          console.log('Marksheet created successfully:', response.data);
+          
+          // Show success message and navigate
+          alert('Marksheet generated successfully!');
+          navigate('/marksheets');
+        } catch (err) {
+          if (err.response?.status === 400 && err.response?.data?.message?.includes('already exists')) {
+            console.log('Marksheet already exists, deleting and recreating...');
+            try {
+              // Delete existing marksheet
+              await marksheetsAPI.delete(marksheetData.rollNumber);
+              // Create new marksheet
+              const response = await marksheetsAPI.create(marksheetData);
+              console.log('Marksheet recreated successfully:', response.data);
+              
+              // Show success message and navigate
+              alert('Marksheet regenerated successfully!');
+              navigate('/marksheets');
+            } catch (deleteErr) {
+              console.error('Error deleting/recreating marksheet:', deleteErr);
+              setError('Error regenerating marksheet. Please try again.');
+              return;
+            }
+          } else {
+            throw err;
+          }
+        }
       } catch (err) {
         console.error('Error creating marksheet:', err);
         const errorMessage = err.response?.data?.message || err.response?.data?.errors || 'Error creating marksheet';
