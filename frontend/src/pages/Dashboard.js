@@ -11,12 +11,13 @@ const Dashboard = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const fetchStats = useCallback(async () => {
     console.log('fetchStats called. Auth state:', { isAuthenticated, admin, token });
     
-    if (!isAuthenticated) {
-      console.log('User not authenticated, skipping stats fetch');
+    if (!isAuthenticated || redirecting) {
+      console.log('User not authenticated or redirecting, skipping stats fetch');
       setLoading(false);
       return;
     }
@@ -24,9 +25,10 @@ const Dashboard = () => {
     // Check if using mock token and force logout
     if (token === 'mock-jwt-token') {
       console.log('Detected mock token, forcing logout...');
+      setRedirecting(true);
       localStorage.removeItem('token');
       localStorage.removeItem('admin');
-      window.location.href = '/login';
+      window.location.replace('/login');
       return;
     }
     
@@ -46,14 +48,17 @@ const Dashboard = () => {
       // If 401 error, clear session and redirect to login
       if (error.response?.status === 401) {
         console.log('401 error detected, clearing session...');
+        setRedirecting(true);
         localStorage.removeItem('token');
         localStorage.removeItem('admin');
-        window.location.href = '/login';
+        // Use replace instead of href to prevent back button issues
+        window.location.replace('/login');
+        return; // Important: return to prevent further execution
       }
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, admin, token]);
+  }, [isAuthenticated, admin, token, redirecting]);
 
   useEffect(() => {
     console.log('Dashboard mounted. Auth state:', { isAuthenticated, admin, token });
