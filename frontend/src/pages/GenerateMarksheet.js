@@ -187,6 +187,7 @@ const GenerateMarksheet = () => {
 
       try {
         console.log('Full marksData before processing:', marksData);
+        console.log('Exam type for bulk generation:', examType);
         const marksheetsToCreate = students.map(student => {
           const studentMarks = marksData[student._id] || {};
           console.log(`Student ${student.studentName} (${student._id}) marks:`, studentMarks);
@@ -288,6 +289,7 @@ const GenerateMarksheet = () => {
 
         console.log('Individual marksData before processing:', individualMarksData);
         console.log(`Individual student ${student.studentName} marks:`, individualMarksData);
+        console.log('Exam type for individual generation:', examType);
 
           const subjectMarks = subjects.map(subject => {
             const subjectData = individualMarksData[subject.name] || {};
