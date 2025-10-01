@@ -126,7 +126,22 @@ exports.handler = async (event, context) => {
 
   let path = event.path;
   const method = event.httpMethod;
-  const body = event.body ? JSON.parse(event.body) : {};
+  
+  // Parse body with error handling
+  let body = {};
+  try {
+    if (event.body) {
+      body = JSON.parse(event.body);
+    }
+  } catch (error) {
+    console.error('JSON parse error:', error);
+    console.error('Body content:', event.body?.substring(0, 100));
+    return createResponse(400, { 
+      message: 'Invalid JSON in request body',
+      error: error.message 
+    });
+  }
+  
   const headers = event.headers || {};
 
   // Handle Netlify Functions path - remove the function name from path
@@ -217,28 +232,39 @@ exports.handler = async (event, context) => {
         return createResponse(401, { message: 'Access token required' });
       }
 
-      const { studentName, currentClass, feeDetails } = body;
-      
-      if (!studentName || !currentClass || !feeDetails?.totalFee || !feeDetails?.amountPaid) {
-        return createResponse(400, { message: 'Required fields missing' });
+      try {
+        console.log('Creating student with data:', JSON.stringify(body, null, 2));
+        
+        const { studentName, currentClass, feeDetails } = body;
+        
+        if (!studentName || !currentClass) {
+          return createResponse(400, { message: 'Student name and class are required' });
+        }
+
+        const studentData = { ...body };
+        
+        // Convert fee fields to numbers if they exist
+        if (studentData.feeDetails) {
+          studentData.feeDetails.totalFee = parseFloat(studentData.feeDetails.totalFee) || 0;
+          studentData.feeDetails.amountPaid = parseFloat(studentData.feeDetails.amountPaid) || 0;
+          studentData.feeDetails.remainingAmount = studentData.feeDetails.totalFee - studentData.feeDetails.amountPaid;
+        }
+
+        const student = new Student(studentData);
+        await student.save();
+
+        console.log('Student created successfully:', student._id);
+        return createResponse(201, {
+          message: 'Student created successfully',
+          student
+        });
+      } catch (error) {
+        console.error('Error creating student:', error);
+        return createResponse(500, { 
+          message: 'Error creating student',
+          error: error.message 
+        });
       }
-
-      const studentData = { ...body };
-      
-      // Convert fee fields to numbers
-      if (studentData.feeDetails) {
-        studentData.feeDetails.totalFee = parseFloat(studentData.feeDetails.totalFee) || 0;
-        studentData.feeDetails.amountPaid = parseFloat(studentData.feeDetails.amountPaid) || 0;
-        studentData.feeDetails.remainingAmount = studentData.feeDetails.totalFee - studentData.feeDetails.amountPaid;
-      }
-
-      const student = new Student(studentData);
-      await student.save();
-
-      return createResponse(201, {
-        message: 'Student created successfully',
-        student
-      });
     }
 
     if (path === '/api/students/stats/dashboard' && method === 'GET') {
