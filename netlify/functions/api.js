@@ -166,30 +166,49 @@ exports.handler = async (event, context) => {
       });
     }
 
+    // Test endpoint
+    if (path === '/api/test' && method === 'GET') {
+      return createResponse(200, { 
+        message: 'API is working', 
+        timestamp: new Date().toISOString(),
+        database: db ? 'connected' : 'disconnected'
+      });
+    }
+
     // Auth routes
     if (path === '/api/auth/login' && method === 'POST') {
+      console.log('Login attempt:', { email: body.email, hasPassword: !!body.password });
+      
       const { email, password } = body;
       
       if (!email || !password) {
+        console.log('Missing credentials:', { email: !!email, password: !!password });
         return createResponse(400, { message: 'Email and password are required' });
       }
 
+      console.log('Looking for admin with email:', email);
       const admin = await Admin.findOne({ email });
       if (!admin) {
+        console.log('Admin not found for email:', email);
         return createResponse(400, { message: 'Invalid credentials' });
       }
+      
+      console.log('Admin found, checking password...');
 
       const isMatch = await bcrypt.compare(password, admin.password);
       if (!isMatch) {
+        console.log('Password mismatch for admin:', email);
         return createResponse(400, { message: 'Invalid credentials' });
       }
 
+      console.log('Password match successful, generating token...');
       const token = jwt.sign(
         { id: admin._id, email: admin.email },
         process.env.JWT_SECRET || 'fallback_secret',
         { expiresIn: process.env.JWT_EXPIRE || '7d' }
       );
 
+      console.log('Login successful for admin:', email);
       return createResponse(200, {
         message: 'Login successful',
         token,

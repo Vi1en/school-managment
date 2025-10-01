@@ -101,9 +101,20 @@ const Login: React.FC = () => {
   const testAPI = async () => {
     console.log('Testing API connectivity...');
     try {
-      const response = await fetch('/api/test');
-      const data = await response.text();
+      // Test the actual login endpoint
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: 'admin@test.com',
+          password: 'password123'
+        })
+      });
+      const data = await response.json();
       console.log('API test response:', data);
+      console.log('Response status:', response.status);
     } catch (error) {
       console.log('API test error:', error);
     }
