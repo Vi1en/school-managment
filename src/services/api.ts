@@ -39,7 +39,10 @@ const createApiInstance = (): AxiosInstance => {
         try {
           if (authStorage) {
             const authData = JSON.parse(authStorage);
-            isAuthenticated = authData.state?.isAuthenticated || false;
+            // Check both possible structures
+            isAuthenticated = authData.state?.isAuthenticated || authData.isAuthenticated || false;
+            console.log('Request interceptor: Auth data structure:', authData);
+            console.log('Request interceptor: isAuthenticated:', isAuthenticated);
           }
         } catch (error) {
           console.log('Request interceptor: Error parsing auth storage:', error);

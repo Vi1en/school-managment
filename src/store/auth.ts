@@ -41,16 +41,18 @@ export const useAuthStore = create<AuthStore>()(
             // Extract user and token from the response data
             const { user, token } = response.data;
             
-            if (user && token) {
-              set({
-                user: user,
-                token: token,
-                isAuthenticated: true,
-                isLoading: false,
-                error: null,
-              });
-              return { success: true };
-            } else {
+              if (user && token) {
+                set({
+                  user: user,
+                  token: token,
+                  isAuthenticated: true,
+                  isLoading: false,
+                  error: null,
+                });
+                // Also store token in localStorage for API interceptor
+                localStorage.setItem('auth-token', token);
+                return { success: true };
+              } else {
               console.log('Auth store: Missing user or token in response');
               set({
                 isLoading: false,
@@ -87,6 +89,7 @@ export const useAuthStore = create<AuthStore>()(
         });
         // Clear any stored tokens
         localStorage.removeItem('auth-storage');
+        localStorage.removeItem('auth-token');
       },
 
       clearError: () => {
@@ -111,12 +114,16 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: state.isAuthenticated,
         };
       },
-      onRehydrateStorage: () => (state) => {
-        console.log('Auth store: Rehydrating from storage:', state);
-        if (state) {
-          console.log('Auth store: Rehydrated state - isAuthenticated:', state.isAuthenticated, 'token:', !!state.token);
-        }
-      },
+          onRehydrateStorage: () => (state) => {
+            console.log('Auth store: Rehydrating from storage:', state);
+            if (state) {
+              console.log('Auth store: Rehydrated state - isAuthenticated:', state.isAuthenticated, 'token:', !!state.token);
+              // Sync token to localStorage for API interceptor
+              if (state.token) {
+                localStorage.setItem('auth-token', state.token);
+              }
+            }
+          },
     }
   )
 );
