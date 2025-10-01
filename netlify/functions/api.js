@@ -54,7 +54,8 @@ app.use(async (req, res, next) => {
     next();
   } catch (error) {
     console.error('Database connection failed:', error);
-    res.status(500).json({ message: 'Database connection failed', error: error.message });
+    // Don't block the request, just log the error
+    next();
   }
 });
 
@@ -69,7 +70,11 @@ app.use('/api/marksheets', require('../../backend/routes/marksheets'));
 
 // Health check route
 app.get('/api/health', (req, res) => {
-  res.json({ message: 'Server is running' });
+  res.json({ 
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+    mongodb: isConnected ? 'connected' : 'disconnected'
+  });
 });
 
 // Debug route to check environment variables
