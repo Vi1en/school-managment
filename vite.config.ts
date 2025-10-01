@@ -17,6 +17,13 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     rollupOptions: {
+      external: (id) => {
+        // Explicitly exclude Vue-related modules
+        if (id.includes('vue') || id.includes('@vue')) {
+          return true;
+        }
+        return false;
+      },
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -28,5 +35,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
+    exclude: ['vue', '@vue'],
   },
 });
