@@ -6,6 +6,8 @@ const API_URL = process.env.REACT_APP_API_URL || '/api';
 // Debug: Log the API URL being used
 console.log('Using API URL:', API_URL);
 console.log('API Version: 3.0 - Fixed FileReader Async Logic');
+console.log('Build Version:', process.env.REACT_APP_VERSION || 'unknown');
+console.log('Cache Buster:', Date.now());
 
 const api = axios.create({
   baseURL: API_URL,
