@@ -24,11 +24,19 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>School Management System</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script>
+      // Force cache busting
+      console.log('Page loaded at:', new Date().toISOString());
+      console.log('Cache buster timestamp:', Date.now());
+    </script>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
