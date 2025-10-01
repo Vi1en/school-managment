@@ -296,12 +296,23 @@ const GenerateMarksheet = () => {
             let maxMarks = 100; // Default max marks per subject
             
             if (examType === 'half-yearly') {
-              totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.halfYearly) || 0);
+              const ut1 = parseFloat(subjectData.UT1) || 0;
+              const ut2 = parseFloat(subjectData.UT2) || 0;
+              const halfYearly = parseFloat(subjectData.halfYearly) || 0;
+              totalMarks = ut1 + ut2 + halfYearly;
+              console.log(`Individual Half-yearly calculation for ${subject.name}: UT1=${ut1}, UT2=${ut2}, halfYearly=${halfYearly}, total=${totalMarks}`);
             } else if (examType === 'annual') {
-              totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.UT3) || 0) + (parseFloat(subjectData.UT4) || 0) + (parseFloat(subjectData.annual) || 0);
+              const ut1 = parseFloat(subjectData.UT1) || 0;
+              const ut2 = parseFloat(subjectData.UT2) || 0;
+              const ut3 = parseFloat(subjectData.UT3) || 0;
+              const ut4 = parseFloat(subjectData.UT4) || 0;
+              const annual = parseFloat(subjectData.annual) || 0;
+              totalMarks = ut1 + ut2 + ut3 + ut4 + annual;
+              console.log(`Individual Annual calculation for ${subject.name}: UT1=${ut1}, UT2=${ut2}, UT3=${ut3}, UT4=${ut4}, annual=${annual}, total=${totalMarks}`);
             } else {
               // For other exam types, use the marks field
               totalMarks = parseFloat(subjectData.marks) || 0;
+              console.log(`Individual Other exam type calculation for ${subject.name}: marks=${subjectData.marks}, total=${totalMarks}`);
             }
             
             console.log(`Individual Subject: ${subject.name}, SubjectData:`, subjectData, `TotalMarks: ${totalMarks}`);
