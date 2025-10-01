@@ -16,12 +16,8 @@ const MarksheetPreview = ({ marksheetData, onBack, onSubmit, loading, isViewOnly
   // Calculate totals for each subject
   const calculateSubjectTotals = () => {
     return marksheetData.subjects.map(subject => {
-      let total = 0;
-      if (marksheetData.examType === 'Half-Yearly') {
-        total = subject.UT1 + subject.UT2 + subject.halfYearly;
-      } else {
-        total = subject.UT3 + subject.UT4 + subject.annual;
-      }
+      // Use the pre-calculated marks from the backend
+      const total = parseFloat(subject.marks) || 0;
       return { ...subject, total };
     });
   };
@@ -288,19 +284,8 @@ const MarksheetPreview = ({ marksheetData, onBack, onSubmit, loading, isViewOnly
                   }}>
                     Subjects with code
                   </th>
-                  {marksheetData.examType === 'Half-Yearly' ? (
-                    <>
-                      <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>UT1</th>
-                      <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>UT2</th>
-                      <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>HFLY</th>
-                    </>
-                  ) : (
-                    <>
-                      <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>UT3</th>
-                      <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>UT4</th>
-                      <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>ANNUAL</th>
-                    </>
-                  )}
+                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>MARKS OBTAINED</th>
+                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>MAX MARKS</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>TOTAL</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>GRADE</th>
                 </tr>
@@ -309,21 +294,10 @@ const MarksheetPreview = ({ marksheetData, onBack, onSubmit, loading, isViewOnly
                 {subjectsWithTotals.map((subject, index) => (
                   <tr key={index}>
                     <td style={{ border: '1px solid #000', padding: '8px' }}>
-                      {subject.subjectName} ({subject.subjectCode})
+                      {subject.name} ({subject.code})
                     </td>
-                    {marksheetData.examType === 'Half-Yearly' ? (
-                      <>
-                        <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.UT1}</td>
-                        <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.UT2}</td>
-                        <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.halfYearly}</td>
-                      </>
-                    ) : (
-                      <>
-                        <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.UT3}</td>
-                        <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.UT4}</td>
-                        <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.annual}</td>
-                      </>
-                    )}
+                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.marks}</td>
+                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{subject.maxMarks}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>{subject.total}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold' }}>
                       {getSubjectGrade(subject.total)}
