@@ -71,22 +71,42 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Login form submitted with data:', formData);
     
     if (!validateForm()) {
+      console.log('Form validation failed:', formErrors);
       return;
     }
 
+    console.log('Attempting login...');
     const result = await login(formData);
+    console.log('Login result:', result);
+    
     if (result.success) {
+      console.log('Login successful, navigating to dashboard');
       navigate('/');
+    } else {
+      console.log('Login failed:', result.error);
     }
   };
 
   const handleDemoLogin = () => {
+    console.log('Setting demo credentials');
     setFormData({
       email: 'admin@test.com',
       password: 'password123',
     });
+  };
+
+  const testAPI = async () => {
+    console.log('Testing API connectivity...');
+    try {
+      const response = await fetch('/api/test');
+      const data = await response.text();
+      console.log('API test response:', data);
+    } catch (error) {
+      console.log('API test error:', error);
+    }
   };
 
   const handleClearSession = () => {
@@ -180,11 +200,19 @@ const Login: React.FC = () => {
               Use demo credentials
             </button>
             
-            <div>
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={testAPI}
+                className="text-sm text-green-600 hover:text-green-500 font-medium block"
+              >
+                Test API Connection
+              </button>
+              
               <button
                 type="button"
                 onClick={handleClearSession}
-                className="text-sm text-red-600 hover:text-red-500 font-medium"
+                className="text-sm text-red-600 hover:text-red-500 font-medium block"
               >
                 Clear old session & refresh
               </button>

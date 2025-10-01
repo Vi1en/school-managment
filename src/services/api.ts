@@ -77,7 +77,15 @@ const apiWrapper = async <T>(
 // Auth API
 export const authAPI = {
   login: async (credentials: LoginForm): Promise<ApiResponse<{ user: any; token: string }>> => {
-    return apiWrapper(() => api.post('/auth/login', credentials));
+    console.log('API: Making login request to /auth/login with:', credentials);
+    try {
+      const result = await apiWrapper(() => api.post('/auth/login', credentials));
+      console.log('API: Login response:', result);
+      return result;
+    } catch (error) {
+      console.log('API: Login error:', error);
+      throw error;
+    }
   },
 
   register: async (adminData: any): Promise<ApiResponse<any>> => {

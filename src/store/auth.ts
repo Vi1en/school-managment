@@ -25,12 +25,16 @@ export const useAuthStore = create<AuthStore>()(
 
       // Actions
       login: async (credentials: LoginForm) => {
+        console.log('Auth store: Starting login with credentials:', credentials);
         set({ isLoading: true, error: null });
         
         try {
+          console.log('Auth store: Calling authAPI.login...');
           const response = await authAPI.login(credentials);
+          console.log('Auth store: API response:', response);
           
           if (response.success && response.data) {
+            console.log('Auth store: Login successful, setting user data');
             set({
               user: response.data.user,
               token: response.data.token,
@@ -40,6 +44,7 @@ export const useAuthStore = create<AuthStore>()(
             });
             return { success: true };
           } else {
+            console.log('Auth store: Login failed, response not successful');
             set({
               isLoading: false,
               error: response.error || 'Login failed',
@@ -47,6 +52,7 @@ export const useAuthStore = create<AuthStore>()(
             return { success: false, error: response.error };
           }
         } catch (error: any) {
+          console.log('Auth store: Login error:', error);
           const errorMessage = error.response?.data?.message || error.message || 'Login failed';
           set({
             isLoading: false,
