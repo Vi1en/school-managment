@@ -74,7 +74,7 @@ cp config.env.example config.env
 
 4. Update `config.env` with your MongoDB URI and JWT secret:
 ```
-PORT=5001
+PORT=3000
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRE=7d
@@ -104,7 +104,7 @@ npm start
 
 ## Usage
 
-1. Open your browser and go to `http://localhost:3001`
+1. Open your browser and go to the deployed URL
 2. Login with admin credentials
 3. Navigate through the dashboard to manage students, fees, and marksheets
 

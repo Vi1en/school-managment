@@ -30,7 +30,7 @@ async function connectDB() {
   }
   
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/school-management';
+    const mongoUri = process.env.MONGODB_URI;
     console.log('Attempting to connect to MongoDB...');
     console.log('MongoDB URI exists:', !!process.env.MONGODB_URI);
     
