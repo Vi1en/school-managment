@@ -131,12 +131,18 @@ const Layout = () => {
       )}
 
       {/* Sidebar */}
-      <div className={`
-        ${isMobile ? 'fixed inset-y-0 left-0 z-50 w-72' : 'relative flex flex-col w-72'}
-        ${sidebarOpen || !isMobile ? 'translate-x-0' : '-translate-x-full'}
-        transition-transform duration-300 ease-in-out
-        modern-sidebar
-      `}>
+      <div 
+        key={`sidebar-${sidebarOpen}-${isMobile}`}
+        className={`
+          ${isMobile ? 'fixed inset-y-0 left-0 z-50 w-72' : 'relative flex flex-col w-72'}
+          ${isMobile ? (sidebarOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
+          transition-transform duration-300 ease-in-out
+          modern-sidebar
+        `}
+        style={{
+          transform: isMobile ? (sidebarOpen ? 'translateX(0)' : 'translateX(-100%)') : 'translateX(0)'
+        }}
+      >
         {/* Debug info */}
         {isMobile && (
           <div className="absolute top-0 right-0 bg-red-500 text-white text-xs p-1 z-50">
@@ -160,6 +166,10 @@ const Layout = () => {
                 console.log('Close button clicked, current sidebarOpen:', sidebarOpen);
                 setSidebarOpen(false);
                 console.log('Sidebar should now be closed');
+                // Force a re-render by updating state again
+                setTimeout(() => {
+                  setSidebarOpen(false);
+                }, 0);
               }}
               className="text-gray-400 hover:text-white transition-colors duration-200 p-2 rounded-lg hover:bg-gray-700"
               aria-label="Close sidebar"
