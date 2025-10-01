@@ -243,6 +243,12 @@ exports.handler = async (event, context) => {
 
         const studentData = { ...body };
         
+        // Generate unique admission number if not provided
+        if (!studentData.admissionNumber) {
+          const count = await Student.countDocuments();
+          studentData.admissionNumber = String(count + 1).padStart(3, '0');
+        }
+        
         // Convert fee fields to numbers if they exist
         if (studentData.feeDetails) {
           studentData.feeDetails.totalFee = parseFloat(studentData.feeDetails.totalFee) || 0;
