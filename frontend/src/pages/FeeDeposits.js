@@ -343,7 +343,7 @@ const FeeDeposits = () => {
                         {deposit.month} {deposit.year}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ₹{deposit.amount.toFixed(2)}
+                        ₹{deposit.amount ? deposit.amount.toFixed(2) : '0.00'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {deposit.paymentMethod || '-'}

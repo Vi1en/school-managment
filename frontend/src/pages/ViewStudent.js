@@ -209,8 +209,8 @@ const ViewStudent = () => {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Attendance</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {student.attendance}%
-                    {student.attendance < 75 && (
+                    {student.attendance ? `${student.attendance}%` : 'Not available'}
+                    {student.attendance && student.attendance < 75 && (
                       <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                         Low Attendance
                       </span>
@@ -240,7 +240,7 @@ const ViewStudent = () => {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Average Marks</dt>
                   <dd className="mt-1 text-sm text-gray-900 font-semibold">
-                    {student.averageMarks.toFixed(2)}
+                    {student.averageMarks ? student.averageMarks.toFixed(2) : 'Not available'}
                   </dd>
                 </div>
               </dl>
@@ -260,26 +260,28 @@ const ViewStudent = () => {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Total Fee</dt>
                   <dd className="mt-1 text-lg font-semibold text-gray-900">
-                    ₹{student.feeDetails.totalFee.toLocaleString()}
+                    ₹{student.feeDetails?.totalFee ? student.feeDetails.totalFee.toLocaleString() : '0'}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Amount Paid</dt>
                   <dd className="mt-1 text-lg font-semibold text-gray-900">
-                    ₹{student.feeDetails.amountPaid.toLocaleString()}
+                    ₹{student.feeDetails?.amountPaid ? student.feeDetails.amountPaid.toLocaleString() : '0'}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Pending Amount</dt>
                   <dd className="mt-1 text-lg font-semibold text-gray-900">
-                    ₹{(student.feeDetails.totalFee - student.feeDetails.amountPaid).toLocaleString()}
+                    ₹{student.feeDetails?.totalFee && student.feeDetails?.amountPaid ? 
+                      (student.feeDetails.totalFee - student.feeDetails.amountPaid).toLocaleString() : 
+                      '0'}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Payment Status</dt>
                   <dd className="mt-1">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(student.feeDetails.paymentStatus)}`}>
-                      {student.feeDetails.paymentStatus}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(student.feeDetails?.paymentStatus)}`}>
+                      {student.feeDetails?.paymentStatus || 'Not set'}
                     </span>
                   </dd>
                 </div>

@@ -214,7 +214,7 @@ const ClassFees = () => {
                         <div className="text-sm font-medium text-black">{classFee.className}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">₹{classFee.totalFees.toLocaleString()}</div>
+                        <div className="text-sm text-gray-900">₹{classFee.totalFees ? classFee.totalFees.toLocaleString() : '0'}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">{classFee.description || '-'}</div>

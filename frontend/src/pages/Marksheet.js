@@ -464,18 +464,18 @@ const Marksheet = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {type === 'half-yearly' || type === 'annual' 
-                        ? `${marksheet?.marks.total.obtained} / ${marksheet?.marks.total.outOf}`
-                        : marksheet?.examResults.average.marks.toFixed(2)
+                        ? `${marksheet?.marks?.total?.obtained || 0} / ${marksheet?.marks?.total?.outOf || 0}`
+                        : marksheet?.examResults?.average?.marks ? marksheet.examResults.average.marks.toFixed(2) : 'N/A'
                       }
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
                       type === 'half-yearly' || type === 'annual' 
-                        ? getGradeColor(marksheet?.result.grade)
-                        : getGradeColor(marksheet?.examResults.average.grade)
+                        ? getGradeColor(marksheet?.result?.grade)
+                        : getGradeColor(marksheet?.examResults?.average?.grade)
                     }`}>
                       {type === 'half-yearly' || type === 'annual' 
-                        ? marksheet?.result.grade
-                        : marksheet?.examResults.average.grade
+                        ? marksheet?.result?.grade || 'N/A'
+                        : marksheet?.examResults?.average?.grade || 'N/A'
                       }
                     </td>
                   </tr>
