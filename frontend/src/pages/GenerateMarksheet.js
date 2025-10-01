@@ -197,9 +197,9 @@ const GenerateMarksheet = () => {
             let totalMarks = 0;
             let maxMarks = 100; // Default max marks per subject
             
-            if (examType === 'half-yearly') {
+            if (examType === 'Half-Yearly') {
               totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.halfYearly) || 0);
-            } else if (examType === 'annual') {
+            } else if (examType === 'Annual') {
               totalMarks = (parseFloat(subjectData.UT1) || 0) + (parseFloat(subjectData.UT2) || 0) + (parseFloat(subjectData.UT3) || 0) + (parseFloat(subjectData.UT4) || 0) + (parseFloat(subjectData.annual) || 0);
             } else {
               // For other exam types, use the marks field
@@ -297,13 +297,13 @@ const GenerateMarksheet = () => {
             let totalMarks = 0;
             let maxMarks = 100; // Default max marks per subject
             
-            if (examType === 'half-yearly') {
+            if (examType === 'Half-Yearly') {
               const ut1 = parseFloat(subjectData.UT1) || 0;
               const ut2 = parseFloat(subjectData.UT2) || 0;
               const halfYearly = parseFloat(subjectData.halfYearly) || 0;
               totalMarks = ut1 + ut2 + halfYearly;
-              console.log(`Individual Half-yearly calculation for ${subject.name}: UT1=${ut1}, UT2=${ut2}, halfYearly=${halfYearly}, total=${totalMarks}`);
-            } else if (examType === 'annual') {
+              console.log(`Individual Half-Yearly calculation for ${subject.name}: UT1=${ut1}, UT2=${ut2}, halfYearly=${halfYearly}, total=${totalMarks}`);
+            } else if (examType === 'Annual') {
               const ut1 = parseFloat(subjectData.UT1) || 0;
               const ut2 = parseFloat(subjectData.UT2) || 0;
               const ut3 = parseFloat(subjectData.UT3) || 0;
