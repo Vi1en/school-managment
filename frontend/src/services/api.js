@@ -33,9 +33,19 @@ api.interceptors.request.use(
 
 // Handle auth errors and JSON parse errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('API Response:', response.config.url, response.status);
+    return response;
+  },
   (error) => {
-    console.error('API Error:', error);
+    console.error('API Error Details:');
+    console.error('- URL:', error.config?.url);
+    console.error('- Method:', error.config?.method);
+    console.error('- Status:', error.response?.status);
+    console.error('- Message:', error.message);
+    console.error('- Code:', error.code);
+    console.error('- Response Data:', error.response?.data);
+    console.error('- Request Headers:', error.config?.headers);
     
     // Handle JSON parse errors
     if (error.message && error.message.includes('JSON.parse')) {
@@ -44,6 +54,7 @@ api.interceptors.response.use(
     }
     
     if (error.response?.status === 401) {
+      console.log('401 error detected, clearing session...');
       localStorage.removeItem('token');
       localStorage.removeItem('admin');
       window.location.href = '/login';

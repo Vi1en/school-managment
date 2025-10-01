@@ -13,6 +13,24 @@ const Dashboard = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
+  const testConnectivity = async () => {
+    try {
+      console.log('Testing basic connectivity...');
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: 'test', password: 'test' })
+      });
+      console.log('Connectivity test response status:', response.status);
+      return true;
+    } catch (error) {
+      console.error('Connectivity test failed:', error);
+      return false;
+    }
+  };
+
   const fetchStats = useCallback(async () => {
     console.log('fetchStats called. Auth state:', { isAuthenticated, admin, token });
     
@@ -29,6 +47,14 @@ const Dashboard = () => {
       localStorage.removeItem('token');
       localStorage.removeItem('admin');
       window.location.replace('/login');
+      return;
+    }
+    
+    // Test connectivity first
+    const isConnected = await testConnectivity();
+    if (!isConnected) {
+      console.error('No network connectivity detected');
+      setLoading(false);
       return;
     }
     
@@ -62,7 +88,16 @@ const Dashboard = () => {
 
   useEffect(() => {
     console.log('Dashboard mounted. Auth state:', { isAuthenticated, admin, token });
-    fetchStats();
+    console.log('Current URL:', window.location.href);
+    console.log('API Base URL:', process.env.REACT_APP_API_URL || '/api');
+    
+    // Add a small delay to ensure everything is loaded
+    const timer = setTimeout(() => {
+      console.log('Starting fetchStats after delay...');
+      fetchStats();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [isAuthenticated, admin, token, fetchStats]);
 
   const handleSearch = async (e) => {
