@@ -56,10 +56,18 @@ export const AuthProvider = ({ children }) => {
     const admin = localStorage.getItem('admin');
     
     if (token && admin) {
-      dispatch({
-        type: 'LOGIN_SUCCESS',
-        payload: { token, admin: JSON.parse(admin) },
-      });
+      try {
+        const parsedAdmin = JSON.parse(admin);
+        dispatch({
+          type: 'LOGIN_SUCCESS',
+          payload: { token, admin: parsedAdmin },
+        });
+      } catch (error) {
+        console.error('Error parsing admin data from localStorage:', error);
+        // Clear corrupted data
+        localStorage.removeItem('token');
+        localStorage.removeItem('admin');
+      }
     }
   }, []);
 
@@ -79,7 +87,8 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
       dispatch({
         type: 'LOGIN_FAILURE',
         payload: errorMessage,
