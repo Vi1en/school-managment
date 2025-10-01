@@ -33,7 +33,7 @@ const ViewMarksheet: React.FC = () => {
         bloodGroup: 'O+',
         address: '123 Main St, City',
         phoneNumber: '1234567890',
-          photo: undefined,
+        photo: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=',
         examType: 'Half-Yearly',
         academicYear: '2024-25',
         subjects: [
@@ -118,159 +118,139 @@ const ViewMarksheet: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Marksheet - {marksheet.studentName}</h1>
-            <p className="text-gray-600">Roll Number: {marksheet.rollNumber}</p>
-            <p className="text-gray-600">Exam Type: {marksheet.examType}</p>
-          </div>
-          <div className="mt-4 sm:mt-0">
-            <Button
-              variant="secondary"
-              onClick={() => window.print()}
-            >
-              Print Marksheet
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Student Information */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Student Information</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <dl className="space-y-3">
+    <div className="max-w-4xl mx-auto">
+      {/* Print-friendly marksheet */}
+      <div className="bg-white shadow-lg print:shadow-none print:bg-white" id="marksheet-print">
+        {/* Header with Logo */}
+        <div className="border-b-4 border-blue-600 p-6 print:p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <img 
+                src="/image.png" 
+                alt="School Logo" 
+                className="h-16 w-16 mr-4 print:h-12 print:w-12"
+                style={{ marginLeft: '-8px' }}
+              />
               <div>
-                <dt className="text-sm font-medium text-gray-500">Student Name</dt>
-                <dd className="text-sm text-gray-900">{marksheet.studentName}</dd>
+                <h1 className="text-2xl font-bold text-blue-800 print:text-xl">SHINDE ACADEMY</h1>
+                <p className="text-sm text-gray-600 print:text-xs">Academic Excellence Since 1995</p>
               </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Father's Name</dt>
-                <dd className="text-sm text-gray-900">{marksheet.fatherName}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Mother's Name</dt>
-                <dd className="text-sm text-gray-900">{marksheet.motherName}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Date of Birth</dt>
-                <dd className="text-sm text-gray-900">{formatDate(marksheet.dob, 'long')}</dd>
-              </div>
-            </dl>
-          </div>
-          <div>
-            <dl className="space-y-3">
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Roll Number</dt>
-                <dd className="text-sm text-gray-900">{marksheet.rollNumber}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Class</dt>
-                <dd className="text-sm text-gray-900">Class {marksheet.currentClass}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Blood Group</dt>
-                <dd className="text-sm text-gray-900">{marksheet.bloodGroup}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-gray-500">Academic Year</dt>
-                <dd className="text-sm text-gray-900">{marksheet.academicYear}</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
-
-      {/* Marks Table */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Subject Marks</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Subject
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Code
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Marks Obtained
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Max Marks
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Percentage
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {marksheet.subjects.map((subject) => (
-                <tr key={subject.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {subject.name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {subject.code}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {subject.marks}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {subject.maxMarks}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatPercentage((subject.marks / subject.maxMarks) * 100)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Summary */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Summary</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{marksheet.totalMarks}</div>
-            <div className="text-sm text-gray-500">Total Marks</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{marksheet.maxTotalMarks}</div>
-            <div className="text-sm text-gray-500">Max Marks</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{formatPercentage(marksheet.percentage)}</div>
-            <div className="text-sm text-gray-500">Percentage</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">
-              {marksheet.rank ? `#${marksheet.rank}` : 'N/A'}
             </div>
-            <div className="text-sm text-gray-500">Rank</div>
+            <div className="text-right">
+              <h2 className="text-xl font-bold text-gray-800 print:text-lg">REPORT CARD</h2>
+              <p className="text-sm text-gray-600 print:text-xs">{marksheet.academicYear}</p>
+            </div>
           </div>
         </div>
-        
-        <div className="mt-6 text-center">
-          <span className={`inline-flex px-4 py-2 text-sm font-semibold rounded-full ${
-            marksheet.promotionStatus === 'Promoted' 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-red-100 text-red-800'
-          }`}>
-            {marksheet.promotionStatus}
-          </span>
+
+        {/* Student Information Section */}
+        <div className="p-6 print:p-4">
+          <div className="flex justify-between items-start mb-6">
+            <div className="flex-1">
+              <div className="grid grid-cols-2 gap-4 text-sm print:text-xs">
+                <div>
+                  <span className="font-semibold">Student Name:</span> {marksheet.studentName}
+                </div>
+                <div>
+                  <span className="font-semibold">Roll Number:</span> {marksheet.rollNumber}
+                </div>
+                <div>
+                  <span className="font-semibold">Father's Name:</span> {marksheet.fatherName}
+                </div>
+                <div>
+                  <span className="font-semibold">Class:</span> {marksheet.currentClass}
+                </div>
+                <div>
+                  <span className="font-semibold">Mother's Name:</span> {marksheet.motherName}
+                </div>
+                <div>
+                  <span className="font-semibold">Blood Group:</span> {marksheet.bloodGroup}
+                </div>
+                <div>
+                  <span className="font-semibold">Date of Birth:</span> {formatDate(marksheet.dob, 'short')}
+                </div>
+                <div>
+                  <span className="font-semibold">Exam Type:</span> {marksheet.examType}
+                </div>
+              </div>
+            </div>
+            <div className="ml-6">
+              {marksheet.photo ? (
+                <img 
+                  src={marksheet.photo} 
+                  alt="Student Photo" 
+                  className="h-24 w-20 object-cover border-2 border-gray-300 print:h-20 print:w-16"
+                />
+              ) : (
+                <div className="h-24 w-20 border-2 border-gray-300 flex items-center justify-center bg-gray-100 print:h-20 print:w-16">
+                  <span className="text-xs text-gray-500">Photo</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Marks Table */}
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-center mb-4 print:text-base">ACADEMIC PERFORMANCE</h3>
+            <table className="w-full border-collapse border border-gray-400 print:text-xs">
+              <thead>
+                <tr className="bg-blue-50 print:bg-gray-100">
+                  <th className="border border-gray-400 px-3 py-2 text-left font-semibold">SUBJECT</th>
+                  <th className="border border-gray-400 px-3 py-2 text-center font-semibold">CODE</th>
+                  <th className="border border-gray-400 px-3 py-2 text-center font-semibold">MARKS OBTAINED</th>
+                  <th className="border border-gray-400 px-3 py-2 text-center font-semibold">MAX MARKS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {marksheet.subjects.map((subject, index) => (
+                  <tr key={subject.id} className={index % 2 === 0 ? 'bg-gray-50 print:bg-white' : 'bg-white'}>
+                    <td className="border border-gray-400 px-3 py-2 font-medium">{subject.name}</td>
+                    <td className="border border-gray-400 px-3 py-2 text-center">{subject.code}</td>
+                    <td className="border border-gray-400 px-3 py-2 text-center font-semibold">{subject.marks}</td>
+                    <td className="border border-gray-400 px-3 py-2 text-center">{subject.maxMarks}</td>
+                  </tr>
+                ))}
+                <tr className="bg-blue-100 print:bg-gray-200 font-bold">
+                  <td className="border border-gray-400 px-3 py-2" colSpan={2}>TOTAL</td>
+                  <td className="border border-gray-400 px-3 py-2 text-center">{marksheet.totalMarks}</td>
+                  <td className="border border-gray-400 px-3 py-2 text-center">{marksheet.maxTotalMarks}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Summary Section */}
+          <div className="grid grid-cols-3 gap-4 mb-6 print:text-xs">
+            <div className="text-center border border-gray-300 p-3 print:p-2">
+              <div className="text-lg font-bold text-blue-600 print:text-base">{formatPercentage(marksheet.percentage)}</div>
+              <div className="text-sm text-gray-600">PERCENTAGE</div>
+            </div>
+            <div className="text-center border border-gray-300 p-3 print:p-2">
+              <div className="text-lg font-bold text-green-600 print:text-base">
+                {marksheet.rank ? `#${marksheet.rank}` : 'N/A'}
+              </div>
+              <div className="text-sm text-gray-600">RANK</div>
+            </div>
+            <div className="text-center border border-gray-300 p-3 print:p-2">
+              <div className={`text-lg font-bold print:text-base ${
+                marksheet.promotionStatus === 'Promoted' ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {marksheet.promotionStatus}
+              </div>
+              <div className="text-sm text-gray-600">STATUS</div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-center text-xs text-gray-600 print:text-xs">
+            <p>This is a computer generated report card and does not require signature.</p>
+            <p className="mt-2">Generated on: {new Date().toLocaleDateString('en-IN')}</p>
+          </div>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex justify-end space-x-4">
+      {/* Action Buttons */}
+      <div className="mt-6 flex justify-end space-x-4 print:hidden">
         <Button
           variant="secondary"
           onClick={() => navigate('/marksheets')}

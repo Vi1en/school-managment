@@ -584,6 +584,164 @@ const GenerateMarksheet: React.FC = () => {
         </div>
       )}
 
+      {/* Preview Modal */}
+      <Modal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        title="Marksheet Preview"
+        size="xl"
+      >
+        {previewData && (
+          <div className="max-w-4xl mx-auto">
+            {/* Print-friendly marksheet */}
+            <div className="bg-white shadow-lg print:shadow-none print:bg-white" id="marksheet-print">
+              {/* Header with Logo */}
+              <div className="border-b-4 border-blue-600 p-6 print:p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <img 
+                      src="/image.png" 
+                      alt="School Logo" 
+                      className="h-16 w-16 mr-4 print:h-12 print:w-12"
+                      style={{ marginLeft: '-8px' }}
+                    />
+                    <div>
+                      <h1 className="text-2xl font-bold text-blue-800 print:text-xl">SHINDE ACADEMY</h1>
+                      <p className="text-sm text-gray-600 print:text-xs">Academic Excellence Since 1995</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <h2 className="text-xl font-bold text-gray-800 print:text-lg">REPORT CARD</h2>
+                    <p className="text-sm text-gray-600 print:text-xs">{previewData.academicYear}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Student Information Section */}
+              <div className="p-6 print:p-4">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex-1">
+                    <div className="grid grid-cols-2 gap-4 text-sm print:text-xs">
+                      <div>
+                        <span className="font-semibold">Student Name:</span> {previewData.studentName}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Roll Number:</span> {previewData.rollNumber}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Father's Name:</span> {previewData.fatherName}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Class:</span> {previewData.currentClass}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Mother's Name:</span> {previewData.motherName}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Blood Group:</span> {previewData.bloodGroup}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Date of Birth:</span> {previewData.dob}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Exam Type:</span> {previewData.examType}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="ml-6">
+                    {previewData.photo ? (
+                      <img 
+                        src={previewData.photo} 
+                        alt="Student Photo" 
+                        className="h-24 w-20 object-cover border-2 border-gray-300 print:h-20 print:w-16"
+                      />
+                    ) : (
+                      <div className="h-24 w-20 border-2 border-gray-300 flex items-center justify-center bg-gray-100 print:h-20 print:w-16">
+                        <span className="text-xs text-gray-500">Photo</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Marks Table */}
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-center mb-4 print:text-base">ACADEMIC PERFORMANCE</h3>
+                  <table className="w-full border-collapse border border-gray-400 print:text-xs">
+                    <thead>
+                      <tr className="bg-blue-50 print:bg-gray-100">
+                        <th className="border border-gray-400 px-3 py-2 text-left font-semibold">SUBJECT</th>
+                        <th className="border border-gray-400 px-3 py-2 text-center font-semibold">CODE</th>
+                        <th className="border border-gray-400 px-3 py-2 text-center font-semibold">MARKS OBTAINED</th>
+                        <th className="border border-gray-400 px-3 py-2 text-center font-semibold">MAX MARKS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {previewData.subjects?.map((subject: any, index: number) => (
+                        <tr key={subject.id || index} className={index % 2 === 0 ? 'bg-gray-50 print:bg-white' : 'bg-white'}>
+                          <td className="border border-gray-400 px-3 py-2 font-medium">{subject.name}</td>
+                          <td className="border border-gray-400 px-3 py-2 text-center">{subject.code}</td>
+                          <td className="border border-gray-400 px-3 py-2 text-center font-semibold">{subject.marks}</td>
+                          <td className="border border-gray-400 px-3 py-2 text-center">{subject.maxMarks}</td>
+                        </tr>
+                      ))}
+                      <tr className="bg-blue-100 print:bg-gray-200 font-bold">
+                        <td className="border border-gray-400 px-3 py-2" colSpan={2}>TOTAL</td>
+                        <td className="border border-gray-400 px-3 py-2 text-center">{previewData.totalMarks}</td>
+                        <td className="border border-gray-400 px-3 py-2 text-center">{previewData.maxTotalMarks}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Summary Section */}
+                <div className="grid grid-cols-3 gap-4 mb-6 print:text-xs">
+                  <div className="text-center border border-gray-300 p-3 print:p-2">
+                    <div className="text-lg font-bold text-blue-600 print:text-base">{previewData.percentage}%</div>
+                    <div className="text-sm text-gray-600">PERCENTAGE</div>
+                  </div>
+                  <div className="text-center border border-gray-300 p-3 print:p-2">
+                    <div className="text-lg font-bold text-green-600 print:text-base">
+                      {previewData.rank ? `#${previewData.rank}` : 'N/A'}
+                    </div>
+                    <div className="text-sm text-gray-600">RANK</div>
+                  </div>
+                  <div className="text-center border border-gray-300 p-3 print:p-2">
+                    <div className={`text-lg font-bold print:text-base ${
+                      previewData.promotionStatus === 'Promoted' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {previewData.promotionStatus}
+                    </div>
+                    <div className="text-sm text-gray-600">STATUS</div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="text-center text-xs text-gray-600 print:text-xs">
+                  <p>This is a computer generated report card and does not require signature.</p>
+                  <p className="mt-2">Generated on: {new Date().toLocaleDateString('en-IN')}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end space-x-4 print:hidden">
+              <Button
+                variant="secondary"
+                onClick={() => setShowPreview(false)}
+              >
+                Close Preview
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => window.print()}
+              >
+                Print Marksheet
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
       {/* Add Subject Modal */}
       <Modal
         isOpen={showAddSubject}
