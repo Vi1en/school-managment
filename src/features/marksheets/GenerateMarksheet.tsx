@@ -175,8 +175,12 @@ const GenerateMarksheet: React.FC = () => {
         }
 
         const classStudents = students.filter(student => student.currentClass === selectedClass);
+        console.log('Class students found:', classStudents.length);
+        console.log('First class student:', classStudents[0]);
+        
         const marksheetsToCreate = classStudents.map(student => {
           const studentId = student.id || student._id || student.admissionNumber;
+          console.log('Processing student:', student.studentName, 'ID:', studentId);
           const studentMarks = marksData[studentId] || {};
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
@@ -191,7 +195,7 @@ const GenerateMarksheet: React.FC = () => {
             };
           });
 
-          return {
+          const marksheetData = {
             rollNumber: student.admissionNumber,
             studentName: student.studentName,
             currentClass: student.currentClass,
@@ -206,11 +210,22 @@ const GenerateMarksheet: React.FC = () => {
             academicYear: '2025-26',
             subjects: subjectMarks,
           };
+          
+          console.log('Created marksheet data for student:', student.studentName, marksheetData);
+          return marksheetData;
         });
 
         // Create marksheets
         for (const marksheetData of marksheetsToCreate) {
-          console.log('Creating marksheet with data:', marksheetData);
+          console.log('Creating marksheet with data:', JSON.stringify(marksheetData, null, 2));
+          console.log('Required fields check:', {
+            rollNumber: !!marksheetData.rollNumber,
+            studentName: !!marksheetData.studentName,
+            examType: !!marksheetData.examType,
+            academicYear: !!marksheetData.academicYear,
+            subjects: !!marksheetData.subjects,
+            subjectsLength: marksheetData.subjects?.length
+          });
           await marksheetsAPI.create(marksheetData);
         }
 
@@ -260,7 +275,15 @@ const GenerateMarksheet: React.FC = () => {
           subjects: subjectMarks,
         };
 
-        console.log('Creating individual marksheet with data:', marksheetData);
+        console.log('Creating individual marksheet with data:', JSON.stringify(marksheetData, null, 2));
+        console.log('Required fields check:', {
+          rollNumber: !!marksheetData.rollNumber,
+          studentName: !!marksheetData.studentName,
+          examType: !!marksheetData.examType,
+          academicYear: !!marksheetData.academicYear,
+          subjects: !!marksheetData.subjects,
+          subjectsLength: marksheetData.subjects?.length
+        });
         const response = await marksheetsAPI.create(marksheetData);
         setPreviewData(response.data);
         setShowPreview(true);
