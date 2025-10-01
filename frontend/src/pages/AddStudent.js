@@ -151,12 +151,16 @@ const AddStudent = () => {
       console.error('Error creating student:', err);
       console.error('Error response:', err.response?.data);
       
-      if (err.response?.data?.errors) {
+      if (err.code === 'ECONNABORTED') {
+        setError('Request timed out. Please try again with a smaller photo or check your internet connection.');
+      } else if (err.code === 'ERR_NETWORK') {
+        setError('Network error. Please check your internet connection and try again.');
+      } else if (err.response?.data?.errors) {
         // Handle validation errors
         const errorMessages = err.response.data.errors.map(error => `${error.path}: ${error.msg}`).join(', ');
         setError(`Validation errors: ${errorMessages}`);
       } else {
-        setError(err.response?.data?.message || 'Error creating student');
+        setError(err.response?.data?.message || err.message || 'Error creating student');
       }
     } finally {
       setLoading(false);

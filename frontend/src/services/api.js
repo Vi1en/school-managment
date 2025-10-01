@@ -9,6 +9,7 @@ console.log('API Version: 2.0 - Fixed JSON Parse Error');
 
 const api = axios.create({
   baseURL: API_URL,
+  timeout: 30000, // 30 seconds timeout
   headers: {
     'Content-Type': 'application/json',
   },
@@ -67,6 +68,7 @@ export const studentsAPI = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 60000, // 60 seconds for file uploads
       });
     }
     return api.post('/students', studentData);

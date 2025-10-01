@@ -135,8 +135,9 @@ exports.handler = async (event, context) => {
       // Check if it's FormData (multipart) or JSON
       if (event.body.startsWith('------WebKitFormBoundary') || event.body.includes('multipart/form-data')) {
         console.log('Received FormData, parsing manually...');
-        // For FormData, we'll parse it manually
-        // This is a simplified parser - in production you'd want to use a proper multipart parser
+        console.log('FormData size:', event.body.length);
+        
+        // For FormData, we'll parse it manually with better error handling
         const lines = event.body.split('\r\n');
         const parsedData = {};
         
@@ -168,14 +169,16 @@ exports.handler = async (event, context) => {
         }
         
         body = parsedData;
-        console.log('Parsed FormData:', body);
+        console.log('Parsed FormData successfully:', Object.keys(body));
       } else {
         body = JSON.parse(event.body);
+        console.log('Parsed JSON successfully');
       }
     }
   } catch (error) {
     console.error('Body parse error:', error);
-    console.error('Body content:', event.body?.substring(0, 100));
+    console.error('Body content length:', event.body?.length);
+    console.error('Body content preview:', event.body?.substring(0, 200));
     return createResponse(400, { 
       message: 'Invalid request body format',
       error: error.message 
