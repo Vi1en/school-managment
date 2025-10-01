@@ -550,9 +550,28 @@ exports.handler = async (event, context) => {
         console.log('Updating existing marksheet for:', rollNumber, examType, academicYear);
         try {
           // Update existing marksheet instead of creating new one
+          // Only update the fields that should be updated
+          const updateData = {
+            studentName: marksheetData.studentName,
+            fatherName: marksheetData.fatherName,
+            motherName: marksheetData.motherName,
+            dob: marksheetData.dob,
+            currentClass: marksheetData.currentClass,
+            bloodGroup: marksheetData.bloodGroup,
+            address: marksheetData.address,
+            phoneNumber: marksheetData.phoneNumber,
+            photo: marksheetData.photo,
+            subjects: marksheetData.subjects,
+            totalMarks: marksheetData.totalMarks,
+            maxTotalMarks: marksheetData.maxTotalMarks,
+            percentage: marksheetData.percentage,
+            promotionStatus: marksheetData.promotionStatus
+          };
+          
+          console.log('Updating marksheet with data:', JSON.stringify(updateData, null, 2));
           const updatedMarksheet = await Marksheet.findOneAndUpdate(
             { rollNumber, examType, academicYear },
-            marksheetData,
+            updateData,
             { new: true, runValidators: true }
           );
           console.log('Marksheet updated successfully:', updatedMarksheet._id);
