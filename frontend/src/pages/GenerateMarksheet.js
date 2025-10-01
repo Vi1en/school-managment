@@ -91,12 +91,20 @@ const GenerateMarksheet = () => {
   };
 
   const handleIndividualMarkChange = (markType, value) => {
-    console.log('handleIndividualMarkChange called:', { markType, value, currentSubject: subjects[currentSubject]?.name });
+    console.log('handleIndividualMarkChange called:', { 
+      markType, 
+      value, 
+      currentSubjectIndex: currentSubject,
+      currentSubjectName: subjects[currentSubject]?.name,
+      allSubjects: subjects.map(s => s.name)
+    });
     setIndividualMarksData(prev => {
+      const subjectName = subjects[currentSubject]?.name;
+      console.log('Storing marks for subject:', subjectName);
       const newData = {
         ...prev,
-        [subjects[currentSubject]?.name]: {
-          ...prev[subjects[currentSubject]?.name],
+        [subjectName]: {
+          ...prev[subjectName],
           [markType]: parseInt(value) || 0
         }
       };
@@ -293,7 +301,9 @@ const GenerateMarksheet = () => {
 
         console.log('Individual marksData before processing:', individualMarksData);
         console.log(`Individual student ${student.studentName} marks:`, individualMarksData);
-          console.log('Exam type for individual generation:', examType, 'Type:', typeof examType);
+        console.log('Exam type for individual generation:', examType, 'Type:', typeof examType);
+        console.log('Current subject index:', currentSubject);
+        console.log('All subjects:', subjects.map(s => s.name));
 
           const subjectMarks = subjects.map(subject => {
             const subjectData = individualMarksData[subject.name] || {};
