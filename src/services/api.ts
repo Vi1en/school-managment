@@ -14,18 +14,25 @@ const createApiInstance = (): AxiosInstance => {
   // Request interceptor to add auth token
   instance.interceptors.request.use(
     (config) => {
+      console.log('Request interceptor: URL:', config.url);
+      
       // Don't add auth token to login or register endpoints
       if (config.url && (config.url.includes('/auth/login') || config.url.includes('/auth/register'))) {
+        console.log('Request interceptor: Skipping auth header for login/register');
         return config;
       }
       
       const token = localStorage.getItem('auth-token');
       if (token) {
+        console.log('Request interceptor: Adding auth header');
         config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        console.log('Request interceptor: No token found');
       }
       return config;
     },
     (error) => {
+      console.log('Request interceptor error:', error);
       return Promise.reject(error);
     }
   );
@@ -36,6 +43,10 @@ const createApiInstance = (): AxiosInstance => {
       return response;
     },
     (error) => {
+      console.log('Response interceptor: Error caught:', error);
+      console.log('Response interceptor: Error URL:', error.config?.url);
+      console.log('Response interceptor: Error status:', error.response?.status);
+      
       const apiError: ApiError = {
         message: error.response?.data?.message || error.message || 'An error occurred',
         status: error.response?.status || 500,
@@ -45,12 +56,16 @@ const createApiInstance = (): AxiosInstance => {
 
       // Handle specific error cases
       if (error.response?.status === 401) {
+        console.log('Response interceptor: 401 error detected');
         // Don't redirect to login if the error is from the login endpoint itself
         if (error.config?.url && !error.config.url.includes('/auth/login')) {
+          console.log('Response interceptor: Redirecting to login (not from login endpoint)');
           // Clear auth data and redirect to login
           localStorage.removeItem('auth-token');
           localStorage.removeItem('auth-storage');
           window.location.href = '/login';
+        } else {
+          console.log('Response interceptor: 401 from login endpoint, not redirecting');
         }
       }
 

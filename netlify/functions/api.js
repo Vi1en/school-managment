@@ -231,7 +231,13 @@ exports.handler = async (event, context) => {
     }
 
     // Auth routes
+    console.log('Checking path:', path, 'method:', method);
+    console.log('Path starts with /api/auth/login:', path.startsWith('/api/auth/login'));
+    console.log('Path equals /api/auth/login:', path === '/api/auth/login');
+    console.log('Method equals POST:', method === 'POST');
+    
     if (path === '/api/auth/login' && method === 'POST') {
+      console.log('Login endpoint matched!');
       console.log('Login attempt:', { email: body.email, hasPassword: !!body.password });
       
       const { email, password } = body;
