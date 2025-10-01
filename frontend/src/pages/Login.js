@@ -95,7 +95,7 @@ const Login = () => {
             </button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center space-y-2">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
               <button
@@ -109,6 +109,20 @@ const Login = () => {
                 Use demo credentials
               </button>
             </p>
+            <div>
+              <button
+                type="button"
+                onClick={() => {
+                  // Clear old session data
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('admin');
+                  window.location.reload();
+                }}
+                className="text-sm text-red-600 hover:text-red-500 font-medium"
+              >
+                Clear old session & refresh
+              </button>
+            </div>
           </div>
         </form>
       </div>
