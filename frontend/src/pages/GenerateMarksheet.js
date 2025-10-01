@@ -181,33 +181,41 @@ const GenerateMarksheet = () => {
           const studentSetting = studentSettings[student._id] || {};
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
+            // Calculate total marks based on exam type
+            let totalMarks = 0;
+            let maxMarks = 100; // Default max marks per subject
+            
+            if (examType === 'half-yearly') {
+              totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.halfYearly || 0);
+            } else if (examType === 'annual') {
+              totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.UT3 || 0) + (subjectData.UT4 || 0) + (subjectData.annual || 0);
+            } else {
+              // For other exam types, use the marks field
+              totalMarks = subjectData.marks || 0;
+            }
+            
             return {
-              subjectName: subject.name,
-              subjectCode: subject.code,
-              UT1: subjectData.UT1 || 0,
-              UT2: subjectData.UT2 || 0,
-              UT3: subjectData.UT3 || 0,
-              UT4: subjectData.UT4 || 0,
-              halfYearly: subjectData.halfYearly || 0,
-              annual: subjectData.annual || 0
+              name: subject.name,
+              code: subject.code,
+              marks: totalMarks,
+              maxMarks: maxMarks
             };
           });
 
           return {
             rollNumber: student.admissionNumber,
             studentName: student.studentName,
-            class: student.currentClass,
+            currentClass: student.currentClass,
             fatherName: student.fatherName || 'N/A',
+            motherName: student.motherName || 'N/A',
             dob: new Date(student.dob).toISOString(),
             bloodGroup: student.bloodGroup || 'O+',
+            address: student.address || 'N/A',
+            phoneNumber: student.phoneNumber || 'N/A',
             photo: student.photo || null,
             examType: examType,
             academicYear: formData.academicYear,
-            subjects: subjectMarks,
-            attendance: {
-              totalDays: parseInt(studentSetting.totalDays) || 105,
-              presentDays: parseInt(studentSetting.presentDays) || 95
-            }
+            subjects: subjectMarks
           };
         });
 
@@ -249,33 +257,41 @@ const GenerateMarksheet = () => {
 
         const subjectMarks = subjects.map(subject => {
           const subjectData = individualMarksData[subject.name] || {};
+          // Calculate total marks based on exam type
+          let totalMarks = 0;
+          let maxMarks = 100; // Default max marks per subject
+          
+          if (examType === 'half-yearly') {
+            totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.halfYearly || 0);
+          } else if (examType === 'annual') {
+            totalMarks = (subjectData.UT1 || 0) + (subjectData.UT2 || 0) + (subjectData.UT3 || 0) + (subjectData.UT4 || 0) + (subjectData.annual || 0);
+          } else {
+            // For other exam types, use the marks field
+            totalMarks = subjectData.marks || 0;
+          }
+          
           return {
-            subjectName: subject.name,
-            subjectCode: subject.code,
-            UT1: subjectData.UT1 || 0,
-            UT2: subjectData.UT2 || 0,
-            UT3: subjectData.UT3 || 0,
-            UT4: subjectData.UT4 || 0,
-            halfYearly: subjectData.halfYearly || 0,
-            annual: subjectData.annual || 0
+            name: subject.name,
+            code: subject.code,
+            marks: totalMarks,
+            maxMarks: maxMarks
           };
         });
 
         const marksheetData = {
           rollNumber: student.admissionNumber,
           studentName: student.studentName,
-          class: student.currentClass,
+          currentClass: student.currentClass,
           fatherName: student.fatherName || 'N/A',
+          motherName: student.motherName || 'N/A',
           dob: new Date(student.dob).toISOString(),
           bloodGroup: student.bloodGroup || 'O+',
+          address: student.address || 'N/A',
+          phoneNumber: student.phoneNumber || 'N/A',
           photo: student.photo || null,
           examType: examType,
           academicYear: formData.academicYear,
-          subjects: subjectMarks,
-          attendance: {
-            totalDays: parseInt(individualStudentSettings.totalDays) || 105,
-            presentDays: parseInt(individualStudentSettings.presentDays) || 95
-          }
+          subjects: subjectMarks
         };
 
         console.log('Creating individual marksheet for:', marksheetData.rollNumber);
