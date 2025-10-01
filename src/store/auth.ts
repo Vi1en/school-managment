@@ -26,6 +26,7 @@ export const useAuthStore = create<AuthStore>()(
       // Actions
       login: async (credentials: LoginForm) => {
         console.log('Auth store: Starting login with credentials:', credentials);
+        console.log('Auth store: Current state before login:', get());
         set({ isLoading: true, error: null });
         
         try {
@@ -102,11 +103,17 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({
-        user: state.user,
-        token: state.token,
-        isAuthenticated: state.isAuthenticated,
-      }),
+      partialize: (state) => {
+        console.log('Auth store: Persisting state:', state);
+        return {
+          user: state.user,
+          token: state.token,
+          isAuthenticated: state.isAuthenticated,
+        };
+      },
+      onRehydrateStorage: () => (state) => {
+        console.log('Auth store: Rehydrating from storage:', state);
+      },
     }
   )
 );
