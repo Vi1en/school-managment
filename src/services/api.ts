@@ -61,11 +61,23 @@ const apiWrapper = async <T>(
 ): Promise<ApiResponse<T>> => {
   try {
     const response = await apiCall();
+    console.log('API wrapper: Raw response:', response.data);
+    
+    // Check if the response has a success field or if it's a direct data response
+    if (response.data && typeof response.data === 'object') {
+      // If it's a direct response from Netlify function, wrap it
+      return {
+        success: true,
+        data: response.data,
+      };
+    }
+    
     return {
       success: true,
       data: response.data,
     };
   } catch (error: any) {
+    console.log('API wrapper: Error caught:', error);
     return {
       success: false,
       data: null as any,

@@ -35,14 +35,28 @@ export const useAuthStore = create<AuthStore>()(
           
           if (response.success && response.data) {
             console.log('Auth store: Login successful, setting user data');
-            set({
-              user: response.data.user,
-              token: response.data.token,
-              isAuthenticated: true,
-              isLoading: false,
-              error: null,
-            });
-            return { success: true };
+            console.log('Auth store: Response data structure:', response.data);
+            
+            // Extract user and token from the response data
+            const { user, token } = response.data;
+            
+            if (user && token) {
+              set({
+                user: user,
+                token: token,
+                isAuthenticated: true,
+                isLoading: false,
+                error: null,
+              });
+              return { success: true };
+            } else {
+              console.log('Auth store: Missing user or token in response');
+              set({
+                isLoading: false,
+                error: 'Invalid response format',
+              });
+              return { success: false, error: 'Invalid response format' };
+            }
           } else {
             console.log('Auth store: Login failed, response not successful');
             set({
