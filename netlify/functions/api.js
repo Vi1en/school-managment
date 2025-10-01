@@ -128,81 +128,19 @@ exports.handler = async (event, context) => {
   const method = event.httpMethod;
   const headers = event.headers || {};
   
-  // Parse body with error handling
+  // Parse body with error handling - ONLY JSON now
   let body = {};
   try {
     if (event.body) {
-      // Check Content-Type header first to determine parsing method
-      const contentType = headers['content-type'] || headers['Content-Type'] || '';
-      console.log('Content-Type:', contentType);
-      console.log('Body preview:', event.body.substring(0, 100));
-      
-      if (contentType.includes('multipart/form-data') || event.body.startsWith('------WebKitFormBoundary')) {
-        console.log('Received FormData, parsing manually...');
-        console.log('FormData size:', event.body.length);
-        console.log('FormData preview:', event.body.substring(0, 500));
-        
-        // For FormData, we'll parse it manually with better error handling
-        const lines = event.body.split('\r\n');
-        const parsedData = {};
-        
-        for (let i = 0; i < lines.length; i++) {
-          const line = lines[i];
-          if (line.startsWith('Content-Disposition: form-data; name=')) {
-            const nameMatch = line.match(/name="([^"]+)"/);
-            if (nameMatch && i + 2 < lines.length) {
-              const fieldName = nameMatch[1];
-              const fieldValue = lines[i + 2];
-              console.log(`Found field: ${fieldName} = ${fieldValue}`);
-              if (fieldValue && !fieldValue.startsWith('------')) {
-                if (fieldName.includes('.')) {
-                  // Handle nested objects like feeDetails.totalFee
-                  const [parent, child] = fieldName.split('.');
-                  if (!parsedData[parent]) parsedData[parent] = {};
-                  parsedData[parent][child] = fieldValue;
-                } else {
-                  parsedData[fieldName] = fieldValue;
-                }
-              }
-            }
-          }
-        }
-        
-        // Convert numeric fields
-        if (parsedData.feeDetails) {
-          parsedData.feeDetails.totalFee = parseFloat(parsedData.feeDetails.totalFee) || 0;
-          parsedData.feeDetails.amountPaid = parseFloat(parsedData.feeDetails.amountPaid) || 0;
-        }
-        
-        body = parsedData;
-        console.log('Parsed FormData successfully:', body);
-        console.log('Required fields check - studentName:', body.studentName, 'currentClass:', body.currentClass);
-        
-        // If required fields are missing, try alternative parsing
-        if (!body.studentName || !body.currentClass) {
-          console.log('Required fields missing, trying alternative parsing...');
-          // Try to extract data using regex patterns
-          const studentNameMatch = event.body.match(/name="studentName"[^>]*>([^<]+)/);
-          const currentClassMatch = event.body.match(/name="currentClass"[^>]*>([^<]+)/);
-          
-          if (studentNameMatch) body.studentName = studentNameMatch[1];
-          if (currentClassMatch) body.currentClass = currentClassMatch[1];
-          
-          console.log('After alternative parsing - studentName:', body.studentName, 'currentClass:', body.currentClass);
-        }
-      } else {
-        // Try JSON parsing
-        body = JSON.parse(event.body);
-        console.log('Parsed JSON successfully');
-      }
+      body = JSON.parse(event.body);
+      console.log('Parsed JSON successfully:', Object.keys(body));
     }
   } catch (error) {
-    console.error('Body parse error:', error);
-    console.error('Content-Type:', headers['content-type'] || headers['Content-Type']);
+    console.error('JSON parse error:', error);
     console.error('Body content length:', event.body?.length);
     console.error('Body content preview:', event.body?.substring(0, 200));
     return createResponse(400, { 
-      message: 'Invalid request body format',
+      message: 'Invalid JSON in request body',
       error: error.message 
     });
   }

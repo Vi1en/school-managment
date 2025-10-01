@@ -62,15 +62,7 @@ export const studentsAPI = {
   getAll: (params) => api.get('/students', { params }),
   getByAdmissionNumber: (admissionNumber) => api.get(`/students/${admissionNumber}`),
   create: (studentData) => {
-    // Check if it's FormData (for file upload)
-    if (studentData instanceof FormData) {
-      return api.post('/students', studentData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        timeout: 60000, // 60 seconds for file uploads
-      });
-    }
+    // Always send as JSON
     return api.post('/students', studentData);
   },
   update: (admissionNumber, studentData) => {

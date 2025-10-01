@@ -107,44 +107,38 @@ const AddStudent = () => {
       // Debug: Log form data before sending
       console.log('Form data before sending:', formData);
       console.log('Photo selected:', photo);
-      console.log('Photo type:', photo ? typeof photo : 'no photo');
       
-      let response;
+      // Always send as JSON - convert photo to base64 if present
+      const jsonData = {
+        ...formData,
+        feeDetails: {
+          totalFee: parseFloat(formData.feeDetails.totalFee) || 0,
+          amountPaid: parseFloat(formData.feeDetails.amountPaid) || 0
+        }
+      };
       
+      // If photo is selected, convert to base64 and include in JSON
       if (photo) {
-        console.log('Sending FormData (with photo)');
-        // Create FormData for file upload
-        const formDataToSend = new FormData();
-        
-        // Add all form fields
-        Object.keys(formData).forEach(key => {
-          if (key === 'feeDetails') {
-            formDataToSend.append('feeDetails.totalFee', formData.feeDetails.totalFee || 0);
-            formDataToSend.append('feeDetails.amountPaid', formData.feeDetails.amountPaid || 0);
-          } else {
-            const value = formData[key];
-            formDataToSend.append(key, value);
-          }
-        });
-        
-        // Add photo
-        formDataToSend.append('photo', photo);
-        
-        response = await studentsAPI.create(formDataToSend);
-      } else {
-        console.log('Sending JSON data (no photo)');
-        // Send as JSON when no photo
-        const jsonData = {
-          ...formData,
-          feeDetails: {
-            totalFee: parseFloat(formData.feeDetails.totalFee) || 0,
-            amountPaid: parseFloat(formData.feeDetails.amountPaid) || 0
-          }
+        console.log('Converting photo to base64...');
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          jsonData.photo = e.target.result; // This will be base64 string
+          console.log('Photo converted to base64, length:', jsonData.photo.length);
         };
+        reader.readAsDataURL(photo);
         
-        console.log('Sending JSON data:', jsonData);
-        response = await studentsAPI.create(jsonData);
+        // Wait for the reader to finish
+        await new Promise((resolve) => {
+          reader.onload = (e) => {
+            jsonData.photo = e.target.result;
+            console.log('Photo converted to base64, length:', jsonData.photo.length);
+            resolve();
+          };
+        });
       }
+      
+      console.log('Sending JSON data:', jsonData);
+      response = await studentsAPI.create(jsonData);
       console.log('Student created successfully:', response.data);
       navigate('/');
     } catch (err) {
