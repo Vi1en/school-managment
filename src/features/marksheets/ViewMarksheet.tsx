@@ -182,7 +182,12 @@ const ViewMarksheet: React.FC = () => {
                 <div><strong>STUDENT'S NAME:</strong> {marksheet.studentName}</div>
                 <div><strong>CLASS:</strong> {marksheet.currentClass}th</div>
                 <div><strong>FATHER'S NAME:</strong> {marksheet.fatherName}</div>
-                <div><strong>DOB:</strong> {formatDate(marksheet.dob, 'long')}</div>
+                <div><strong>DOB:</strong> {new Date(marksheet.dob).toLocaleDateString('en-IN', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}</div>
                 <div><strong>BLOOD GROUP:</strong> {marksheet.bloodGroup}</div>
               </div>
             </div>
@@ -324,7 +329,11 @@ const ViewMarksheet: React.FC = () => {
               <div><strong>RESULT:</strong> {marksheet.promotionStatus}</div>
               <div><strong>NO.of School days:</strong> 105</div>
               <div><strong>NO.of days Present:</strong> 95</div>
-              <div><strong>DATE:</strong> {new Date().toLocaleDateString('dd-MM-yyyy')}</div>
+              <div><strong>DATE:</strong> {new Date().toLocaleDateString('en-IN', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+              }).replace(/\//g, '-')}</div>
             </div>
             <div style={{ 
               border: '1px solid #000', 

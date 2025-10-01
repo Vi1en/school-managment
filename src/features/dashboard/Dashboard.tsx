@@ -25,25 +25,35 @@ const Dashboard: React.FC = () => {
     if (isAuthenticated) {
       console.log('Dashboard: User is authenticated, fetching students data');
       fetchStudents();
-      fetchStats();
     } else {
       console.log('Dashboard: User not authenticated, skipping data fetch');
     }
   }, [fetchStudents, isAuthenticated]);
 
+  // Calculate stats when students data changes
+  useEffect(() => {
+    if (students.length > 0) {
+      console.log('Dashboard: Students loaded, calculating stats');
+      fetchStats();
+    }
+  }, [students]);
+
   const fetchStats = async () => {
     try {
+      console.log('Dashboard: Calculating stats for', students.length, 'students');
+      console.log('Dashboard: Students data:', students);
+      
       // This would normally come from an API
       // For now, we'll calculate from students data
       const totalStudents = students.length;
-      const paidStudents = students.filter(s => s.feeDetails.paymentStatus === 'paid').length;
-      const partialPaidStudents = students.filter(s => s.feeDetails.paymentStatus === 'partial').length;
-      const unpaidStudents = students.filter(s => s.feeDetails.paymentStatus === 'unpaid').length;
+      const paidStudents = students.filter(s => s.feeDetails?.paymentStatus === 'paid').length;
+      const partialPaidStudents = students.filter(s => s.feeDetails?.paymentStatus === 'partial').length;
+      const unpaidStudents = students.filter(s => s.feeDetails?.paymentStatus === 'unpaid').length;
       
-      const totalPaid = students.reduce((sum, s) => sum + s.feeDetails.amountPaid, 0);
-      const totalFee = students.reduce((sum, s) => sum + s.feeDetails.totalFee, 0);
+      const totalPaid = students.reduce((sum, s) => sum + (s.feeDetails?.amountPaid || 0), 0);
+      const totalFee = students.reduce((sum, s) => sum + (s.feeDetails?.totalFee || 0), 0);
       
-      setStats({
+      const calculatedStats = {
         totalStudents,
         paidStudents,
         partialPaidStudents,
@@ -57,8 +67,12 @@ const Dashboard: React.FC = () => {
           totalPending: totalFee - totalPaid,
           totalFee,
         },
-      });
+      };
+      
+      console.log('Dashboard: Calculated stats:', calculatedStats);
+      setStats(calculatedStats);
     } catch (error) {
+      console.error('Dashboard: Error calculating stats:', error);
       setError('Failed to fetch dashboard statistics');
     }
   };
