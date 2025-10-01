@@ -126,55 +126,22 @@ exports.handler = async (event, context) => {
 
   let path = event.path;
   const method = event.httpMethod;
+  const headers = event.headers || {};
   
   // Parse body with error handling
   let body = {};
-  
-  // Check if it's FormData (multipart/form-data)
-  const contentType = headers['content-type'] || headers['Content-Type'] || '';
-  const isFormData = contentType.includes('multipart/form-data');
-  
-  if (isFormData) {
-    // For FormData, we'll parse it manually or use a library
-    // For now, let's handle it as a simple case
-    try {
-      // Parse FormData manually - this is a simplified approach
-      const formData = new URLSearchParams(event.body);
-      body = {};
-      for (const [key, value] of formData.entries()) {
-        if (key.includes('.')) {
-          // Handle nested objects like feeDetails.totalFee
-          const [parent, child] = key.split('.');
-          if (!body[parent]) body[parent] = {};
-          body[parent][child] = value;
-        } else {
-          body[key] = value;
-        }
-      }
-    } catch (error) {
-      console.error('FormData parse error:', error);
-      return createResponse(400, { 
-        message: 'Error parsing form data',
-        error: error.message 
-      });
+  try {
+    if (event.body) {
+      body = JSON.parse(event.body);
     }
-  } else {
-    // Parse as JSON
-    try {
-      if (event.body) {
-        body = JSON.parse(event.body);
-      }
-    } catch (error) {
-      console.error('JSON parse error:', error);
-      console.error('Body content:', event.body?.substring(0, 100));
-      return createResponse(400, { 
-        message: 'Invalid JSON in request body',
-        error: error.message 
-      });
-    }
+  } catch (error) {
+    console.error('JSON parse error:', error);
+    console.error('Body content:', event.body?.substring(0, 100));
+    return createResponse(400, { 
+      message: 'Invalid JSON in request body',
+      error: error.message 
+    });
   }
-  
-  const headers = event.headers || {};
 
   // Handle Netlify Functions path - remove the function name from path
   if (path.startsWith('/.netlify/functions/api')) {
