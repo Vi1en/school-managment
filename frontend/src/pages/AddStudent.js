@@ -121,11 +121,6 @@ const AddStudent = () => {
       if (photo) {
         console.log('Converting photo to base64...');
         const reader = new FileReader();
-        reader.onload = async (e) => {
-          jsonData.photo = e.target.result; // This will be base64 string
-          console.log('Photo converted to base64, length:', jsonData.photo.length);
-        };
-        reader.readAsDataURL(photo);
         
         // Wait for the reader to finish
         await new Promise((resolve) => {
@@ -134,6 +129,7 @@ const AddStudent = () => {
             console.log('Photo converted to base64, length:', jsonData.photo.length);
             resolve();
           };
+          reader.readAsDataURL(photo);
         });
       }
       
