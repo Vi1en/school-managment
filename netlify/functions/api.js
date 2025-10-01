@@ -140,6 +140,7 @@ exports.handler = async (event, context) => {
       if (contentType.includes('multipart/form-data') || event.body.startsWith('------WebKitFormBoundary')) {
         console.log('Received FormData, parsing manually...');
         console.log('FormData size:', event.body.length);
+        console.log('FormData preview:', event.body.substring(0, 500));
         
         // For FormData, we'll parse it manually with better error handling
         const lines = event.body.split('\r\n');
@@ -152,6 +153,7 @@ exports.handler = async (event, context) => {
             if (nameMatch && i + 2 < lines.length) {
               const fieldName = nameMatch[1];
               const fieldValue = lines[i + 2];
+              console.log(`Found field: ${fieldName} = ${fieldValue}`);
               if (fieldValue && !fieldValue.startsWith('------')) {
                 if (fieldName.includes('.')) {
                   // Handle nested objects like feeDetails.totalFee
@@ -173,7 +175,21 @@ exports.handler = async (event, context) => {
         }
         
         body = parsedData;
-        console.log('Parsed FormData successfully:', Object.keys(body));
+        console.log('Parsed FormData successfully:', body);
+        console.log('Required fields check - studentName:', body.studentName, 'currentClass:', body.currentClass);
+        
+        // If required fields are missing, try alternative parsing
+        if (!body.studentName || !body.currentClass) {
+          console.log('Required fields missing, trying alternative parsing...');
+          // Try to extract data using regex patterns
+          const studentNameMatch = event.body.match(/name="studentName"[^>]*>([^<]+)/);
+          const currentClassMatch = event.body.match(/name="currentClass"[^>]*>([^<]+)/);
+          
+          if (studentNameMatch) body.studentName = studentNameMatch[1];
+          if (currentClassMatch) body.currentClass = currentClassMatch[1];
+          
+          console.log('After alternative parsing - studentName:', body.studentName, 'currentClass:', body.currentClass);
+        }
       } else {
         // Try JSON parsing
         body = JSON.parse(event.body);
