@@ -507,6 +507,23 @@ exports.handler = async (event, context) => {
       return createResponse(200, marksheets);
     }
 
+    // Delete marksheet
+    if (path.startsWith('/api/marksheets/') && method === 'DELETE') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const rollNumber = path.split('/')[3];
+      const deletedMarksheet = await Marksheet.findOneAndDelete({ rollNumber });
+      
+      if (!deletedMarksheet) {
+        return createResponse(404, { message: 'Marksheet not found' });
+      }
+
+      return createResponse(200, { message: 'Marksheet deleted successfully' });
+    }
+
     // Update marksheet
     if (path.startsWith('/api/marksheets/') && method === 'PUT') {
       const user = authenticateToken(headers);

@@ -343,8 +343,12 @@ const GenerateMarksheet = () => {
             console.log('Marksheet already exists, deleting and recreating...');
             try {
               // Delete existing marksheet
-              await marksheetsAPI.delete(marksheetData.rollNumber);
+              console.log('Deleting existing marksheet for roll number:', marksheetData.rollNumber);
+              const deleteResponse = await marksheetsAPI.delete(marksheetData.rollNumber);
+              console.log('Delete response:', deleteResponse.data);
+              
               // Create new marksheet
+              console.log('Creating new marksheet after deletion...');
               const response = await marksheetsAPI.create(marksheetData);
               console.log('Marksheet recreated successfully:', response.data);
               
@@ -353,6 +357,7 @@ const GenerateMarksheet = () => {
               navigate('/marksheets');
             } catch (deleteErr) {
               console.error('Error deleting/recreating marksheet:', deleteErr);
+              console.error('Delete error details:', deleteErr.response?.data);
               setError('Error regenerating marksheet. Please try again.');
               return;
             }
