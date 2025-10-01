@@ -1,27 +1,6 @@
-const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const { body, validationResult } = require('express-validator');
-
-const app = express();
-
-// Middleware
-app.use(cors({
-  origin: '*',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
-
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Configure multer for memory storage
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 // Database connection
 let db = null;
@@ -31,7 +10,7 @@ const connectDB = async () => {
       const mongoUri = process.env.MONGODB_URI;
       if (!mongoUri) {
         console.error('MONGODB_URI not found');
-        return;
+        return false;
       }
       
       await mongoose.connect(mongoUri, {
@@ -40,9 +19,12 @@ const connectDB = async () => {
       });
       db = mongoose.connection;
       console.log('MongoDB connected successfully');
+      return true;
     }
+    return true;
   } catch (error) {
     console.error('MongoDB connection error:', error);
+    return false;
   }
 };
 
@@ -105,327 +87,258 @@ const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
 const Student = mongoose.models.Student || mongoose.model('Student', StudentSchema);
 const Marksheet = mongoose.models.Marksheet || mongoose.model('Marksheet', MarksheetSchema);
 
-// Auth middleware
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
+// Helper function to create response
+const createResponse = (statusCode, body, headers = {}) => {
+  return {
+    statusCode,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify(body)
+  };
+};
+
+// Auth helper
+const authenticateToken = (headers) => {
+  const authHeader = headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Access token required' });
+    return null;
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret', (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Invalid or expired token' });
-    }
-    req.user = user;
-    next();
-  });
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+  } catch (err) {
+    return null;
+  }
 };
 
-// Routes
-app.get('/api/health', (req, res) => {
-  res.json({
-    message: 'School Management API is running',
-    path: '/api/health',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Auth routes
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    await connectDB();
-    
-    const { email, password } = req.body;
-    
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
-
-    const admin = await Admin.findOne({ email });
-    if (!admin) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
-
-    const token = jwt.sign(
-      { id: admin._id, email: admin.email },
-      process.env.JWT_SECRET || 'fallback_secret',
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
-    );
-
-    res.json({
-      message: 'Login successful',
-      token,
-      admin: {
-        id: admin._id,
-        name: admin.name,
-        email: admin.email,
-        role: admin.role
-      }
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-app.get('/api/auth/me', authenticateToken, async (req, res) => {
-  try {
-    await connectDB();
-    
-    const admin = await Admin.findById(req.user.id).select('-password');
-    if (!admin) {
-      return res.status(404).json({ message: 'Admin not found' });
-    }
-
-    res.json({ admin });
-  } catch (error) {
-    console.error('Get me error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-// Students routes
-app.get('/api/students', authenticateToken, async (req, res) => {
-  try {
-    await connectDB();
-    
-    const students = await Student.find().sort({ createdAt: -1 });
-    res.json(students);
-  } catch (error) {
-    console.error('Get students error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-app.post('/api/students', upload.single('photo'), [
-  body('studentName').notEmpty().withMessage('Student name is required'),
-  body('currentClass').notEmpty().withMessage('Current class is required'),
-  body('feeDetails.totalFee').isNumeric().withMessage('Total fee must be a number'),
-  body('feeDetails.amountPaid').isNumeric().withMessage('Amount paid must be a number')
-], async (req, res) => {
-  try {
-    await connectDB();
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const studentData = { ...req.body };
-    
-    // Handle photo upload
-    if (req.file) {
-      const base64 = req.file.buffer.toString('base64');
-      studentData.photo = `data:image/jpeg;base64,${base64}`;
-    }
-
-    // Convert fee fields to numbers
-    if (studentData.feeDetails) {
-      studentData.feeDetails.totalFee = parseFloat(studentData.feeDetails.totalFee) || 0;
-      studentData.feeDetails.amountPaid = parseFloat(studentData.feeDetails.amountPaid) || 0;
-      studentData.feeDetails.remainingAmount = studentData.feeDetails.totalFee - studentData.feeDetails.amountPaid;
-    }
-
-    const student = new Student(studentData);
-    await student.save();
-
-    res.status(201).json({
-      message: 'Student created successfully',
-      student
-    });
-  } catch (error) {
-    console.error('Create student error:', error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'Student with this admission number already exists' });
-    }
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-app.get('/api/students/stats/dashboard', authenticateToken, async (req, res) => {
-  try {
-    await connectDB();
-    
-    const totalStudents = await Student.countDocuments();
-    const paidStudents = await Student.countDocuments({ 'feeDetails.remainingAmount': 0 });
-    const partialPaidStudents = await Student.countDocuments({ 
-      'feeDetails.remainingAmount': { $gt: 0, $lt: { $expr: '$feeDetails.totalFee' } }
-    });
-    const unpaidStudents = await Student.countDocuments({ 
-      'feeDetails.remainingAmount': { $eq: { $expr: '$feeDetails.totalFee' } }
-    });
-
-    res.json({
-      totalStudents,
-      paidStudents,
-      partialPaidStudents,
-      unpaidStudents,
-      failedStudents: 0,
-      passedStudents: 0,
-      graduatedStudents: 0,
-      averageAttendance: 0,
-      feeStats: {
-        totalCollected: 0,
-        totalPending: 0
-      }
-    });
-  } catch (error) {
-    console.error('Get stats error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-// Marksheets routes
-app.get('/api/marksheets', authenticateToken, async (req, res) => {
-  try {
-    await connectDB();
-    
-    const marksheets = await Marksheet.find().sort({ createdAt: -1 });
-    res.json(marksheets);
-  } catch (error) {
-    console.error('Get marksheets error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-app.post('/api/marksheets', [
-  body('rollNumber').notEmpty().withMessage('Roll number is required'),
-  body('studentName').notEmpty().withMessage('Student name is required'),
-  body('examType').notEmpty().withMessage('Exam type is required'),
-  body('academicYear').notEmpty().withMessage('Academic year is required')
-], async (req, res) => {
-  try {
-    await connectDB();
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const marksheetData = req.body;
-
-    // Check for duplicate
-    const existingMarksheet = await Marksheet.findOne({
-      rollNumber: marksheetData.rollNumber,
-      examType: marksheetData.examType,
-      academicYear: marksheetData.academicYear
-    });
-
-    if (existingMarksheet) {
-      return res.status(400).json({ message: 'Marksheet with this roll number, exam type, and academic year already exists' });
-    }
-
-    // Calculate totals and percentage
-    let totalMarks = 0;
-    let maxTotalMarks = 0;
-    
-    marksheetData.subjects.forEach(subject => {
-      totalMarks += subject.marks || 0;
-      maxTotalMarks += subject.maxMarks || 0;
-    });
-
-    marksheetData.totalMarks = totalMarks;
-    marksheetData.maxTotalMarks = maxTotalMarks;
-    marksheetData.percentage = maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0;
-
-    // Set promotion status
-    marksheetData.promotionStatus = marksheetData.percentage >= 40 ? 'Promoted' : 'Not Promoted';
-
-    const marksheet = new Marksheet(marksheetData);
-    await marksheet.save();
-
-    res.status(201).json({
-      message: 'Marksheet created successfully',
-      marksheet
-    });
-  } catch (error) {
-    console.error('Create marksheet error:', error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'Marksheet with this roll number, exam type, and academic year already exists' });
-    }
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-// Default route
-app.use('*', (req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-    path: req.originalUrl,
-    method: req.method
-  });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Global error handler:', err);
-  res.status(500).json({
-    message: 'Something went wrong!',
-    error: err.message,
-    details: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
-});
-
-// Netlify function handler
 exports.handler = async (event, context) => {
-  // Connect to database
-  await connectDB();
-  
-  // Convert Netlify event to Express request
-  const appHandler = app;
-  
-  return new Promise((resolve) => {
-    const { httpMethod, path, headers, body, queryStringParameters } = event;
-    
-    const req = {
-      method: httpMethod,
-      url: path,
-      headers: headers || {},
-      body: body ? JSON.parse(body) : {},
-      query: queryStringParameters || {}
-    };
-    
-    const res = {
-      status: (code) => ({
-        json: (data) => resolve({
-          statusCode: code,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-      }),
-      json: (data) => resolve({
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-    };
-    
-    appHandler(req, res, () => {
-      resolve({
-        statusCode: 404,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ message: 'Not found' })
+  // Handle preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return createResponse(200, {});
+  }
+
+  const path = event.path;
+  const method = event.httpMethod;
+  const body = event.body ? JSON.parse(event.body) : {};
+  const headers = event.headers || {};
+
+  try {
+    // Connect to database
+    const dbConnected = await connectDB();
+    if (!dbConnected) {
+      return createResponse(500, { message: 'Database connection failed' });
+    }
+
+    // Health check
+    if (path === '/api/health') {
+      return createResponse(200, {
+        message: 'School Management API is running',
+        path: '/api/health',
+        timestamp: new Date().toISOString()
       });
+    }
+
+    // Auth routes
+    if (path === '/api/auth/login' && method === 'POST') {
+      const { email, password } = body;
+      
+      if (!email || !password) {
+        return createResponse(400, { message: 'Email and password are required' });
+      }
+
+      const admin = await Admin.findOne({ email });
+      if (!admin) {
+        return createResponse(400, { message: 'Invalid credentials' });
+      }
+
+      const isMatch = await bcrypt.compare(password, admin.password);
+      if (!isMatch) {
+        return createResponse(400, { message: 'Invalid credentials' });
+      }
+
+      const token = jwt.sign(
+        { id: admin._id, email: admin.email },
+        process.env.JWT_SECRET || 'fallback_secret',
+        { expiresIn: process.env.JWT_EXPIRE || '7d' }
+      );
+
+      return createResponse(200, {
+        message: 'Login successful',
+        token,
+        admin: {
+          id: admin._id,
+          name: admin.name,
+          email: admin.email,
+          role: admin.role
+        }
+      });
+    }
+
+    if (path === '/api/auth/me' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const admin = await Admin.findById(user.id).select('-password');
+      if (!admin) {
+        return createResponse(404, { message: 'Admin not found' });
+      }
+
+      return createResponse(200, { admin });
+    }
+
+    // Students routes
+    if (path === '/api/students' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const students = await Student.find().sort({ createdAt: -1 });
+      return createResponse(200, students);
+    }
+
+    if (path === '/api/students' && method === 'POST') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const { studentName, currentClass, feeDetails } = body;
+      
+      if (!studentName || !currentClass || !feeDetails?.totalFee || !feeDetails?.amountPaid) {
+        return createResponse(400, { message: 'Required fields missing' });
+      }
+
+      const studentData = { ...body };
+      
+      // Convert fee fields to numbers
+      if (studentData.feeDetails) {
+        studentData.feeDetails.totalFee = parseFloat(studentData.feeDetails.totalFee) || 0;
+        studentData.feeDetails.amountPaid = parseFloat(studentData.feeDetails.amountPaid) || 0;
+        studentData.feeDetails.remainingAmount = studentData.feeDetails.totalFee - studentData.feeDetails.amountPaid;
+      }
+
+      const student = new Student(studentData);
+      await student.save();
+
+      return createResponse(201, {
+        message: 'Student created successfully',
+        student
+      });
+    }
+
+    if (path === '/api/students/stats/dashboard' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const totalStudents = await Student.countDocuments();
+      const paidStudents = await Student.countDocuments({ 'feeDetails.remainingAmount': 0 });
+      const partialPaidStudents = await Student.countDocuments({ 
+        'feeDetails.remainingAmount': { $gt: 0, $lt: { $expr: '$feeDetails.totalFee' } }
+      });
+      const unpaidStudents = await Student.countDocuments({ 
+        'feeDetails.remainingAmount': { $eq: { $expr: '$feeDetails.totalFee' } }
+      });
+
+      return createResponse(200, {
+        totalStudents,
+        paidStudents,
+        partialPaidStudents,
+        unpaidStudents,
+        failedStudents: 0,
+        passedStudents: 0,
+        graduatedStudents: 0,
+        averageAttendance: 0,
+        feeStats: {
+          totalCollected: 0,
+          totalPending: 0
+        }
+      });
+    }
+
+    // Marksheets routes
+    if (path === '/api/marksheets' && method === 'GET') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const marksheets = await Marksheet.find().sort({ createdAt: -1 });
+      return createResponse(200, marksheets);
+    }
+
+    if (path === '/api/marksheets' && method === 'POST') {
+      const user = authenticateToken(headers);
+      if (!user) {
+        return createResponse(401, { message: 'Access token required' });
+      }
+
+      const { rollNumber, studentName, examType, academicYear, subjects } = body;
+      
+      if (!rollNumber || !studentName || !examType || !academicYear || !subjects) {
+        return createResponse(400, { message: 'Required fields missing' });
+      }
+
+      // Check for duplicate
+      const existingMarksheet = await Marksheet.findOne({
+        rollNumber,
+        examType,
+        academicYear
+      });
+
+      if (existingMarksheet) {
+        return createResponse(400, { message: 'Marksheet with this roll number, exam type, and academic year already exists' });
+      }
+
+      // Calculate totals and percentage
+      let totalMarks = 0;
+      let maxTotalMarks = 0;
+      
+      subjects.forEach(subject => {
+        totalMarks += subject.marks || 0;
+        maxTotalMarks += subject.maxMarks || 0;
+      });
+
+      const marksheetData = {
+        ...body,
+        totalMarks,
+        maxTotalMarks,
+        percentage: maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0,
+        promotionStatus: (maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0) >= 40 ? 'Promoted' : 'Not Promoted'
+      };
+
+      const marksheet = new Marksheet(marksheetData);
+      await marksheet.save();
+
+      return createResponse(201, {
+        message: 'Marksheet created successfully',
+        marksheet
+      });
+    }
+
+    // Default response
+    return createResponse(404, {
+      message: 'Route not found',
+      path: path,
+      method: method
     });
-  });
+
+  } catch (error) {
+    console.error('API Error:', error);
+    return createResponse(500, {
+      message: 'Server error',
+      error: error.message
+    });
+  }
 };
