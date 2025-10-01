@@ -120,7 +120,7 @@ const Layout = () => {
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && isMobile && (
         <div 
-          className="fixed inset-0 z-40 mobile-sidebar-overlay"
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 mobile-overlay"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -194,7 +194,7 @@ const Layout = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className={`flex flex-1 flex-col overflow-hidden ${isMobile ? 'w-full' : ''}`}>
         {/* Top bar */}
         <div className="top-bar flex h-16 flex-shrink-0">
           {/* Mobile hamburger menu */}
