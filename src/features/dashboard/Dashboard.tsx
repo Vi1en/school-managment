@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStudentsStore } from '@/store/students';
 import { useUIStore } from '@/store/ui';
+import { useAuthStore } from '@/store/auth';
 import { DashboardStats, Student } from '@/types';
 import { formatCurrency, formatPercentage } from '@/utils/format';
 import Button from '@/components/ui/Button';
@@ -12,6 +13,7 @@ import { TableColumn } from '@/types';
 const Dashboard: React.FC = () => {
   const { students, fetchStudents, searchStudents, isLoading } = useStudentsStore();
   const { setError, clearError } = useUIStore();
+  const { isAuthenticated } = useAuthStore();
   
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,9 +21,15 @@ const Dashboard: React.FC = () => {
   const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
-    fetchStudents();
-    fetchStats();
-  }, [fetchStudents]);
+    // Only fetch data if user is authenticated
+    if (isAuthenticated) {
+      console.log('Dashboard: User is authenticated, fetching students data');
+      fetchStudents();
+      fetchStats();
+    } else {
+      console.log('Dashboard: User not authenticated, skipping data fetch');
+    }
+  }, [fetchStudents, isAuthenticated]);
 
   const fetchStats = async () => {
     try {
@@ -137,6 +145,17 @@ const Dashboard: React.FC = () => {
       ),
     },
   ];
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
