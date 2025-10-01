@@ -63,16 +63,21 @@ const GenerateMarksheet = () => {
   };
 
   const handleMarkChange = (studentId, markType, value) => {
-    setMarksData(prev => ({
-      ...prev,
-      [studentId]: {
-        ...prev[studentId],
-        [subjects[currentSubject]?.name]: {
-          ...prev[studentId]?.[subjects[currentSubject]?.name],
-          [markType]: parseInt(value) || 0
+    console.log('handleMarkChange called:', { studentId, markType, value, currentSubject: subjects[currentSubject]?.name });
+    setMarksData(prev => {
+      const newData = {
+        ...prev,
+        [studentId]: {
+          ...prev[studentId],
+          [subjects[currentSubject]?.name]: {
+            ...prev[studentId]?.[subjects[currentSubject]?.name],
+            [markType]: parseInt(value) || 0
+          }
         }
-      }
-    }));
+      };
+      console.log('Updated marksData:', newData);
+      return newData;
+    });
   };
 
   const handleStudentSettingChange = (studentId, settingType, value) => {
@@ -86,13 +91,18 @@ const GenerateMarksheet = () => {
   };
 
   const handleIndividualMarkChange = (markType, value) => {
-    setIndividualMarksData(prev => ({
-      ...prev,
-      [subjects[currentSubject]?.name]: {
-        ...prev[subjects[currentSubject]?.name],
-        [markType]: parseInt(value) || 0
-      }
-    }));
+    console.log('handleIndividualMarkChange called:', { markType, value, currentSubject: subjects[currentSubject]?.name });
+    setIndividualMarksData(prev => {
+      const newData = {
+        ...prev,
+        [subjects[currentSubject]?.name]: {
+          ...prev[subjects[currentSubject]?.name],
+          [markType]: parseInt(value) || 0
+        }
+      };
+      console.log('Updated individualMarksData:', newData);
+      return newData;
+    });
   };
 
   const handleIndividualStudentSettingChange = (settingType, value) => {
@@ -176,8 +186,10 @@ const GenerateMarksheet = () => {
       setError('');
 
       try {
+        console.log('Full marksData before processing:', marksData);
         const marksheetsToCreate = students.map(student => {
           const studentMarks = marksData[student._id] || {};
+          console.log(`Student ${student.studentName} (${student._id}) marks:`, studentMarks);
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
             // Calculate total marks based on exam type
@@ -273,6 +285,9 @@ const GenerateMarksheet = () => {
           setError('Selected student not found');
           return;
         }
+
+        console.log('Individual marksData before processing:', individualMarksData);
+        console.log(`Individual student ${student.studentName} marks:`, individualMarksData);
 
           const subjectMarks = subjects.map(subject => {
             const subjectData = individualMarksData[subject.name] || {};
