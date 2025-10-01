@@ -38,8 +38,15 @@ const GenerateMarksheet: React.FC = () => {
 
   // Fetch students when component mounts
   useEffect(() => {
+    console.log('GenerateMarksheet: Fetching students...');
     fetchStudents();
   }, [fetchStudents]);
+
+  // Debug students data
+  useEffect(() => {
+    console.log('GenerateMarksheet: Students updated:', students.length, 'students');
+    console.log('GenerateMarksheet: Students data:', students);
+  }, [students]);
 
   // Initialize individual marks data when student is selected
   useEffect(() => {
@@ -61,10 +68,12 @@ const GenerateMarksheet: React.FC = () => {
 
   const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const className = e.target.value;
+    console.log('GenerateMarksheet: Class changed to:', className);
     setSelectedClass(className);
     if (className) {
       // Filter students by class
       const classStudents = students.filter(student => student.currentClass === className);
+      console.log('GenerateMarksheet: Found', classStudents.length, 'students in class', className);
       // Update marks data for bulk generation
       const initialMarksData: Record<string, SubjectMarksData> = {};
       classStudents.forEach(student => {
@@ -613,6 +622,10 @@ const GenerateMarksheet: React.FC = () => {
                       height: '60px', 
                       width: '60px', 
                       marginRight: '15px'
+                    }}
+                    onError={(e) => {
+                      console.log('Logo image failed to load, trying alternative path');
+                      e.currentTarget.src = './image.png';
                     }}
                   />
                   <div>

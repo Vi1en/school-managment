@@ -140,6 +140,10 @@ const ViewMarksheet: React.FC = () => {
                 width: '60px', 
                 marginRight: '15px'
               }}
+              onError={(e) => {
+                console.log('Logo image failed to load, trying alternative path');
+                e.currentTarget.src = './image.png';
+              }}
             />
             <div>
               <h1 style={{ 
