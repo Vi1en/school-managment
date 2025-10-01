@@ -132,8 +132,12 @@ exports.handler = async (event, context) => {
   let body = {};
   try {
     if (event.body) {
-      // Check if it's FormData (multipart) or JSON
-      if (event.body.startsWith('------WebKitFormBoundary') || event.body.includes('multipart/form-data')) {
+      // Check Content-Type header first to determine parsing method
+      const contentType = headers['content-type'] || headers['Content-Type'] || '';
+      console.log('Content-Type:', contentType);
+      console.log('Body preview:', event.body.substring(0, 100));
+      
+      if (contentType.includes('multipart/form-data') || event.body.startsWith('------WebKitFormBoundary')) {
         console.log('Received FormData, parsing manually...');
         console.log('FormData size:', event.body.length);
         
@@ -171,12 +175,14 @@ exports.handler = async (event, context) => {
         body = parsedData;
         console.log('Parsed FormData successfully:', Object.keys(body));
       } else {
+        // Try JSON parsing
         body = JSON.parse(event.body);
         console.log('Parsed JSON successfully');
       }
     }
   } catch (error) {
     console.error('Body parse error:', error);
+    console.error('Content-Type:', headers['content-type'] || headers['Content-Type']);
     console.error('Body content length:', event.body?.length);
     console.error('Body content preview:', event.body?.substring(0, 200));
     return createResponse(400, { 
