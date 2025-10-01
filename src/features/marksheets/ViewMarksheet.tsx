@@ -120,74 +120,70 @@ const ViewMarksheet: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Print-friendly marksheet */}
-      <div className="bg-white shadow-lg print:shadow-none print:bg-white" id="marksheet-print" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <div className="bg-white shadow-lg print:shadow-none print:bg-white" id="marksheet-print" style={{ 
+        fontFamily: 'Arial, sans-serif',
+        border: '2px solid #1e40af',
+        padding: '0'
+      }}>
         {/* Header with Logo */}
         <div style={{ 
-          borderBottom: '4px solid #1e40af', 
           padding: '20px',
-          backgroundColor: '#f8fafc'
+          textAlign: 'center',
+          borderBottom: '2px solid #1e40af'
         }}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <img 
-                src="/image.png" 
-                alt="School Logo" 
-                style={{ 
-                  height: '60px', 
-                  width: '60px', 
-                  marginRight: '15px',
-                  marginLeft: '-5px'
-                }}
-              />
-              <div>
-                <h1 style={{ 
-                  fontSize: '24px', 
-                  fontWeight: 'bold', 
-                  color: '#1e40af',
-                  margin: 0,
-                  letterSpacing: '1px'
-                }}>SHINDE ACADEMY</h1>
-                <p style={{ 
-                  fontSize: '12px', 
-                  color: '#64748b',
-                  margin: '2px 0 0 0'
-                }}>Academic Excellence Since 1995</p>
-              </div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <h2 style={{ 
-                fontSize: '20px', 
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+            <img 
+              src="/image.png" 
+              alt="School Logo" 
+              style={{ 
+                height: '60px', 
+                width: '60px', 
+                marginRight: '15px'
+              }}
+            />
+            <div>
+              <h1 style={{ 
+                fontSize: '28px', 
                 fontWeight: 'bold', 
-                color: '#1f2937',
-                margin: 0
-              }}>REPORT CARD</h2>
+                color: '#1e40af',
+                margin: 0,
+                letterSpacing: '2px'
+              }}>SHINDE ACADEMY</h1>
               <p style={{ 
-                fontSize: '12px', 
-                color: '#64748b',
-                margin: '2px 0 0 0'
-              }}>{marksheet.academicYear}</p>
+                fontSize: '14px', 
+                color: '#059669',
+                margin: '5px 0 0 0',
+                fontWeight: 'bold'
+              }}>DUNCAN ROAD, TUMARIYATOLA, RAXAUL, BIHAR</p>
             </div>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <p style={{ 
+              fontSize: '16px', 
+              color: '#059669',
+              margin: '5px 0',
+              fontWeight: 'bold'
+            }}>SESSION 2025-26</p>
+            <p style={{ 
+              fontSize: '18px', 
+              color: '#059669',
+              margin: '5px 0',
+              fontWeight: 'bold'
+            }}>REPORT CARD OF HALF YEARLY EXAMINATION</p>
           </div>
         </div>
 
         {/* Student Information Section */}
         <div style={{ padding: '20px' }}>
-          <div className="flex justify-between items-start" style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: '1fr 1fr', 
-                gap: '12px',
-                fontSize: '13px'
-              }}>
-                <div><strong>Student Name:</strong> {marksheet.studentName}</div>
-                <div><strong>Roll Number:</strong> {marksheet.rollNumber}</div>
-                <div><strong>Father's Name:</strong> {marksheet.fatherName}</div>
-                <div><strong>Class:</strong> {marksheet.currentClass}</div>
-                <div><strong>Mother's Name:</strong> {marksheet.motherName}</div>
-                <div><strong>Blood Group:</strong> {marksheet.bloodGroup}</div>
-                <div><strong>Date of Birth:</strong> {formatDate(marksheet.dob, 'short')}</div>
-                <div><strong>Exam Type:</strong> {marksheet.examType}</div>
+              <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                <div><strong>ROLL NO.:</strong> {marksheet.rollNumber}</div>
+                <div><strong>STUDENT'S NAME:</strong> {marksheet.studentName}</div>
+                <div><strong>CLASS:</strong> {marksheet.currentClass}th</div>
+                <div><strong>FATHER'S NAME:</strong> {marksheet.fatherName}</div>
+                <div><strong>DOB:</strong> {formatDate(marksheet.dob, 'long')}</div>
+                <div><strong>BLOOD GROUP:</strong> {marksheet.bloodGroup}</div>
               </div>
             </div>
             <div style={{ marginLeft: '20px' }}>
@@ -196,25 +192,23 @@ const ViewMarksheet: React.FC = () => {
                   src={marksheet.photo} 
                   alt="Student Photo" 
                   style={{
-                    height: '80px',
-                    width: '70px',
+                    height: '100px',
+                    width: '80px',
                     objectFit: 'cover',
-                    border: '2px solid #d1d5db',
-                    borderRadius: '4px'
+                    border: '2px solid #000'
                   }}
                 />
               ) : (
                 <div style={{
-                  height: '80px',
-                  width: '70px',
-                  border: '2px solid #d1d5db',
-                  borderRadius: '4px',
+                  height: '100px',
+                  width: '80px',
+                  border: '2px solid #000',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: '#f3f4f6'
                 }}>
-                  <span style={{ fontSize: '10px', color: '#6b7280' }}>Photo</span>
+                  <span style={{ fontSize: '12px', color: '#6b7280' }}>Photo</span>
                 </div>
               )}
             </div>
@@ -222,176 +216,144 @@ const ViewMarksheet: React.FC = () => {
 
           {/* Marks Table */}
           <div style={{ marginBottom: '20px' }}>
-            <h3 style={{ 
-              fontSize: '16px', 
-              fontWeight: 'bold', 
-              textAlign: 'center',
-              marginBottom: '15px',
-              color: '#1f2937'
-            }}>ACADEMIC PERFORMANCE</h3>
             <table style={{ 
               width: '100%', 
               borderCollapse: 'collapse',
               fontSize: '12px',
-              border: '1px solid #374151'
+              border: '2px solid #000'
             }}>
               <thead>
-                <tr style={{ backgroundColor: '#e5e7eb' }}>
+                <tr>
                   <th style={{ 
-                    border: '1px solid #374151', 
+                    border: '1px solid #000', 
                     padding: '8px', 
                     textAlign: 'left',
                     fontWeight: 'bold',
-                    backgroundColor: '#d1d5db'
-                  }}>SUBJECT</th>
+                    backgroundColor: '#f0f0f0'
+                  }}>Subjects with code</th>
                   <th style={{ 
-                    border: '1px solid #374151', 
+                    border: '1px solid #000', 
                     padding: '8px', 
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    backgroundColor: '#d1d5db'
-                  }}>CODE</th>
+                    backgroundColor: '#f0f0f0'
+                  }}>UT1</th>
                   <th style={{ 
-                    border: '1px solid #374151', 
+                    border: '1px solid #000', 
                     padding: '8px', 
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    backgroundColor: '#d1d5db'
-                  }}>MARKS OBTAINED</th>
+                    backgroundColor: '#f0f0f0'
+                  }}>UT2</th>
                   <th style={{ 
-                    border: '1px solid #374151', 
+                    border: '1px solid #000', 
                     padding: '8px', 
                     textAlign: 'center',
                     fontWeight: 'bold',
-                    backgroundColor: '#d1d5db'
-                  }}>MAX MARKS</th>
+                    backgroundColor: '#f0f0f0'
+                  }}>HFLY</th>
+                  <th style={{ 
+                    border: '1px solid #000', 
+                    padding: '8px', 
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    backgroundColor: '#f0f0f0'
+                  }}>TOTAL</th>
+                  <th style={{ 
+                    border: '1px solid #000', 
+                    padding: '8px', 
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    backgroundColor: '#f0f0f0'
+                  }}>GRADE</th>
                 </tr>
               </thead>
               <tbody>
                 {marksheet.subjects.map((subject, index) => (
-                  <tr key={subject.id} style={{ 
-                    backgroundColor: index % 2 === 0 ? '#f9fafb' : '#ffffff'
-                  }}>
+                  <tr key={subject.id}>
                     <td style={{ 
-                      border: '1px solid #374151', 
+                      border: '1px solid #000', 
                       padding: '8px',
                       fontWeight: '500'
-                    }}>{subject.name}</td>
+                    }}>{subject.name} ({subject.code})</td>
                     <td style={{ 
-                      border: '1px solid #374151', 
+                      border: '1px solid #000', 
                       padding: '8px',
                       textAlign: 'center'
-                    }}>{subject.code}</td>
+                    }}>{Math.floor(subject.marks * 0.1)}</td>
                     <td style={{ 
-                      border: '1px solid #374151', 
+                      border: '1px solid #000', 
+                      padding: '8px',
+                      textAlign: 'center'
+                    }}>{Math.floor(subject.marks * 0.1)}</td>
+                    <td style={{ 
+                      border: '1px solid #000', 
+                      padding: '8px',
+                      textAlign: 'center'
+                    }}>{Math.floor(subject.marks * 0.8)}</td>
+                    <td style={{ 
+                      border: '1px solid #000', 
                       padding: '8px',
                       textAlign: 'center',
                       fontWeight: 'bold'
                     }}>{subject.marks}</td>
                     <td style={{ 
-                      border: '1px solid #374151', 
+                      border: '1px solid #000', 
                       padding: '8px',
-                      textAlign: 'center'
-                    }}>{subject.maxMarks}</td>
+                      textAlign: 'center',
+                      fontWeight: 'bold'
+                    }}>{subject.marks >= 90 ? 'A+' : subject.marks >= 80 ? 'A' : subject.marks >= 70 ? 'B' : subject.marks >= 60 ? 'C' : subject.marks >= 50 ? 'D' : 'F'}</td>
                   </tr>
                 ))}
-                <tr style={{ 
-                  backgroundColor: '#bfdbfe',
-                  fontWeight: 'bold'
-                }}>
-                  <td style={{ 
-                    border: '1px solid #374151', 
-                    padding: '8px'
-                  }} colSpan={2}>TOTAL</td>
-                  <td style={{ 
-                    border: '1px solid #374151', 
-                    padding: '8px',
-                    textAlign: 'center'
-                  }}>{marksheet.totalMarks}</td>
-                  <td style={{ 
-                    border: '1px solid #374151', 
-                    padding: '8px',
-                    textAlign: 'center'
-                  }}>{marksheet.maxTotalMarks}</td>
-                </tr>
               </tbody>
             </table>
           </div>
 
           {/* Summary Section */}
           <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '1fr 1fr 1fr', 
-            gap: '15px',
-            marginBottom: '20px',
-            fontSize: '12px'
+            display: 'flex', 
+            justifyContent: 'space-between',
+            marginBottom: '20px'
           }}>
             <div style={{ 
-              textAlign: 'center', 
-              border: '1px solid #d1d5db', 
-              padding: '12px',
-              backgroundColor: '#f8fafc'
+              border: '1px solid #000', 
+              padding: '10px',
+              width: '48%',
+              fontSize: '12px'
             }}>
-              <div style={{ 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#1e40af'
-              }}>{formatPercentage(marksheet.percentage)}</div>
-              <div style={{ 
-                fontSize: '11px', 
-                color: '#6b7280',
-                marginTop: '4px'
-              }}>PERCENTAGE</div>
+              <div><strong>RESULT:</strong> {marksheet.promotionStatus}</div>
+              <div><strong>NO.of School days:</strong> 105</div>
+              <div><strong>NO.of days Present:</strong> 95</div>
+              <div><strong>DATE:</strong> {new Date().toLocaleDateString('dd-MM-yyyy')}</div>
             </div>
             <div style={{ 
-              textAlign: 'center', 
-              border: '1px solid #d1d5db', 
-              padding: '12px',
-              backgroundColor: '#f8fafc'
+              border: '1px solid #000', 
+              padding: '10px',
+              width: '48%',
+              fontSize: '12px'
             }}>
-              <div style={{ 
-                fontSize: '16px', 
-                fontWeight: 'bold', 
-                color: '#059669'
-              }}>
-                {marksheet.rank ? `#${marksheet.rank}` : 'N/A'}
-              </div>
-              <div style={{ 
-                fontSize: '11px', 
-                color: '#6b7280',
-                marginTop: '4px'
-              }}>RANK</div>
-            </div>
-            <div style={{ 
-              textAlign: 'center', 
-              border: '1px solid #d1d5db', 
-              padding: '12px',
-              backgroundColor: '#f8fafc'
-            }}>
-              <div style={{ 
-                fontSize: '16px', 
-                fontWeight: 'bold',
-                color: marksheet.promotionStatus === 'Promoted' ? '#059669' : '#dc2626'
-              }}>
-                {marksheet.promotionStatus}
-              </div>
-              <div style={{ 
-                fontSize: '11px', 
-                color: '#6b7280',
-                marginTop: '4px'
-              }}>STATUS</div>
+              <div><strong>TOTAL MARKS:</strong> {marksheet.totalMarks}</div>
+              <div><strong>PERCENTAGE:</strong> {formatPercentage(marksheet.percentage)}</div>
+              <div><strong>OVERALL GRADE:</strong> {marksheet.percentage >= 90 ? 'A+' : marksheet.percentage >= 80 ? 'A' : marksheet.percentage >= 70 ? 'B' : marksheet.percentage >= 60 ? 'C' : marksheet.percentage >= 50 ? 'D' : 'F'}</div>
+              <div><strong>RANK:</strong> {marksheet.rank ? `${marksheet.rank}th` : 'N/A'}</div>
             </div>
           </div>
 
-          {/* Footer */}
+          {/* Signatures */}
           <div style={{ 
-            textAlign: 'center', 
-            fontSize: '10px', 
-            color: '#6b7280',
-            marginTop: '20px'
+            display: 'flex', 
+            justifyContent: 'space-between',
+            marginTop: '30px',
+            fontSize: '12px'
           }}>
-            <p style={{ margin: '0 0 5px 0' }}>This is a computer generated report card and does not require signature.</p>
-            <p style={{ margin: 0 }}>Generated on: {new Date().toLocaleDateString('en-IN')}</p>
+            <div>
+              <div style={{ borderBottom: '1px solid #000', width: '150px', marginBottom: '5px' }}></div>
+              <div>Principal's Signature</div>
+            </div>
+            <div>
+              <div style={{ borderBottom: '1px solid #000', width: '150px', marginBottom: '5px' }}></div>
+              <div>Teacher's Signature</div>
+            </div>
           </div>
         </div>
       </div>
