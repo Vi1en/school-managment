@@ -281,27 +281,29 @@ const GenerateMarksheet: React.FC = () => {
         
         {/* Generation Mode */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 mb-3" style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
             Generation Mode
           </label>
           <div className="flex space-x-4">
-            <label className="flex items-center">
+            <label className="flex items-center" style={{ color: '#000', fontSize: '14px' }}>
               <input
                 type="radio"
                 value="bulk"
                 checked={generationMode === 'bulk'}
                 onChange={(e) => setGenerationMode(e.target.value as 'bulk' | 'individual')}
                 className="mr-2"
+                style={{ marginRight: '8px' }}
               />
               Bulk Generation (All Students in Class)
             </label>
-            <label className="flex items-center">
+            <label className="flex items-center" style={{ color: '#000', fontSize: '14px' }}>
               <input
                 type="radio"
                 value="individual"
                 checked={generationMode === 'individual'}
                 onChange={(e) => setGenerationMode(e.target.value as 'bulk' | 'individual')}
                 className="mr-2"
+                style={{ marginRight: '8px' }}
               />
               Individual Generation (Single Student)
             </label>
@@ -311,7 +313,7 @@ const GenerateMarksheet: React.FC = () => {
         {/* Class Selection */}
         {generationMode === 'bulk' && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2" style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
               Select Class *
             </label>
             <select
@@ -319,10 +321,19 @@ const GenerateMarksheet: React.FC = () => {
               onChange={handleClassChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ 
+                width: '100%', 
+                padding: '8px 12px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: '6px',
+                fontSize: '14px',
+                color: '#000',
+                backgroundColor: '#fff'
+              }}
             >
-              <option value="">Select Class</option>
+              <option value="" style={{ color: '#6b7280' }}>Select Class</option>
               {Array.from(new Set(students.map(s => s.currentClass))).map(className => (
-                <option key={className} value={className}>
+                <option key={className} value={className} style={{ color: '#000' }}>
                   Class {className}
                 </option>
               ))}
@@ -333,7 +344,7 @@ const GenerateMarksheet: React.FC = () => {
         {/* Individual Student Selection */}
         {generationMode === 'individual' && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2" style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
               Select Student *
             </label>
             <select
@@ -341,10 +352,19 @@ const GenerateMarksheet: React.FC = () => {
               onChange={handleStudentChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              style={{ 
+                width: '100%', 
+                padding: '8px 12px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: '6px',
+                fontSize: '14px',
+                color: '#000',
+                backgroundColor: '#fff'
+              }}
             >
-              <option value="">Select Student</option>
+              <option value="" style={{ color: '#6b7280' }}>Select Student</option>
               {students.map((student) => (
-                <option key={student.id} value={student.id}>
+                <option key={student.id} value={student.id} style={{ color: '#000' }}>
                   {student.studentName} ({student.admissionNumber})
                 </option>
               ))}
@@ -354,7 +374,7 @@ const GenerateMarksheet: React.FC = () => {
 
         {/* Exam Type */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2" style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
             Exam Type *
           </label>
           <select
@@ -362,10 +382,19 @@ const GenerateMarksheet: React.FC = () => {
             onChange={(e) => setExamType(e.target.value as 'Half-Yearly' | 'Annual' | 'Quarterly')}
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ 
+              width: '100%', 
+              padding: '8px 12px', 
+              border: '1px solid #d1d5db', 
+              borderRadius: '6px',
+              fontSize: '14px',
+              color: '#000',
+              backgroundColor: '#fff'
+            }}
           >
-            <option value="Half-Yearly">Half-Yearly</option>
-            <option value="Annual">Annual</option>
-            <option value="Quarterly">Quarterly</option>
+            <option value="Half-Yearly" style={{ color: '#000' }}>Half-Yearly</option>
+            <option value="Annual" style={{ color: '#000' }}>Annual</option>
+            <option value="Quarterly" style={{ color: '#000' }}>Quarterly</option>
           </select>
         </div>
       </div>
@@ -373,7 +402,7 @@ const GenerateMarksheet: React.FC = () => {
       {/* Subject Management */}
       <div className="bg-white shadow rounded-lg p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Subjects</h2>
+          <h2 className="text-lg font-semibold text-gray-900" style={{ color: '#111827', fontSize: '18px', fontWeight: '600' }}>Subjects</h2>
           <Button
             variant="secondary"
             size="sm"
@@ -396,6 +425,17 @@ const GenerateMarksheet: React.FC = () => {
                     ? 'bg-black text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 )}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  borderRadius: '8px',
+                  whiteSpace: 'nowrap',
+                  color: currentSubject === index ? '#fff' : '#374151',
+                  backgroundColor: currentSubject === index ? '#000' : '#f3f4f6',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
               >
                 {subject.name}
               </button>
@@ -406,46 +446,46 @@ const GenerateMarksheet: React.FC = () => {
         {/* Marks Input */}
         {subjects[currentSubject] && (
           <div className="space-y-4">
-            <h3 className="text-md font-medium text-gray-900">
+            <h3 className="text-md font-medium text-gray-900" style={{ color: '#111827', fontSize: '16px', fontWeight: '500' }}>
               {subjects[currentSubject].name} - {subjects[currentSubject].code}
             </h3>
 
             {generationMode === 'bulk' ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '100%', borderCollapse: 'separate', borderSpacing: '0' }}>
+                  <thead className="bg-gray-50" style={{ backgroundColor: '#f9fafb' }}>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '500', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Student
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '500', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         UT1 (10)
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '500', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         UT2 (10)
                       </th>
                       {examType === 'Annual' && (
                         <>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '500', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             UT3 (10)
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '500', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             UT4 (10)
                           </th>
                         </>
                       )}
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ padding: '12px 24px', textAlign: 'left', fontSize: '12px', fontWeight: '500', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {examType === 'Half-Yearly' ? 'Half-Yearly (80)' : 'Annual (80)'}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-gray-200" style={{ backgroundColor: '#fff' }}>
                     {classStudents.map((student) => (
-                      <tr key={student.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <tr key={student.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" style={{ padding: '16px 24px', whiteSpace: 'nowrap', fontSize: '14px', fontWeight: '500', color: '#111827' }}>
                           {student.studentName}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap" style={{ padding: '16px 24px', whiteSpace: 'nowrap' }}>
                           <input
                             type="number"
                             min="0"
@@ -453,9 +493,19 @@ const GenerateMarksheet: React.FC = () => {
                             value={marksData[student.id]?.[subjects[currentSubject].name]?.UT1 || ''}
                             onChange={(e) => handleMarkChange(student.id, 'UT1', e.target.value)}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            style={{ 
+                              width: '100%', 
+                              padding: '4px 8px', 
+                              textAlign: 'center', 
+                              border: '1px solid #d1d5db', 
+                              borderRadius: '4px',
+                              fontSize: '14px',
+                              color: '#000',
+                              backgroundColor: '#fff'
+                            }}
                           />
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap" style={{ padding: '16px 24px', whiteSpace: 'nowrap' }}>
                           <input
                             type="number"
                             min="0"
@@ -463,6 +513,16 @@ const GenerateMarksheet: React.FC = () => {
                             value={marksData[student.id]?.[subjects[currentSubject].name]?.UT2 || ''}
                             onChange={(e) => handleMarkChange(student.id, 'UT2', e.target.value)}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            style={{ 
+                              width: '100%', 
+                              padding: '4px 8px', 
+                              textAlign: 'center', 
+                              border: '1px solid #d1d5db', 
+                              borderRadius: '4px',
+                              fontSize: '14px',
+                              color: '#000',
+                              backgroundColor: '#fff'
+                            }}
                           />
                         </td>
                         {examType === 'Annual' && (
