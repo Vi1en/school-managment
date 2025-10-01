@@ -62,25 +62,81 @@ exports.handler = async (event, context) => {
     }
   }
 
-  // Mock students endpoint
-  if (path === '/api/students' && method === 'GET') {
+  // Mock get current user
+  if (path === '/api/auth/me' && method === 'GET') {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify([
-        {
-          _id: 'mock-student-1',
-          admissionNumber: '001',
-          studentName: 'John Doe',
-          currentClass: '10th',
-          bloodGroup: 'A+',
-          feeDetails: {
-            totalFee: 5000,
-            amountPaid: 3000,
-            remainingAmount: 2000
-          }
+      body: JSON.stringify({
+        admin: {
+          id: 'mock-admin-id',
+          name: 'Admin User',
+          email: 'admin@test.com',
+          role: 'admin'
         }
-      ])
+      })
+    };
+  }
+
+  // Mock students endpoint
+  if (path === '/api/students' && method === 'GET') {
+    const students = [
+      {
+        _id: 'mock-student-1',
+        admissionNumber: '001',
+        studentName: 'John Doe',
+        currentClass: '10th',
+        bloodGroup: 'A+',
+        passFailStatus: 'Pass',
+        feeDetails: {
+          totalFee: 5000,
+          amountPaid: 3000,
+          remainingAmount: 2000
+        }
+      },
+      {
+        _id: 'mock-student-2',
+        admissionNumber: '002',
+        studentName: 'Jane Smith',
+        currentClass: '9th',
+        bloodGroup: 'B+',
+        passFailStatus: 'Pass',
+        feeDetails: {
+          totalFee: 4500,
+          amountPaid: 4500,
+          remainingAmount: 0
+        }
+      }
+    ];
+    
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(students)
+    };
+  }
+
+  // Mock get student by admission number
+  if (path.startsWith('/api/students/') && method === 'GET') {
+    const admissionNumber = path.split('/')[3];
+    const student = {
+      _id: 'mock-student-' + admissionNumber,
+      admissionNumber: admissionNumber,
+      studentName: 'Student ' + admissionNumber,
+      currentClass: '10th',
+      bloodGroup: 'A+',
+      passFailStatus: 'Pass',
+      feeDetails: {
+        totalFee: 5000,
+        amountPaid: 3000,
+        remainingAmount: 2000
+      }
+    };
+    
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(student)
     };
   }
 
