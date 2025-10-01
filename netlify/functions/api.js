@@ -124,10 +124,15 @@ exports.handler = async (event, context) => {
     return createResponse(200, {});
   }
 
-  const path = event.path;
+  let path = event.path;
   const method = event.httpMethod;
   const body = event.body ? JSON.parse(event.body) : {};
   const headers = event.headers || {};
+
+  // Handle Netlify Functions path - remove the function name from path
+  if (path.startsWith('/.netlify/functions/api')) {
+    path = path.replace('/.netlify/functions/api', '/api');
+  }
 
   try {
     // Connect to database
