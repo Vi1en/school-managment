@@ -46,6 +46,10 @@ const GenerateMarksheet: React.FC = () => {
   useEffect(() => {
     console.log('GenerateMarksheet: Students updated:', students.length, 'students');
     console.log('GenerateMarksheet: Students data:', students);
+    if (students.length > 0) {
+      console.log('GenerateMarksheet: First student structure:', students[0]);
+      console.log('GenerateMarksheet: First student ID:', students[0].id);
+    }
   }, [students]);
 
   // Initialize individual marks data when student is selected
@@ -77,6 +81,7 @@ const GenerateMarksheet: React.FC = () => {
       // Update marks data for bulk generation - each student gets their own marks object
       const initialMarksData: Record<string, SubjectMarksData> = {};
       classStudents.forEach(student => {
+        console.log('GenerateMarksheet: Processing student:', student.studentName, 'ID:', student.id);
         initialMarksData[student.id] = {};
         subjects.forEach(subject => {
           initialMarksData[student.id][subject.name] = {
@@ -90,6 +95,7 @@ const GenerateMarksheet: React.FC = () => {
         });
       });
       console.log('GenerateMarksheet: Initialized marks data for', Object.keys(initialMarksData).length, 'students');
+      console.log('GenerateMarksheet: Marks data keys:', Object.keys(initialMarksData));
       setMarksData(initialMarksData);
     } else {
       setMarksData({});
@@ -508,7 +514,10 @@ const GenerateMarksheet: React.FC = () => {
                             min="0"
                             max="10"
                             value={marksData[student.id]?.[subjects[currentSubject].name]?.UT1 || ''}
-                            onChange={(e) => handleMarkChange(student.id, 'UT1', e.target.value)}
+                            onChange={(e) => {
+                              console.log('UT1 input changed for student:', student.id, 'value:', e.target.value);
+                              handleMarkChange(student.id, 'UT1', e.target.value);
+                            }}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                             style={{ 
                               width: '100%', 
@@ -528,7 +537,10 @@ const GenerateMarksheet: React.FC = () => {
                             min="0"
                             max="10"
                             value={marksData[student.id]?.[subjects[currentSubject].name]?.UT2 || ''}
-                            onChange={(e) => handleMarkChange(student.id, 'UT2', e.target.value)}
+                            onChange={(e) => {
+                              console.log('UT2 input changed for student:', student.id, 'value:', e.target.value);
+                              handleMarkChange(student.id, 'UT2', e.target.value);
+                            }}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                             style={{ 
                               width: '100%', 
@@ -566,14 +578,27 @@ const GenerateMarksheet: React.FC = () => {
                             </td>
                           </>
                         )}
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap" style={{ padding: '16px 24px', whiteSpace: 'nowrap' }}>
                           <input
                             type="number"
                             min="0"
                             max="80"
                             value={marksData[student.id]?.[subjects[currentSubject].name]?.[examType === 'Half-Yearly' ? 'halfYearly' : 'annual'] || ''}
-                            onChange={(e) => handleMarkChange(student.id, examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value)}
+                            onChange={(e) => {
+                              console.log('Half-Yearly/Annual input changed for student:', student.id, 'value:', e.target.value);
+                              handleMarkChange(student.id, examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value);
+                            }}
                             className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            style={{ 
+                              width: '100%', 
+                              padding: '4px 8px', 
+                              textAlign: 'center', 
+                              border: '1px solid #d1d5db', 
+                              borderRadius: '4px',
+                              fontSize: '14px',
+                              color: '#000',
+                              backgroundColor: '#fff'
+                            }}
                           />
                         </td>
                       </tr>
