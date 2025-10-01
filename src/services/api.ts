@@ -9,10 +9,11 @@ const createApiInstance = (): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
     },
-    // Add cache busting
-    params: {
-      _t: Date.now()
-    }
+        // Add cache busting
+        params: {
+          _t: Date.now(),
+          _v: '2.0.0'
+        }
   });
 
   // Request interceptor to add auth token
