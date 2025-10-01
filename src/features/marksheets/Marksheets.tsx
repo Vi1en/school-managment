@@ -22,9 +22,9 @@ const Marksheets: React.FC = () => {
   useEffect(() => {
     if (searchTerm) {
       const filtered = marksheets.filter(marksheet =>
-        marksheet.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        marksheet.rollNumber.includes(searchTerm) ||
-        marksheet.examType.toLowerCase().includes(searchTerm.toLowerCase())
+        marksheet?.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        marksheet?.rollNumber?.includes(searchTerm) ||
+        marksheet?.examType?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredMarksheets(filtered);
     } else {

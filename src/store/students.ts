@@ -40,8 +40,20 @@ export const useStudentsStore = create<StudentsStore>((set, get) => ({
       
       const response = await studentsAPI.getAll(searchParams);
       
+      console.log('Students API response:', response);
+      
+      // Handle different response structures
+      let studentsData: Student[] = [];
+      if (Array.isArray(response.data)) {
+        studentsData = response.data;
+      } else if (response.data && typeof response.data === 'object' && 'students' in response.data && Array.isArray((response.data as any).students)) {
+        studentsData = (response.data as any).students;
+      } else if (response.data && typeof response.data === 'object' && 'data' in response.data && Array.isArray((response.data as any).data)) {
+        studentsData = (response.data as any).data;
+      }
+      
       set({
-        students: Array.isArray(response.data) ? response.data : (response.data as any).students || [],
+        students: studentsData,
         isLoading: false,
         pagination: searchParams,
       });

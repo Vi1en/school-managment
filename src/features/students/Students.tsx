@@ -22,14 +22,17 @@ const Students: React.FC = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      const filtered = students.filter(student =>
-        student.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.admissionNumber.includes(searchTerm) ||
-        student.currentClass.includes(searchTerm)
-      );
+      const filtered = students.filter(student => {
+        if (!student) return false;
+        return (
+          (student.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+          (student.admissionNumber?.includes(searchTerm) || false) ||
+          (student.currentClass?.includes(searchTerm) || false)
+        );
+      });
       setFilteredStudents(filtered);
     } else {
-      setFilteredStudents(students);
+      setFilteredStudents(students || []);
     }
   }, [students, searchTerm]);
 
@@ -49,22 +52,22 @@ const Students: React.FC = () => {
       dataIndex: 'studentName',
       render: (value, record) => (
         <div className="flex items-center">
-          {record.photo ? (
+          {record?.photo ? (
             <img
               className="h-10 w-10 rounded-full mr-3"
               src={record.photo}
-              alt={record.studentName}
+              alt={record.studentName || 'Student'}
             />
           ) : (
             <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
               <span className="text-sm font-medium text-gray-700">
-                {record.studentName.charAt(0)}
+                {record?.studentName?.charAt(0) || '?'}
               </span>
             </div>
           )}
           <div>
-            <div className="text-sm font-medium text-gray-900">{record.studentName}</div>
-            <div className="text-sm text-gray-500">{record.admissionNumber}</div>
+            <div className="text-sm font-medium text-gray-900">{record?.studentName || 'Unknown'}</div>
+            <div className="text-sm text-gray-500">{record?.admissionNumber || 'N/A'}</div>
           </div>
         </div>
       ),
@@ -73,7 +76,7 @@ const Students: React.FC = () => {
       key: 'currentClass',
       title: 'Class',
       dataIndex: 'currentClass',
-      render: (value) => `Class ${value}`,
+      render: (value) => `Class ${value || 'N/A'}`,
     },
     {
       key: 'phoneNumber',
@@ -85,8 +88,8 @@ const Students: React.FC = () => {
       title: 'Fee Status',
       dataIndex: 'feeDetails',
       render: (value) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(value.paymentStatus)}`}>
-          {value.paymentStatus.toUpperCase()}
+        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(value?.paymentStatus)}`}>
+          {value?.paymentStatus?.toUpperCase() || 'UNKNOWN'}
         </span>
       ),
     },
@@ -97,10 +100,10 @@ const Students: React.FC = () => {
       render: (value) => (
         <div>
           <div className="text-sm font-medium text-gray-900">
-            {formatCurrency(value.amountPaid)}
+            {formatCurrency(value?.amountPaid || 0)}
           </div>
           <div className="text-sm text-gray-500">
-            of {formatCurrency(value.totalFee)}
+            of {formatCurrency(value?.totalFee || 0)}
           </div>
         </div>
       ),
@@ -112,19 +115,19 @@ const Students: React.FC = () => {
       render: (_, record) => (
         <div className="flex space-x-2">
           <Link
-            to={`/student/${record.admissionNumber}`}
+            to={`/student/${record?.admissionNumber || 'unknown'}`}
             className="text-blue-600 hover:text-blue-900 text-sm font-medium"
           >
             View
           </Link>
           <Link
-            to={`/edit-student/${record.admissionNumber}`}
+            to={`/edit-student/${record?.admissionNumber || 'unknown'}`}
             className="text-green-600 hover:text-green-900 text-sm font-medium"
           >
             Edit
           </Link>
           <button
-            onClick={() => handleDelete(record.id)}
+            onClick={() => handleDelete(record?.id || '')}
             className="text-red-600 hover:text-red-900 text-sm font-medium"
           >
             Delete
@@ -193,24 +196,24 @@ const Students: React.FC = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white shadow rounded-lg p-6">
-          <div className="text-2xl font-bold text-gray-900">{students.length}</div>
+          <div className="text-2xl font-bold text-gray-900">{students?.length || 0}</div>
           <div className="text-sm text-gray-500">Total Students</div>
         </div>
         <div className="bg-white shadow rounded-lg p-6">
           <div className="text-2xl font-bold text-green-600">
-            {students.filter(s => s.feeDetails.paymentStatus === 'paid').length}
+            {students?.filter(s => s?.feeDetails?.paymentStatus === 'paid').length || 0}
           </div>
           <div className="text-sm text-gray-500">Paid Students</div>
         </div>
         <div className="bg-white shadow rounded-lg p-6">
           <div className="text-2xl font-bold text-yellow-600">
-            {students.filter(s => s.feeDetails.paymentStatus === 'partial').length}
+            {students?.filter(s => s?.feeDetails?.paymentStatus === 'partial').length || 0}
           </div>
           <div className="text-sm text-gray-500">Partial Paid</div>
         </div>
         <div className="bg-white shadow rounded-lg p-6">
           <div className="text-2xl font-bold text-red-600">
-            {students.filter(s => s.feeDetails.paymentStatus === 'unpaid').length}
+            {students?.filter(s => s?.feeDetails?.paymentStatus === 'unpaid').length || 0}
           </div>
           <div className="text-sm text-gray-500">Unpaid Students</div>
         </div>

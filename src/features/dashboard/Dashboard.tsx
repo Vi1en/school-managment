@@ -74,8 +74,8 @@ const Dashboard: React.FC = () => {
     try {
       await searchStudents(searchTerm);
       setSearchResults(students.filter(student => 
-        student.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.admissionNumber.includes(searchTerm)
+        student?.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student?.admissionNumber?.includes(searchTerm)
       ));
     } catch (error) {
       setError('Search failed');
