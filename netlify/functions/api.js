@@ -9,21 +9,45 @@ const connectDB = async () => {
     if (!db) {
       const mongoUri = process.env.MONGODB_URI;
       if (!mongoUri) {
-        console.error('MONGODB_URI not found');
+        console.error('MONGODB_URI not found in environment variables');
         return false;
       }
       
+      console.log('Attempting to connect to MongoDB...');
       await mongoose.connect(mongoUri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
       db = mongoose.connection;
-      console.log('MongoDB connected successfully');
+      
+      // Set up connection event listeners
+      db.on('connected', () => {
+        console.log('MongoDB connected successfully');
+      });
+      
+      db.on('error', (err) => {
+        console.error('MongoDB connection error:', err);
+      });
+      
+      db.on('disconnected', () => {
+        console.log('MongoDB disconnected');
+      });
+      
+      console.log('MongoDB connection established');
       return true;
     }
-    return true;
+    
+    // Check if connection is still alive
+    if (db.readyState === 1) {
+      return true;
+    } else {
+      console.log('Database connection lost, reconnecting...');
+      db = null;
+      return await connectDB();
+    }
   } catch (error) {
     console.error('MongoDB connection error:', error);
+    db = null;
     return false;
   }
 };
@@ -159,19 +183,50 @@ exports.handler = async (event, context) => {
 
     // Health check
     if (path === '/api/health') {
+      const dbHealth = db ? {
+        status: 'connected',
+        readyState: db.readyState,
+        host: db.host,
+        port: db.port,
+        name: db.name
+      } : {
+        status: 'disconnected',
+        readyState: 0
+      };
+      
       return createResponse(200, {
         message: 'School Management API is running',
         path: '/api/health',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        database: dbHealth,
+        environment: {
+          hasMongoUri: !!process.env.MONGODB_URI,
+          nodeEnv: process.env.NODE_ENV || 'development'
+        }
       });
     }
 
     // Test endpoint
     if (path === '/api/test' && method === 'GET') {
+      const dbStatus = db ? {
+        status: 'connected',
+        readyState: db.readyState,
+        host: db.host,
+        port: db.port,
+        name: db.name
+      } : {
+        status: 'disconnected',
+        readyState: 0
+      };
+      
       return createResponse(200, { 
         message: 'API is working', 
         timestamp: new Date().toISOString(),
-        database: db ? 'connected' : 'disconnected'
+        database: dbStatus,
+        environment: {
+          hasMongoUri: !!process.env.MONGODB_URI,
+          nodeEnv: process.env.NODE_ENV || 'development'
+        }
       });
     }
 
