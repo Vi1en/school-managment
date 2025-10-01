@@ -30,7 +30,10 @@ const GenerateMarksheet = () => {
   const [generationMode, setGenerationMode] = useState('bulk'); // 'bulk' or 'individual'
   const [selectedStudent, setSelectedStudent] = useState('');
   const [individualMarksData, setIndividualMarksData] = useState({});
-  const [individualStudentSettings, setIndividualStudentSettings] = useState({});
+  const [individualStudentSettings, setIndividualStudentSettings] = useState({
+    totalDays: 105,
+    presentDays: 95
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,6 +65,44 @@ const GenerateMarksheet = () => {
     }
   };
 
+  const handleStudentChange = (e) => {
+    const studentId = e.target.value;
+    setSelectedStudent(studentId);
+    
+    // Initialize individual marks data for the selected student
+    if (studentId) {
+      const initialMarksData = {};
+      subjects.forEach(subject => {
+        initialMarksData[subject.name] = {
+          UT1: 0,
+          UT2: 0,
+          UT3: 0,
+          UT4: 0,
+          halfYearly: 0,
+          annual: 0,
+          marks: 0
+        };
+      });
+      setIndividualMarksData(initialMarksData);
+      console.log('Initialized individual marks data:', initialMarksData);
+    } else {
+      setIndividualMarksData({});
+    }
+  };
+
+  const handleGenerationModeChange = (e) => {
+    const mode = e.target.value;
+    setGenerationMode(mode);
+    
+    // Clear individual marks data when switching modes
+    if (mode === 'bulk') {
+      setIndividualMarksData({});
+      setSelectedStudent('');
+    } else {
+      setMarksData({});
+    }
+  };
+
   const handleMarkChange = (studentId, markType, value) => {
     console.log('handleMarkChange called:', { studentId, markType, value, currentSubject: subjects[currentSubject]?.name });
     setMarksData(prev => {
@@ -90,22 +131,26 @@ const GenerateMarksheet = () => {
     }));
   };
 
-  const handleIndividualMarkChange = (markType, value) => {
+  const handleIndividualMarkChange = (markType, value, subjectName) => {
+    const numericValue = parseFloat(value) || 0;
     console.log('handleIndividualMarkChange called:', { 
       markType, 
       value, 
+      numericValue,
+      subjectName,
       currentSubjectIndex: currentSubject,
-      currentSubjectName: subjects[currentSubject]?.name,
-      allSubjects: subjects.map(s => s.name)
+      currentSubjectName: subjects[currentSubject]?.name
     });
+    
     setIndividualMarksData(prev => {
-      const subjectName = subjects[currentSubject]?.name;
-      console.log('Storing marks for subject:', subjectName);
+      const targetSubject = subjectName || subjects[currentSubject]?.name;
+      console.log('Storing marks for subject:', targetSubject);
+      
       const newData = {
         ...prev,
-        [subjectName]: {
-          ...prev[subjectName],
-          [markType]: parseInt(value) || 0
+        [targetSubject]: {
+          ...prev[targetSubject],
+          [markType]: numericValue
         }
       };
       console.log('Updated individualMarksData:', newData);
@@ -183,6 +228,24 @@ const GenerateMarksheet = () => {
   };
 
 
+  // Validation function to ensure marks are properly formatted
+  const validateMarksData = (marksData) => {
+    const validatedData = {};
+    Object.keys(marksData).forEach(subjectName => {
+      const subjectData = marksData[subjectName];
+      validatedData[subjectName] = {
+        UT1: parseFloat(subjectData.UT1) || 0,
+        UT2: parseFloat(subjectData.UT2) || 0,
+        UT3: parseFloat(subjectData.UT3) || 0,
+        UT4: parseFloat(subjectData.UT4) || 0,
+        halfYearly: parseFloat(subjectData.halfYearly) || 0,
+        annual: parseFloat(subjectData.annual) || 0,
+        marks: parseFloat(subjectData.marks) || 0
+      };
+    });
+    return validatedData;
+  };
+
   const generateMarksheets = async () => {
     if (generationMode === 'bulk') {
       if (!selectedClass || students.length === 0) {
@@ -196,8 +259,16 @@ const GenerateMarksheet = () => {
       try {
         console.log('Full marksData before processing:', marksData);
         console.log('Exam type for bulk generation:', examType, 'Type:', typeof examType);
+        
+        // Validate and clean the marks data for bulk generation
+        const validatedBulkMarksData = {};
+        Object.keys(marksData).forEach(studentId => {
+          validatedBulkMarksData[studentId] = validateMarksData(marksData[studentId]);
+        });
+        console.log('Validated bulk marks data:', validatedBulkMarksData);
+        
         const marksheetsToCreate = students.map(student => {
-          const studentMarks = marksData[student._id] || {};
+          const studentMarks = validatedBulkMarksData[student._id] || {};
           console.log(`Student ${student.studentName} (${student._id}) marks:`, studentMarks);
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
@@ -304,9 +375,13 @@ const GenerateMarksheet = () => {
         console.log('Exam type for individual generation:', examType, 'Type:', typeof examType);
         console.log('Current subject index:', currentSubject);
         console.log('All subjects:', subjects.map(s => s.name));
+        
+        // Validate and clean the marks data
+        const validatedMarksData = validateMarksData(individualMarksData);
+        console.log('Validated individual marks data:', validatedMarksData);
 
           const subjectMarks = subjects.map(subject => {
-            const subjectData = individualMarksData[subject.name] || {};
+            const subjectData = validatedMarksData[subject.name] || {};
             console.log(`Processing subject: ${subject.name}`);
             console.log(`Subject data from individualMarksData:`, subjectData);
             console.log(`Full individualMarksData:`, individualMarksData);
@@ -435,7 +510,7 @@ const GenerateMarksheet = () => {
                             type="radio"
                             value="bulk"
                             checked={generationMode === 'bulk'}
-                            onChange={(e) => setGenerationMode(e.target.value)}
+                            onChange={handleGenerationModeChange}
                             className="mr-2"
                           />
                           Bulk Generation (All Students in Class)
@@ -445,7 +520,7 @@ const GenerateMarksheet = () => {
                             type="radio"
                             value="individual"
                             checked={generationMode === 'individual'}
-                            onChange={(e) => setGenerationMode(e.target.value)}
+                            onChange={handleGenerationModeChange}
                             className="mr-2"
                           />
                           Individual Generation (Single Student)
@@ -518,7 +593,7 @@ const GenerateMarksheet = () => {
                         </label>
                         <select
                           value={selectedStudent}
-                          onChange={(e) => setSelectedStudent(e.target.value)}
+                          onChange={handleStudentChange}
                           required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
@@ -846,7 +921,7 @@ const GenerateMarksheet = () => {
                                               min="0"
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT1 || ''}
-                                              onChange={(e) => handleIndividualMarkChange('UT1', e.target.value)}
+                                              onChange={(e) => handleIndividualMarkChange('UT1', e.target.value, subjects[currentSubject]?.name)}
                                               className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             />
                                           </td>
@@ -856,7 +931,7 @@ const GenerateMarksheet = () => {
                                               min="0"
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT2 || ''}
-                                              onChange={(e) => handleIndividualMarkChange('UT2', e.target.value)}
+                                              onChange={(e) => handleIndividualMarkChange('UT2', e.target.value, subjects[currentSubject]?.name)}
                                               className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             />
                                           </td>
@@ -869,7 +944,7 @@ const GenerateMarksheet = () => {
                                               min="0"
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT3 || ''}
-                                              onChange={(e) => handleIndividualMarkChange('UT3', e.target.value)}
+                                              onChange={(e) => handleIndividualMarkChange('UT3', e.target.value, subjects[currentSubject]?.name)}
                                               className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             />
                                           </td>
@@ -879,7 +954,7 @@ const GenerateMarksheet = () => {
                                               min="0"
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT4 || ''}
-                                              onChange={(e) => handleIndividualMarkChange('UT4', e.target.value)}
+                                              onChange={(e) => handleIndividualMarkChange('UT4', e.target.value, subjects[currentSubject]?.name)}
                                               className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                             />
                                           </td>
@@ -891,7 +966,7 @@ const GenerateMarksheet = () => {
                                           min="0"
                                           max="80"
                                           value={individualMarksData[subjects[currentSubject]?.name]?.[examType === 'Half-Yearly' ? 'halfYearly' : 'annual'] || ''}
-                                          onChange={(e) => handleIndividualMarkChange(examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value)}
+                                          onChange={(e) => handleIndividualMarkChange(examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value, subjects[currentSubject]?.name)}
                                           className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
                                         />
                                       </td>
