@@ -121,7 +121,10 @@ const Layout = () => {
       {sidebarOpen && isMobile && (
         <div 
           className="fixed inset-0 z-40 bg-black bg-opacity-50"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => {
+            console.log('Overlay clicked');
+            setSidebarOpen(false);
+          }}
         />
       )}
 
@@ -129,7 +132,7 @@ const Layout = () => {
       <div className={`
         ${isMobile ? 'fixed inset-y-0 left-0 z-50 w-72' : 'relative flex flex-col w-72'}
         ${sidebarOpen || !isMobile ? 'translate-x-0' : '-translate-x-full'}
-        sidebar-transition
+        transition-transform duration-300 ease-in-out
         modern-sidebar
       `}>
         {/* Logo Section */}
@@ -145,8 +148,12 @@ const Layout = () => {
           </div>
           {isMobile && (
             <button
-              onClick={() => setSidebarOpen(false)}
-              className="text-gray-400 hover:text-white transition-colors duration-200"
+              onClick={() => {
+                console.log('Close button clicked');
+                setSidebarOpen(false);
+              }}
+              className="text-gray-400 hover:text-white transition-colors duration-200 p-2 rounded-lg hover:bg-gray-700"
+              aria-label="Close sidebar"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
