@@ -26,13 +26,46 @@ const createApiInstance = (): AxiosInstance => {
         return config;
       }
       
-      const token = localStorage.getItem('auth-token');
-      if (token) {
-        console.log('Request interceptor: Adding auth header');
+      // Check if this is a protected endpoint that requires authentication
+      const protectedEndpoints = ['/students', '/marksheets', '/settings', '/fee-deposits', '/class-fees'];
+      const isProtectedEndpoint = protectedEndpoints.some(endpoint => config.url?.includes(endpoint));
+      
+      if (isProtectedEndpoint) {
+        const token = localStorage.getItem('auth-token');
+        const authStorage = localStorage.getItem('auth-storage');
+        
+        // Check if user is authenticated
+        let isAuthenticated = false;
+        try {
+          if (authStorage) {
+            const authData = JSON.parse(authStorage);
+            isAuthenticated = authData.state?.isAuthenticated || false;
+          }
+        } catch (error) {
+          console.log('Request interceptor: Error parsing auth storage:', error);
+        }
+        
+        if (!isAuthenticated || !token) {
+          console.log('Request interceptor: Blocking protected endpoint call - user not authenticated');
+          return Promise.reject({
+            message: 'User not authenticated',
+            status: 401,
+            code: 'AUTH_REQUIRED'
+          });
+        }
+        
+        console.log('Request interceptor: Adding auth header for protected endpoint');
         config.headers.Authorization = `Bearer ${token}`;
       } else {
-        console.log('Request interceptor: No token found');
+        const token = localStorage.getItem('auth-token');
+        if (token) {
+          console.log('Request interceptor: Adding auth header');
+          config.headers.Authorization = `Bearer ${token}`;
+        } else {
+          console.log('Request interceptor: No token found');
+        }
       }
+      
       return config;
     },
     (error) => {
