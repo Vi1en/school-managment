@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { marksheetsAPI, studentsAPI } from '../services/enhanced-api';
 import LoadingSpinner from './LoadingSpinner';
 import Input from './Input';
+import MarksheetPreview from './MarksheetPreview';
 
 const MobileFirstMarksheetGenerator = () => {
   const navigate = useNavigate();
@@ -25,6 +26,8 @@ const MobileFirstMarksheetGenerator = () => {
   const [selectedStudent, setSelectedStudent] = useState('');
   const [showAddSubject, setShowAddSubject] = useState(false);
   const [newSubject, setNewSubject] = useState({ name: '', code: '', maxMarks: 100 });
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewData, setPreviewData] = useState(null);
 
   // Fetch students when class changes
   useEffect(() => {
@@ -73,6 +76,8 @@ const MobileFirstMarksheetGenerator = () => {
   const handleMarkChange = (studentId, subjectName, markType, value) => {
     const numValue = parseFloat(value) || 0;
     
+    console.log('Bulk mark change:', { studentId, subjectName, markType, value, numValue });
+    
     setMarksData(prev => {
       const newData = { ...prev };
       if (!newData[studentId]) {
@@ -88,12 +93,16 @@ const MobileFirstMarksheetGenerator = () => {
       const subject = newData[studentId][subjectName];
       subject.total = subject.ut1 + subject.ut2 + subject.halfYearly;
       
+      console.log('Updated bulk marks for student:', studentId, newData[studentId][subjectName]);
+      
       return newData;
     });
   };
 
   const handleIndividualMarkChange = (subjectName, markType, value) => {
     const numValue = parseFloat(value) || 0;
+    
+    console.log('Individual mark change:', { selectedStudent, subjectName, markType, value, numValue });
     
     setMarksData(prev => {
       const newData = { ...prev };
@@ -110,6 +119,8 @@ const MobileFirstMarksheetGenerator = () => {
       const subject = newData[selectedStudent][subjectName];
       subject.total = subject.ut1 + subject.ut2 + subject.halfYearly;
       
+      console.log('Updated individual marks for student:', selectedStudent, newData[selectedStudent][subjectName]);
+      
       return newData;
     });
   };
@@ -124,6 +135,97 @@ const MobileFirstMarksheetGenerator = () => {
 
   const removeSubject = (index) => {
     setSubjects(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const previewMarksheet = () => {
+    console.log('Preview marksheet - Mode:', generationMode, 'Selected student:', selectedStudent);
+    console.log('Current marksData:', marksData);
+    console.log('Current subjects:', subjects);
+    
+    if (generationMode === 'individual' && selectedStudent) {
+      const student = students.find(s => (s._id || s.admissionNumber) === selectedStudent);
+      if (student) {
+        const studentMarks = marksData[selectedStudent] || {};
+        console.log('Individual student marks:', studentMarks);
+        
+        const processedSubjects = subjects.map(subject => {
+          const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
+          console.log(`Subject ${subject.name} marks:`, marks);
+          return {
+            name: subject.name,
+            code: subject.code,
+            ut1: marks.ut1,
+            ut2: marks.ut2,
+            halfYearly: marks.halfYearly,
+            total: marks.total,
+            maxMarks: subject.maxMarks
+          };
+        });
+
+        const previewData = {
+          rollNumber: student.admissionNumber,
+          studentName: student.studentName,
+          fatherName: student.fatherName,
+          motherName: student.motherName,
+          dob: student.dob,
+          currentClass: student.currentClass,
+          bloodGroup: student.bloodGroup,
+          address: student.address,
+          phoneNumber: student.phoneNumber,
+          photo: student.photo,
+          examType,
+          academicYear,
+          subjects: processedSubjects,
+          totalDays: 105,
+          daysPresent: 95
+        };
+
+        console.log('Individual preview data:', previewData);
+        setPreviewData(previewData);
+        setShowPreview(true);
+      }
+    } else if (generationMode === 'bulk' && students.length > 0) {
+      const firstStudent = students[0];
+      const studentId = firstStudent._id || firstStudent.admissionNumber;
+      const studentMarks = marksData[studentId] || {};
+      console.log('Bulk first student marks:', studentMarks);
+      
+      const processedSubjects = subjects.map(subject => {
+        const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
+        console.log(`Bulk subject ${subject.name} marks:`, marks);
+        return {
+          name: subject.name,
+          code: subject.code,
+          ut1: marks.ut1,
+          ut2: marks.ut2,
+          halfYearly: marks.halfYearly,
+          total: marks.total,
+          maxMarks: subject.maxMarks
+        };
+      });
+
+      const previewData = {
+        rollNumber: firstStudent.admissionNumber,
+        studentName: firstStudent.studentName,
+        fatherName: firstStudent.fatherName,
+        motherName: firstStudent.motherName,
+        dob: firstStudent.dob,
+        currentClass: firstStudent.currentClass,
+        bloodGroup: firstStudent.bloodGroup,
+        address: firstStudent.address,
+        phoneNumber: firstStudent.phoneNumber,
+        photo: firstStudent.photo,
+        examType,
+        academicYear,
+        subjects: processedSubjects,
+        totalDays: 105,
+        daysPresent: 95
+      };
+
+      console.log('Bulk preview data:', previewData);
+      setPreviewData(previewData);
+      setShowPreview(true);
+    }
   };
 
   const generateMarksheets = async () => {
@@ -175,6 +277,47 @@ const MobileFirstMarksheetGenerator = () => {
         await Promise.all(marksheetPromises);
         setSuccess(`Successfully generated ${students.length} marksheets!`);
         
+        // Show preview for first student
+        if (students.length > 0) {
+          const firstStudent = students[0];
+          const studentId = firstStudent._id || firstStudent.admissionNumber;
+          const studentMarks = marksData[studentId] || {};
+          
+          const processedSubjects = subjects.map(subject => {
+            const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
+            return {
+              name: subject.name,
+              code: subject.code,
+              ut1: marks.ut1,
+              ut2: marks.ut2,
+              halfYearly: marks.halfYearly,
+              total: marks.total,
+              maxMarks: subject.maxMarks
+            };
+          });
+
+          const previewMarksheetData = {
+            rollNumber: firstStudent.admissionNumber,
+            studentName: firstStudent.studentName,
+            fatherName: firstStudent.fatherName,
+            motherName: firstStudent.motherName,
+            dob: firstStudent.dob,
+            currentClass: firstStudent.currentClass,
+            bloodGroup: firstStudent.bloodGroup,
+            address: firstStudent.address,
+            phoneNumber: firstStudent.phoneNumber,
+            photo: firstStudent.photo,
+            examType,
+            academicYear,
+            subjects: processedSubjects,
+            totalDays: 105,
+            daysPresent: 95
+          };
+
+          setPreviewData(previewMarksheetData);
+          setShowPreview(true);
+        }
+        
       } else {
         // Generate marksheet for individual student
         const student = students.find(s => (s._id || s.admissionNumber) === selectedStudent);
@@ -217,6 +360,10 @@ const MobileFirstMarksheetGenerator = () => {
 
         await marksheetsAPI.create(marksheetData);
         setSuccess('Marksheet generated successfully!');
+        
+        // Show preview
+        setPreviewData(marksheetData);
+        setShowPreview(true);
       }
 
       // Navigate to marksheets list after successful generation
@@ -545,6 +692,13 @@ const MobileFirstMarksheetGenerator = () => {
             Cancel
           </button>
           <button
+            onClick={previewMarksheet}
+            disabled={students.length === 0}
+            className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Preview Marksheet
+          </button>
+          <button
             onClick={generateMarksheets}
             disabled={loading || students.length === 0}
             className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -553,6 +707,15 @@ const MobileFirstMarksheetGenerator = () => {
           </button>
         </div>
       </div>
+
+      {/* Marksheet Preview Modal */}
+      {showPreview && (
+        <MarksheetPreview
+          marksheetData={previewData}
+          onClose={() => setShowPreview(false)}
+          onPrint={() => window.print()}
+        />
+      )}
     </div>
   );
 };
