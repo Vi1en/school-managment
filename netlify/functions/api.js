@@ -206,29 +206,47 @@ exports.handler = async (event, context) => {
       });
     }
 
-    // Test endpoint
-    if (path === '/api/test' && method === 'GET') {
-      const dbStatus = db ? {
-        status: 'connected',
-        readyState: db.readyState,
-        host: db.host,
-        port: db.port,
-        name: db.name
-      } : {
-        status: 'disconnected',
-        readyState: 0
-      };
-      
-      return createResponse(200, { 
-        message: 'API is working', 
-        timestamp: new Date().toISOString(),
-        database: dbStatus,
-        environment: {
-          hasMongoUri: !!process.env.MONGODB_URI,
-          nodeEnv: process.env.NODE_ENV || 'development'
+        // Test endpoint
+        if (path === '/api/test' && method === 'GET') {
+          const dbStatus = db ? {
+            status: 'connected',
+            readyState: db.readyState,
+            host: db.host,
+            port: db.port,
+            name: db.name
+          } : {
+            status: 'disconnected',
+            readyState: 0
+          };
+
+          // Test database operations
+          let dbTestResults = {};
+          try {
+            const studentCount = await Student.countDocuments();
+            const marksheetCount = await Marksheet.countDocuments();
+            dbTestResults = {
+              studentCount,
+              marksheetCount,
+              testPassed: true
+            };
+          } catch (testError) {
+            dbTestResults = {
+              testPassed: false,
+              error: testError.message
+            };
+          }
+
+          return createResponse(200, {
+            message: 'API is working',
+            timestamp: new Date().toISOString(),
+            database: dbStatus,
+            dbTestResults,
+            environment: {
+              hasMongoUri: !!process.env.MONGODB_URI,
+              nodeEnv: process.env.NODE_ENV || 'development'
+            }
+          });
         }
-      });
-    }
 
     // Auth routes
     console.log('Checking path:', path, 'method:', method);
@@ -512,6 +530,30 @@ exports.handler = async (event, context) => {
         return createResponse(401, { message: 'Access token required' });
       }
 
+      // Check database connection status
+      console.log('Database connection status:', {
+        connected: db ? db.readyState === 1 : false,
+        readyState: db ? db.readyState : 'no connection',
+        host: db ? db.host : 'unknown',
+        name: db ? db.name : 'unknown'
+      });
+
+      // Test database operation
+      try {
+        const testCount = await Marksheet.countDocuments();
+        console.log('Database test successful - marksheet count:', testCount);
+      } catch (dbError) {
+        console.error('Database test failed:', dbError);
+        return createResponse(500, {
+          message: 'Database connection error',
+          error: dbError.message,
+          details: {
+            readyState: db ? db.readyState : 'no connection',
+            connected: db ? db.readyState === 1 : false
+          }
+        });
+      }
+
       const { rollNumber, studentName, examType, academicYear, subjects } = body;
       
       console.log('Creating marksheet with data:', { rollNumber, studentName, examType, academicYear, subjects });
@@ -540,11 +582,22 @@ exports.handler = async (event, context) => {
       };
 
       // Check for existing marksheet
-      const existingMarksheet = await Marksheet.findOne({
-        rollNumber,
-        examType,
-        academicYear
-      });
+      let existingMarksheet;
+      try {
+        console.log('Checking for existing marksheet...');
+        existingMarksheet = await Marksheet.findOne({
+          rollNumber,
+          examType,
+          academicYear
+        });
+        console.log('Existing marksheet check completed:', !!existingMarksheet);
+      } catch (findError) {
+        console.error('Error checking for existing marksheet:', findError);
+        return createResponse(500, {
+          message: 'Database error - failed to check existing marksheet',
+          error: findError.message
+        });
+      }
 
       if (existingMarksheet) {
         console.log('Updating existing marksheet for:', rollNumber, examType, academicYear);
