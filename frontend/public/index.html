@@ -36,6 +36,42 @@
       // Force cache busting
       console.log('Page loaded at:', new Date().toISOString());
       console.log('Cache buster timestamp:', Date.now());
+      
+      // EMERGENCY INPUT VISIBILITY FIX - Run immediately
+      console.log('🚨 EMERGENCY INPUT FIX: Starting...');
+      
+      function forceInputVisibility() {
+        const inputs = document.querySelectorAll('input, textarea, select');
+        console.log('Found', inputs.length, 'input elements');
+        
+        inputs.forEach((input, index) => {
+          input.style.setProperty('color', '#000000', 'important');
+          input.style.setProperty('background-color', '#ffffff', 'important');
+          input.style.setProperty('border-color', '#d1d5db', 'important');
+          input.style.setProperty('opacity', '1', 'important');
+          input.style.setProperty('visibility', 'visible', 'important');
+          input.style.setProperty('font-size', '16px', 'important');
+          
+          if (index < 3) {
+            console.log('Fixed input', index + 1, input.type || input.tagName);
+          }
+        });
+        
+        console.log('✅ Applied emergency fix to', inputs.length, 'inputs');
+      }
+      
+      // Run immediately
+      forceInputVisibility();
+      
+      // Run when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceInputVisibility);
+      } else {
+        forceInputVisibility();
+      }
+      
+      // Run every 2 seconds
+      setInterval(forceInputVisibility, 2000);
     </script>
     <!--
       This HTML file is a template.

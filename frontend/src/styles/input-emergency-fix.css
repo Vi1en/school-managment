@@ -1,0 +1,203 @@
+/* EMERGENCY INPUT VISIBILITY FIX */
+/* This file uses direct color values instead of CSS variables to ensure visibility */
+
+/* Reset any problematic global styles */
+* {
+  box-sizing: border-box;
+}
+
+/* Force all inputs to be visible with maximum specificity */
+input, textarea, select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+
+/* All input types with direct color values */
+input[type="text"], 
+input[type="number"], 
+input[type="email"], 
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+input[type="file"],
+input[type="search"],
+input[type="url"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="checkbox"],
+input[type="radio"],
+textarea,
+select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 0.375rem !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Focus states - ensure text stays visible */
+input:focus, 
+textarea:focus, 
+select:focus {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Placeholder text visibility */
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Override ALL possible conflicting classes */
+.text-gray-900,
+.text-gray-700,
+.text-gray-600,
+.text-gray-500,
+.text-gray-400,
+.text-gray-300,
+.text-gray-200,
+.text-gray-100,
+.text-white,
+.text-black {
+  color: #000000 !important;
+}
+
+.bg-white,
+.bg-gray-50,
+.bg-gray-100,
+.bg-gray-200,
+.bg-transparent {
+  background-color: #ffffff !important;
+}
+
+/* Specific class overrides */
+.appearance-none,
+.relative,
+.block,
+.w-full,
+.px-3,
+.py-2,
+.border,
+.border-gray-300,
+.rounded-md,
+.rounded-lg,
+.shadow-sm,
+.focus\:outline-none:focus,
+.focus\:ring-indigo-500:focus,
+.focus\:border-indigo-500:focus,
+.focus\:ring-blue-500:focus,
+.focus\:border-blue-500:focus,
+.sm\:text-sm {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* File input specific styling */
+input[type="file"] {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+input[type="file"]::file-selector-button {
+  color: #000000 !important;
+  background-color: #f3f4f6 !important;
+  border: 1px solid #d1d5db !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.375rem !important;
+  margin-right: 0.5rem !important;
+}
+
+/* Checkbox and radio button styling */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #3b82f6 !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Mobile-specific fixes */
+@media (max-width: 640px) {
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    padding: 0.75rem !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  input, textarea, select {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border-color: #d1d5db !important;
+  }
+  
+  input:focus, textarea:focus, select:focus {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border-color: #3b82f6 !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  input, textarea, select {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  input, textarea, select {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #000000 !important;
+  }
+}
+
+/* Force override any inline styles that might be hiding text */
+input[style*="color: transparent"],
+input[style*="opacity: 0"],
+input[style*="visibility: hidden"] {
+  color: #000000 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Ensure text is visible even with complex selectors */
+div input,
+form input,
+fieldset input,
+label input,
+span input,
+p input {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Override any CSS-in-JS styles */
+input[data-testid],
+input[data-cy],
+input[data-qa] {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
