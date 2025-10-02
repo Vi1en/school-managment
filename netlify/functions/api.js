@@ -567,6 +567,29 @@ exports.handler = async (event, context) => {
             percentage: marksheetData.percentage,
             promotionStatus: marksheetData.promotionStatus
           };
+
+          // Validate updateData
+          console.log('Update data validation:', {
+            hasStudentName: !!updateData.studentName,
+            hasSubjects: !!updateData.subjects,
+            subjectsLength: updateData.subjects?.length,
+            totalMarks: updateData.totalMarks,
+            maxTotalMarks: updateData.maxTotalMarks,
+            percentage: updateData.percentage
+          });
+
+          // Ensure required fields are present
+          if (!updateData.studentName || !updateData.subjects || !Array.isArray(updateData.subjects)) {
+            console.error('Invalid update data - missing required fields');
+            return createResponse(400, {
+              message: 'Invalid update data - missing required fields',
+              details: {
+                hasStudentName: !!updateData.studentName,
+                hasSubjects: !!updateData.subjects,
+                subjectsIsArray: Array.isArray(updateData.subjects)
+              }
+            });
+          }
           
           console.log('Updating marksheet with data:', JSON.stringify(updateData, null, 2));
           const updatedMarksheet = await Marksheet.findOneAndUpdate(
@@ -578,10 +601,38 @@ exports.handler = async (event, context) => {
           return createResponse(200, { message: 'Marksheet updated successfully', marksheet: updatedMarksheet });
         } catch (error) {
           console.error('Error updating marksheet:', error);
-          return createResponse(500, {
-            message: 'Error updating marksheet',
-            error: error.message
+          console.error('Error details:', {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            code: error.code
           });
+          
+          // Try to create a new marksheet if update fails
+          console.log('Update failed, attempting to create new marksheet...');
+          try {
+            const newMarksheet = new Marksheet(marksheetData);
+            await newMarksheet.save();
+            console.log('New marksheet created successfully:', newMarksheet._id);
+            return createResponse(201, {
+              message: 'Marksheet created successfully (update failed)',
+              marksheet: newMarksheet
+            });
+          } catch (createError) {
+            console.error('Error creating new marksheet:', createError);
+            return createResponse(500, {
+              message: 'Error updating and creating marksheet',
+              error: error.message,
+              createError: createError.message,
+              details: {
+                name: error.name,
+                code: error.code,
+                rollNumber,
+                examType,
+                academicYear
+              }
+            });
+          }
         }
       }
 
