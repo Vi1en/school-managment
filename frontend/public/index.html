@@ -30,9 +30,15 @@
     <meta http-equiv="Expires" content="0">
     <meta name="cache-buster" content="nuclear-fix-v2">
     
-        <!-- COMPREHENSIVE INPUT FIX - INLINE CSS -->
+        <!-- ULTRA-AGGRESSIVE INPUT FIX - MAXIMUM SPECIFICITY -->
         <style>
-          /* Base input styles with maximum specificity */
+          /* ULTRA-HIGH SPECIFICITY - This will override everything */
+          html body div#root div input,
+          html body div#root div textarea,
+          html body div#root div select,
+          html body div input,
+          html body div textarea,
+          html body div select,
           input, textarea, select {
             color: #000000 !important;
             background-color: #ffffff !important;
@@ -50,9 +56,10 @@
             width: 100% !important;
             -webkit-text-fill-color: #000000 !important;
             -webkit-opacity: 1 !important;
+            font-family: inherit !important;
           }
           
-          /* All input types */
+          /* ALL input types with maximum specificity */
           input[type="text"], input[type="number"], input[type="email"], 
           input[type="password"], input[type="tel"], input[type="date"], 
           input[type="file"], input[type="search"], input[type="url"], 
@@ -74,10 +81,14 @@
             width: 100% !important;
             -webkit-text-fill-color: #000000 !important;
             -webkit-opacity: 1 !important;
+            font-family: inherit !important;
           }
           
-          /* Focus states */
-          input:focus, textarea:focus, select:focus {
+          /* Focus states with maximum specificity */
+          input:focus, textarea:focus, select:focus,
+          html body div input:focus,
+          html body div textarea:focus,
+          html body div select:focus {
             color: #000000 !important;
             background-color: #ffffff !important;
             border-color: #3b82f6 !important;
@@ -89,23 +100,56 @@
             -webkit-opacity: 1 !important;
           }
           
-          /* Placeholder text */
-          input::placeholder, textarea::placeholder {
+          /* Placeholder text with maximum specificity */
+          input::placeholder, textarea::placeholder,
+          html body div input::placeholder,
+          html body div textarea::placeholder {
             color: #6b7280 !important;
             opacity: 1 !important;
             -webkit-text-fill-color: #6b7280 !important;
           }
           
-          /* Override conflicting classes */
-          .text-gray-900, .text-gray-700, .text-gray-600, .text-gray-500, 
-          .text-gray-400, .text-gray-300, .text-gray-200, .text-gray-100, 
-          .text-white, .text-black {
+          /* Override ALL possible conflicting classes */
+          .text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600, 
+          .text-gray-500, .text-gray-400, .text-gray-300, .text-gray-200, 
+          .text-gray-100, .text-white, .text-black, .text-transparent,
+          .text-current, .text-inherit {
             color: #000000 !important;
             -webkit-text-fill-color: #000000 !important;
           }
           
-          .bg-white, .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-transparent {
+          .bg-white, .bg-gray-50, .bg-gray-100, .bg-gray-200, 
+          .bg-gray-300, .bg-transparent, .bg-opacity-0,
+          .bg-opacity-10, .bg-opacity-20, .bg-opacity-30,
+          .bg-opacity-40, .bg-opacity-50 {
             background-color: #ffffff !important;
+          }
+          
+          /* Override any inline styles that might hide text */
+          input[style*="color: transparent"],
+          input[style*="opacity: 0"],
+          input[style*="visibility: hidden"],
+          input[style*="color: white"],
+          input[style*="color: #ffffff"],
+          input[style*="color: #fff"],
+          input[style*="color: inherit"],
+          input[style*="color: currentColor"],
+          input[style*="-webkit-text-fill-color: transparent"] {
+            color: #000000 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            -webkit-text-fill-color: #000000 !important;
+            -webkit-opacity: 1 !important;
+          }
+          
+          /* Force override with attribute selectors */
+          input[class], textarea[class], select[class],
+          input[data-testid], input[data-cy], input[data-qa],
+          input[class*="input"], input[class*="form"], input[class*="field"] {
+            color: #000000 !important;
+            background-color: #ffffff !important;
+            -webkit-text-fill-color: #000000 !important;
+            -webkit-opacity: 1 !important;
           }
           
           /* File input styling */
@@ -130,6 +174,25 @@
               -webkit-text-fill-color: #000000 !important;
             }
           }
+          
+          /* Dark mode - keep black text for visibility */
+          @media (prefers-color-scheme: dark) {
+            input, textarea, select {
+              color: #000000 !important;
+              background-color: #ffffff !important;
+              -webkit-text-fill-color: #000000 !important;
+            }
+          }
+          
+          /* High contrast mode */
+          @media (prefers-contrast: high) {
+            input, textarea, select {
+              color: #000000 !important;
+              background-color: #ffffff !important;
+              border: 2px solid #000000 !important;
+              -webkit-text-fill-color: #000000 !important;
+            }
+          }
         </style>
   </head>
   <body>
@@ -145,10 +208,10 @@
       
           function forceInputVisibility() {
             const inputs = document.querySelectorAll('input, textarea, select');
-            console.log('Found', inputs.length, 'input elements');
+            console.log('🚨 ULTRA-AGGRESSIVE FIX: Found', inputs.length, 'input elements');
             
             inputs.forEach((input, index) => {
-              // Comprehensive approach - force everything
+              // ULTRA-AGGRESSIVE approach - force everything with maximum specificity
               input.style.setProperty('color', '#000000', 'important');
               input.style.setProperty('background-color', '#ffffff', 'important');
               input.style.setProperty('border-color', '#d1d5db', 'important');
@@ -165,9 +228,14 @@
               input.style.setProperty('display', 'block', 'important');
               input.style.setProperty('outline', 'none', 'important');
               input.style.setProperty('box-shadow', 'none', 'important');
+              input.style.setProperty('font-family', 'inherit', 'important');
               
               // Force set attributes for maximum compatibility
               input.setAttribute('style', input.getAttribute('style') + '; color: #000000 !important; background-color: #ffffff !important; -webkit-text-fill-color: #000000 !important;');
+              
+              // Add data attributes to force override
+              input.setAttribute('data-force-visible', 'true');
+              input.setAttribute('data-text-color', '#000000');
               
               // Add event listeners to maintain visibility
               const maintainVisibility = (e) => {
@@ -176,19 +244,29 @@
                 e.target.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
                 e.target.style.setProperty('opacity', '1', 'important');
                 e.target.style.setProperty('visibility', 'visible', 'important');
+                e.target.style.setProperty('text-shadow', 'none', 'important');
               };
               
+              // Remove existing listeners to avoid duplicates
+              input.removeEventListener('focus', maintainVisibility);
+              input.removeEventListener('blur', maintainVisibility);
+              input.removeEventListener('input', maintainVisibility);
+              input.removeEventListener('change', maintainVisibility);
+              
+              // Add new listeners
               input.addEventListener('focus', maintainVisibility);
               input.addEventListener('blur', maintainVisibility);
               input.addEventListener('input', maintainVisibility);
               input.addEventListener('change', maintainVisibility);
+              input.addEventListener('keyup', maintainVisibility);
+              input.addEventListener('keydown', maintainVisibility);
               
               if (index < 3) {
-                console.log('Fixed input', index + 1, input.type || input.tagName);
+                console.log('🔧 Fixed input', index + 1, input.type || input.tagName, 'with ultra-aggressive approach');
               }
             });
             
-            console.log('✅ Applied comprehensive fix to', inputs.length, 'inputs');
+            console.log('✅ ULTRA-AGGRESSIVE FIX: Applied to', inputs.length, 'inputs');
           }
       
       // Run immediately
@@ -201,8 +279,34 @@
         forceInputVisibility();
       }
       
-      // Run every 1 second for maximum coverage
-      setInterval(forceInputVisibility, 1000);
+          // Run every 500ms for maximum coverage
+          setInterval(forceInputVisibility, 500);
+          
+          // Also run on any DOM mutation
+          const observer = new MutationObserver((mutations) => {
+            let hasNewInputs = false;
+            mutations.forEach((mutation) => {
+              mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1) { // Element node
+                  if (node.tagName === 'INPUT' || node.tagName === 'TEXTAREA' || node.tagName === 'SELECT' || 
+                      node.querySelector && node.querySelector('input, textarea, select')) {
+                    hasNewInputs = true;
+                  }
+                }
+              });
+            });
+            
+            if (hasNewInputs) {
+              console.log('🔄 New inputs detected, applying ultra-aggressive fix...');
+              setTimeout(forceInputVisibility, 100);
+            }
+          });
+          
+          // Start observing
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
     </script>
     <!--
       This HTML file is a template.
