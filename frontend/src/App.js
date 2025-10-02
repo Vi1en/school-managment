@@ -1,25 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { fixInputVisibility } from './utils/inputVisibilityFix';
 import './utils/emergencyInputFix';
+import './styles/definitive-input-fix.css';
 import './styles/input-emergency-fix.css';
 import './styles/input-fix.css';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import AddStudent from './pages/AddStudent';
-import EditStudent from './pages/EditStudent';
-import ViewStudent from './pages/ViewStudent';
-import Settings from './pages/Settings';
-import FeeDeposits from './pages/FeeDeposits';
-import Marks from './pages/Marks';
-import Marksheet from './pages/Marksheet';
-import MarksheetSelector from './pages/MarksheetSelector';
-import GenerateMarksheet from './pages/GenerateMarksheet';
-import Marksheets from './pages/Marksheets';
-import ViewMarksheet from './pages/ViewMarksheet';
-import ClassFees from './pages/ClassFees';
-import Layout from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
+import LoadingSpinner from './components/LoadingSpinner';
+import MobileFirstLayout from './components/MobileFirstLayout';
+import MobileFirstMarksheetGenerator from './components/MobileFirstMarksheetGenerator';
+
+// Lazy load components for better performance
+const Login = React.lazy(() => import('./pages/Login'));
+const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const AddStudent = React.lazy(() => import('./pages/AddStudent'));
+const EditStudent = React.lazy(() => import('./pages/EditStudent'));
+const ViewStudent = React.lazy(() => import('./pages/ViewStudent'));
+const Settings = React.lazy(() => import('./pages/Settings'));
+const FeeDeposits = React.lazy(() => import('./pages/FeeDeposits'));
+const Marks = React.lazy(() => import('./pages/Marks'));
+const Marksheet = React.lazy(() => import('./pages/Marksheet'));
+const MarksheetSelector = React.lazy(() => import('./pages/MarksheetSelector'));
+const Marksheets = React.lazy(() => import('./pages/Marksheets'));
+const ViewMarksheet = React.lazy(() => import('./pages/ViewMarksheet'));
+const ClassFees = React.lazy(() => import('./pages/ClassFees'));
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -28,31 +33,33 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="add-student" element={<AddStudent />} />
-        <Route path="edit-student/:admissionNumber" element={<EditStudent />} />
-        <Route path="student/:admissionNumber" element={<ViewStudent />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="fee-deposits" element={<FeeDeposits />} />
-        <Route path="class-fees" element={<ClassFees />} />
-        <Route path="marks" element={<Marks />} />
-        <Route path="marksheet" element={<MarksheetSelector />} />
-        <Route path="marksheet/:admissionNumber/:type" element={<Marksheet />} />
-        <Route path="marksheets" element={<Marksheets />} />
-        <Route path="generate-marksheet" element={<GenerateMarksheet />} />
-        <Route path="view-marksheet/:rollNumber" element={<ViewMarksheet />} />
-      </Route>
-    </Routes>
+    <Suspense fallback={<LoadingSpinner size="lg" text="Loading application..." className="min-h-screen" />}>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <MobileFirstLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="add-student" element={<AddStudent />} />
+          <Route path="edit-student/:admissionNumber" element={<EditStudent />} />
+          <Route path="student/:admissionNumber" element={<ViewStudent />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="fee-deposits" element={<FeeDeposits />} />
+          <Route path="class-fees" element={<ClassFees />} />
+          <Route path="marks" element={<Marks />} />
+          <Route path="marksheet" element={<MarksheetSelector />} />
+          <Route path="marksheet/:admissionNumber/:type" element={<Marksheet />} />
+          <Route path="marksheets" element={<Marksheets />} />
+          <Route path="generate-marksheet" element={<MobileFirstMarksheetGenerator />} />
+          <Route path="view-marksheet/:rollNumber" element={<ViewMarksheet />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 };
 
@@ -63,13 +70,15 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-gray-50">
-          <AppRoutes />
-        </div>
-      </Router>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <AppRoutes />
+          </div>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 
