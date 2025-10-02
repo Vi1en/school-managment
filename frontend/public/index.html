@@ -28,6 +28,46 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    
+    <!-- NUCLEAR INPUT FIX - INLINE CSS -->
+    <style>
+      input, textarea, select {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0.375rem !important;
+        width: 100% !important;
+        display: block !important;
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-text-fill-color: #000000 !important;
+        -webkit-opacity: 1 !important;
+        text-shadow: none !important;
+      }
+      
+      input:focus, textarea:focus, select:focus {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border-color: #3b82f6 !important;
+        outline: none !important;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        -webkit-text-fill-color: #000000 !important;
+        -webkit-opacity: 1 !important;
+      }
+      
+      input::placeholder, textarea::placeholder {
+        color: #6b7280 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #6b7280 !important;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -37,27 +77,34 @@
       console.log('Page loaded at:', new Date().toISOString());
       console.log('Cache buster timestamp:', Date.now());
       
-      // EMERGENCY INPUT VISIBILITY FIX - Run immediately
-      console.log('🚨 EMERGENCY INPUT FIX: Starting...');
+      // NUCLEAR INPUT VISIBILITY FIX - Run immediately
+      console.log('🚨 NUCLEAR INPUT FIX: Starting...');
       
       function forceInputVisibility() {
         const inputs = document.querySelectorAll('input, textarea, select');
         console.log('Found', inputs.length, 'input elements');
         
         inputs.forEach((input, index) => {
+          // Nuclear approach - force everything
           input.style.setProperty('color', '#000000', 'important');
           input.style.setProperty('background-color', '#ffffff', 'important');
           input.style.setProperty('border-color', '#d1d5db', 'important');
           input.style.setProperty('opacity', '1', 'important');
           input.style.setProperty('visibility', 'visible', 'important');
           input.style.setProperty('font-size', '16px', 'important');
+          input.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+          input.style.setProperty('-webkit-opacity', '1', 'important');
+          input.style.setProperty('text-shadow', 'none', 'important');
+          
+          // Force set attributes
+          input.setAttribute('style', input.getAttribute('style') + '; color: #000000 !important; background-color: #ffffff !important; -webkit-text-fill-color: #000000 !important;');
           
           if (index < 3) {
             console.log('Fixed input', index + 1, input.type || input.tagName);
           }
         });
         
-        console.log('✅ Applied emergency fix to', inputs.length, 'inputs');
+        console.log('✅ Applied nuclear fix to', inputs.length, 'inputs');
       }
       
       // Run immediately
@@ -70,8 +117,8 @@
         forceInputVisibility();
       }
       
-      // Run every 2 seconds
-      setInterval(forceInputVisibility, 2000);
+      // Run every 1 second for maximum coverage
+      setInterval(forceInputVisibility, 1000);
     </script>
     <!--
       This HTML file is a template.

@@ -1,0 +1,178 @@
+/* NUCLEAR INPUT FIX - THIS WILL WORK */
+/* Maximum specificity to override everything */
+
+/* Force ALL inputs to be visible with the highest possible specificity */
+html body div input,
+html body div textarea,
+html body div select,
+input,
+textarea,
+select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 0.375rem !important;
+  width: 100% !important;
+  display: block !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* All input types */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+input[type="file"],
+input[type="search"],
+input[type="url"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="checkbox"],
+input[type="radio"],
+textarea,
+select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  padding: 0.5rem 0.75rem !important;
+  border-radius: 0.375rem !important;
+  width: 100% !important;
+  display: block !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Focus states */
+input:focus,
+textarea:focus,
+select:focus {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: #3b82f6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-opacity: 1 !important;
+}
+
+/* Placeholder text */
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+}
+
+/* Override ALL possible classes */
+.text-gray-900,
+.text-gray-800,
+.text-gray-700,
+.text-gray-600,
+.text-gray-500,
+.text-gray-400,
+.text-gray-300,
+.text-gray-200,
+.text-gray-100,
+.text-white,
+.text-black,
+.text-transparent,
+.text-current,
+.text-inherit {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.bg-white,
+.bg-gray-50,
+.bg-gray-100,
+.bg-gray-200,
+.bg-gray-300,
+.bg-transparent,
+.bg-opacity-0,
+.bg-opacity-10,
+.bg-opacity-20,
+.bg-opacity-30,
+.bg-opacity-40,
+.bg-opacity-50 {
+  background-color: #ffffff !important;
+}
+
+/* Override any inline styles */
+input[style*="color: transparent"],
+input[style*="opacity: 0"],
+input[style*="visibility: hidden"],
+input[style*="color: white"],
+input[style*="color: #ffffff"],
+input[style*="color: #fff"],
+input[style*="color: inherit"],
+input[style*="color: currentColor"],
+input[style*="-webkit-text-fill-color: transparent"] {
+  color: #000000 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-opacity: 1 !important;
+}
+
+/* Force override with attribute selectors */
+input[class],
+textarea[class],
+select[class] {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-opacity: 1 !important;
+}
+
+/* Override any CSS-in-JS */
+input[data-testid],
+input[data-cy],
+input[data-qa],
+input[class*="input"],
+input[class*="form"],
+input[class*="field"] {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-opacity: 1 !important;
+}
+
+/* Mobile specific */
+@media (max-width: 640px) {
+  input, textarea, select {
+    font-size: 16px !important;
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
+    -webkit-opacity: 1 !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  input, textarea, select {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+}
