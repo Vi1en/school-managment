@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { studentsAPI } from '../services/api';
 
@@ -10,6 +10,38 @@ const EditStudent = () => {
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const fileInputRef = useRef(null);
+  const selectRef = useRef(null);
+  const textareaRef = useRef(null);
+
+  // NUCLEAR FIX - Force black text on white background for native elements
+  const applyNuclearFix = (element) => {
+    if (element) {
+      element.style.cssText = `
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important;
+        box-shadow: none !important;
+        display: block !important;
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        opacity: 1 !important;
+        outline: none !important;
+        padding: 0.5rem 0.75rem !important;
+        text-shadow: none !important;
+        visibility: visible !important;
+        width: 100% !important;
+        -webkit-text-fill-color: #000000 !important;
+        -webkit-opacity: 1 !important;
+        font-family: inherit !important;
+      `;
+      
+      // Add data attributes for tracking
+      element.setAttribute('data-force-visible', 'true');
+      element.setAttribute('data-text-color', '#000000');
+    }
+  };
   const [formData, setFormData] = useState({
     admissionNumber: '',
     studentName: '',
@@ -29,6 +61,18 @@ const EditStudent = () => {
   useEffect(() => {
     fetchStudent();
   }, [admissionNumber]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Apply nuclear fix to native elements
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('🔧 EditStudent: Applying nuclear fix to native elements...');
+      if (fileInputRef.current) applyNuclearFix(fileInputRef.current);
+      if (selectRef.current) applyNuclearFix(selectRef.current);
+      if (textareaRef.current) applyNuclearFix(textareaRef.current);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const fetchStudent = async () => {
     try {
@@ -210,12 +254,15 @@ const EditStudent = () => {
                   Update Student Photo (Passport Size)
                 </label>
                 <input
+                  ref={fileInputRef}
                   type="file"
                   name="photo"
                   id="photo"
                   accept="image/*"
                   onChange={handlePhotoChange}
                   className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                  onFocus={(e) => applyNuclearFix(e.target)}
+                  onBlur={(e) => applyNuclearFix(e.target)}
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   JPG, PNG, JPEG up to 2MB. Recommended: 2x2 inches (passport size). Leave empty to keep current photo.
@@ -319,11 +366,14 @@ const EditStudent = () => {
                   Blood Group
                 </label>
                 <select
+                  ref={selectRef}
                   name="bloodGroup"
                   id="bloodGroup"
                   value={formData.bloodGroup}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  onFocus={(e) => applyNuclearFix(e.target)}
+                  onBlur={(e) => applyNuclearFix(e.target)}
                 >
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
@@ -342,12 +392,15 @@ const EditStudent = () => {
                   Address
                 </label>
                 <textarea
+                  ref={textareaRef}
                   name="address"
                   id="address"
                   rows={3}
                   value={formData.address}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  onFocus={(e) => applyNuclearFix(e.target)}
+                  onBlur={(e) => applyNuclearFix(e.target)}
                 />
               </div>
 

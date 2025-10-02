@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { studentsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,6 +13,36 @@ const Dashboard = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const searchInputRef = useRef(null);
+
+  // NUCLEAR FIX - Force black text on white background for native elements
+  const applyNuclearFix = (element) => {
+    if (element) {
+      element.style.cssText = `
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important;
+        box-shadow: none !important;
+        display: block !important;
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        opacity: 1 !important;
+        outline: none !important;
+        padding: 0.5rem 0.75rem !important;
+        text-shadow: none !important;
+        visibility: visible !important;
+        width: 100% !important;
+        -webkit-text-fill-color: #000000 !important;
+        -webkit-opacity: 1 !important;
+        font-family: inherit !important;
+      `;
+      
+      // Add data attributes for tracking
+      element.setAttribute('data-force-visible', 'true');
+      element.setAttribute('data-text-color', '#000000');
+    }
+  };
 
   const testConnectivity = async () => {
     try {
@@ -117,6 +147,16 @@ const Dashboard = () => {
     return () => clearTimeout(timer);
   }, [isAuthenticated, admin, token, fetchStats]);
 
+  // Apply nuclear fix to search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('🔧 Dashboard: Applying nuclear fix to search input...');
+      if (searchInputRef.current) applyNuclearFix(searchInputRef.current);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
@@ -215,11 +255,14 @@ const Dashboard = () => {
           <form onSubmit={handleSearch} className="flex gap-4">
             <div className="flex-1">
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Enter admission number or student name to search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
+                onFocus={(e) => applyNuclearFix(e.target)}
+                onBlur={(e) => applyNuclearFix(e.target)}
               />
             </div>
             <button
