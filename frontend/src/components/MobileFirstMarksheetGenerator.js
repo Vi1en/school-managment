@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { marksheetsAPI, studentsAPI } from '../services/enhanced-api';
 import LoadingSpinner from './LoadingSpinner';
@@ -14,6 +14,41 @@ const MobileFirstMarksheetGenerator = () => {
   const [selectedClass, setSelectedClass] = useState('');
   const [examType, setExamType] = useState('Half-Yearly');
   const [academicYear, setAcademicYear] = useState('2025-26');
+  
+  // Refs for native HTML elements
+  const classSelectRef = useRef(null);
+  const examTypeSelectRef = useRef(null);
+  const studentSelectRef = useRef(null);
+  const radioInputsRef = useRef([]);
+
+  // NUCLEAR FIX - Force black text on white background for native elements
+  const applyNuclearFix = (element) => {
+    if (element) {
+      element.style.cssText = `
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important;
+        box-shadow: none !important;
+        display: block !important;
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        opacity: 1 !important;
+        outline: none !important;
+        padding: 0.5rem 0.75rem !important;
+        text-shadow: none !important;
+        visibility: visible !important;
+        width: 100% !important;
+        -webkit-text-fill-color: #000000 !important;
+        -webkit-opacity: 1 !important;
+        font-family: inherit !important;
+      `;
+      
+      // Add data attributes for tracking
+      element.setAttribute('data-force-visible', 'true');
+      element.setAttribute('data-text-color', '#000000');
+    }
+  };
   const [subjects, setSubjects] = useState([
     { name: 'HINDI COURSE A', code: '002', maxMarks: 100 },
     { name: 'ENGLISH LAN & LIT', code: '184', maxMarks: 100 },
@@ -28,6 +63,21 @@ const MobileFirstMarksheetGenerator = () => {
   const [newSubject, setNewSubject] = useState({ name: '', code: '', maxMarks: 100 });
   const [showPreview, setShowPreview] = useState(false);
   const [previewData, setPreviewData] = useState(null);
+
+  // Apply nuclear fix to native elements
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('🔧 MarksheetGenerator: Applying nuclear fix to native elements...');
+      if (classSelectRef.current) applyNuclearFix(classSelectRef.current);
+      if (examTypeSelectRef.current) applyNuclearFix(examTypeSelectRef.current);
+      if (studentSelectRef.current) applyNuclearFix(studentSelectRef.current);
+      radioInputsRef.current.forEach(input => {
+        if (input) applyNuclearFix(input);
+      });
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch students when class changes
   useEffect(() => {
@@ -443,10 +493,13 @@ const MobileFirstMarksheetGenerator = () => {
                     Class
                   </label>
                   <select
+                    ref={classSelectRef}
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                    onFocus={(e) => applyNuclearFix(e.target)}
+                    onBlur={(e) => applyNuclearFix(e.target)}
                   >
                     <option value="">Select Class</option>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(grade => (
@@ -460,10 +513,13 @@ const MobileFirstMarksheetGenerator = () => {
                     Exam Type
                   </label>
                   <select
+                    ref={examTypeSelectRef}
                     value={examType}
                     onChange={(e) => setExamType(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                    onFocus={(e) => applyNuclearFix(e.target)}
+                    onBlur={(e) => applyNuclearFix(e.target)}
                   >
                     <option value="Half-Yearly">Half-Yearly</option>
                     <option value="Annual">Annual</option>
@@ -491,23 +547,29 @@ const MobileFirstMarksheetGenerator = () => {
                   <div className="space-y-2">
                     <label className="flex items-center">
                       <input
+                        ref={(el) => radioInputsRef.current[0] = el}
                         type="radio"
                         name="generationMode"
                         value="bulk"
                         checked={generationMode === 'bulk'}
                         onChange={(e) => setGenerationMode(e.target.value)}
                         className="mr-2"
+                        onFocus={(e) => applyNuclearFix(e.target)}
+                        onBlur={(e) => applyNuclearFix(e.target)}
                       />
                       <span className="text-sm text-gray-700">Bulk (All Students)</span>
                     </label>
                     <label className="flex items-center">
                       <input
+                        ref={(el) => radioInputsRef.current[1] = el}
                         type="radio"
                         name="generationMode"
                         value="individual"
                         checked={generationMode === 'individual'}
                         onChange={(e) => setGenerationMode(e.target.value)}
                         className="mr-2"
+                        onFocus={(e) => applyNuclearFix(e.target)}
+                        onBlur={(e) => applyNuclearFix(e.target)}
                       />
                       <span className="text-sm text-gray-700">Individual</span>
                     </label>
@@ -520,10 +582,13 @@ const MobileFirstMarksheetGenerator = () => {
                       Select Student
                     </label>
                     <select
+                      ref={studentSelectRef}
                       value={selectedStudent}
                       onChange={(e) => setSelectedStudent(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                      onFocus={(e) => applyNuclearFix(e.target)}
+                      onBlur={(e) => applyNuclearFix(e.target)}
                     >
                       <option value="">Select Student</option>
                       {students.map(student => (
