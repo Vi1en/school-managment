@@ -1,6 +1,10 @@
 import React from 'react';
 
 const MarksheetPreview = ({ marksheetData, onClose, onPrint }) => {
+  // Debug logging
+  console.log('MarksheetPreview received data:', marksheetData);
+  console.log('Subjects data:', marksheetData?.subjects);
+  
   if (!marksheetData) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -83,7 +87,15 @@ const MarksheetPreview = ({ marksheetData, onClose, onPrint }) => {
                   src="/image.png" 
                   alt="SHINDE ACADEMY Logo" 
                   className="w-24 h-24 object-contain mr-4"
-                  onError={(e) => { e.target.style.display = 'none'; }}
+                  onError={(e) => { 
+                    console.log('Logo failed to load, showing fallback');
+                    e.target.style.display = 'none';
+                    // Show fallback text
+                    const fallback = document.createElement('div');
+                    fallback.className = 'w-24 h-24 bg-blue-100 flex items-center justify-center text-blue-800 text-xs font-bold border-2 border-blue-300 rounded mr-4';
+                    fallback.textContent = 'SA';
+                    e.target.parentNode.insertBefore(fallback, e.target);
+                  }}
                 />
                 <div className="text-center">
                   <h1 className="text-4xl font-extrabold text-blue-800 tracking-wide">SHINDE ACADEMY</h1>
@@ -134,16 +146,27 @@ const MarksheetPreview = ({ marksheetData, onClose, onPrint }) => {
                 </tr>
               </thead>
               <tbody>
-                {marksheetData.subjects?.map((subject, index) => (
-                  <tr key={index}>
-                    <td className="border border-gray-800 p-2 text-sm">{subject.name} ({subject.code})</td>
-                    <td className="border border-gray-800 p-2 text-center text-sm">{subject.ut1 || 0}</td>
-                    <td className="border border-gray-800 p-2 text-center text-sm">{subject.ut2 || 0}</td>
-                    <td className="border border-gray-800 p-2 text-center text-sm">{subject.halfYearly || 0}</td>
-                    <td className="border border-gray-800 p-2 text-center text-sm">{subject.total || 0}</td>
-                    <td className="border border-gray-800 p-2 text-center text-sm">{calculateGrade(subject.total || 0, subject.maxMarks || 100)}</td>
-                  </tr>
-                )) || (
+                {marksheetData.subjects?.map((subject, index) => {
+                  // Debug logging for each subject
+                  console.log(`Rendering subject ${index}:`, subject);
+                  
+                  const ut1 = subject.ut1 || subject.UT1 || 0;
+                  const ut2 = subject.ut2 || subject.UT2 || 0;
+                  const halfYearly = subject.halfYearly || subject.HFLY || 0;
+                  const total = subject.total || (ut1 + ut2 + halfYearly);
+                  const maxMarks = subject.maxMarks || 100;
+                  
+                  return (
+                    <tr key={index}>
+                      <td className="border border-gray-800 p-2 text-sm">{subject.name} ({subject.code})</td>
+                      <td className="border border-gray-800 p-2 text-center text-sm">{ut1 > 0 ? ut1 : '-'}</td>
+                      <td className="border border-gray-800 p-2 text-center text-sm">{ut2 > 0 ? ut2 : '-'}</td>
+                      <td className="border border-gray-800 p-2 text-center text-sm">{halfYearly > 0 ? halfYearly : '-'}</td>
+                      <td className="border border-gray-800 p-2 text-center text-sm">{total > 0 ? total : '-'}</td>
+                      <td className="border border-gray-800 p-2 text-center text-sm">{total > 0 ? calculateGrade(total, maxMarks) : '-'}</td>
+                    </tr>
+                  );
+                }) || (
                   <tr>
                     <td colSpan="6" className="border border-gray-800 p-4 text-center text-gray-500">
                       No subjects data available

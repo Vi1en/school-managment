@@ -151,14 +151,18 @@ const MobileFirstMarksheetGenerator = () => {
         const processedSubjects = subjects.map(subject => {
           const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
           console.log(`Subject ${subject.name} marks:`, marks);
+          
+          // Calculate total if not already calculated
+          const total = marks.total || (marks.ut1 + marks.ut2 + marks.halfYearly);
+          
           return {
             name: subject.name,
             code: subject.code,
-            ut1: marks.ut1,
-            ut2: marks.ut2,
-            halfYearly: marks.halfYearly,
-            total: marks.total,
-            maxMarks: subject.maxMarks
+            ut1: marks.ut1 || 0,
+            ut2: marks.ut2 || 0,
+            halfYearly: marks.halfYearly || 0,
+            total: total,
+            maxMarks: subject.maxMarks || 100
           };
         });
 
@@ -193,14 +197,18 @@ const MobileFirstMarksheetGenerator = () => {
       const processedSubjects = subjects.map(subject => {
         const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
         console.log(`Bulk subject ${subject.name} marks:`, marks);
+        
+        // Calculate total if not already calculated
+        const total = marks.total || (marks.ut1 + marks.ut2 + marks.halfYearly);
+        
         return {
           name: subject.name,
           code: subject.code,
-          ut1: marks.ut1,
-          ut2: marks.ut2,
-          halfYearly: marks.halfYearly,
-          total: marks.total,
-          maxMarks: subject.maxMarks
+          ut1: marks.ut1 || 0,
+          ut2: marks.ut2 || 0,
+          halfYearly: marks.halfYearly || 0,
+          total: total,
+          maxMarks: subject.maxMarks || 100
         };
       });
 
@@ -242,14 +250,18 @@ const MobileFirstMarksheetGenerator = () => {
           
           const processedSubjects = subjects.map(subject => {
             const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
+            
+            // Calculate total if not already calculated
+            const total = marks.total || (marks.ut1 + marks.ut2 + marks.halfYearly);
+            
             return {
               name: subject.name,
               code: subject.code,
-              ut1: marks.ut1,
-              ut2: marks.ut2,
-              halfYearly: marks.halfYearly,
-              total: marks.total,
-              maxMarks: subject.maxMarks
+              ut1: marks.ut1 || 0,
+              ut2: marks.ut2 || 0,
+              halfYearly: marks.halfYearly || 0,
+              total: total,
+              maxMarks: subject.maxMarks || 100
             };
           });
 
@@ -285,14 +297,18 @@ const MobileFirstMarksheetGenerator = () => {
           
           const processedSubjects = subjects.map(subject => {
             const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
+            
+            // Calculate total if not already calculated
+            const total = marks.total || (marks.ut1 + marks.ut2 + marks.halfYearly);
+            
             return {
               name: subject.name,
               code: subject.code,
-              ut1: marks.ut1,
-              ut2: marks.ut2,
-              halfYearly: marks.halfYearly,
-              total: marks.total,
-              maxMarks: subject.maxMarks
+              ut1: marks.ut1 || 0,
+              ut2: marks.ut2 || 0,
+              halfYearly: marks.halfYearly || 0,
+              total: total,
+              maxMarks: subject.maxMarks || 100
             };
           });
 
@@ -329,14 +345,18 @@ const MobileFirstMarksheetGenerator = () => {
         
         const processedSubjects = subjects.map(subject => {
           const marks = studentMarks[subject.name] || { ut1: 0, ut2: 0, halfYearly: 0, total: 0, maxMarks: subject.maxMarks };
+          
+          // Calculate total if not already calculated
+          const total = marks.total || (marks.ut1 + marks.ut2 + marks.halfYearly);
+          
           return {
             name: subject.name,
             code: subject.code,
-            ut1: marks.ut1,
-            ut2: marks.ut2,
-            halfYearly: marks.halfYearly,
-            total: marks.total,
-            maxMarks: subject.maxMarks
+            ut1: marks.ut1 || 0,
+            ut2: marks.ut2 || 0,
+            halfYearly: marks.halfYearly || 0,
+            total: total,
+            maxMarks: subject.maxMarks || 100
           };
         });
 
