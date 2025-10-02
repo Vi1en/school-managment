@@ -167,6 +167,12 @@ const GenerateMarksheet: React.FC = () => {
     setLocalError('');
     clearError();
 
+    console.log('GenerateMarksheets: Starting generation process');
+    console.log('GenerateMarksheets: Mode:', generationMode);
+    console.log('GenerateMarksheets: Selected class:', selectedClass);
+    console.log('GenerateMarksheets: Selected student:', selectedStudent);
+    console.log('GenerateMarksheets: Students count:', students.length);
+
     try {
       if (generationMode === 'bulk') {
         if (!selectedClass || students.length === 0) {
@@ -182,9 +188,12 @@ const GenerateMarksheet: React.FC = () => {
           const studentId = student.id || student._id || student.admissionNumber;
           console.log('Processing student:', student.studentName, 'ID:', studentId);
           const studentMarks = marksData[studentId] || {};
+          console.log('Student marks data:', studentMarks);
+          
           const subjectMarks = subjects.map(subject => {
             const subjectData = studentMarks[subject.name] || {};
             const totalMarks = calculateTotalMarks(subjectData, examType);
+            console.log(`Subject ${subject.name}:`, subjectData, 'Total:', totalMarks);
             
             return {
               id: subject.id,
@@ -215,8 +224,19 @@ const GenerateMarksheet: React.FC = () => {
           return marksheetData;
         });
 
+        // Validate marksheets data before creating
+        const validMarksheets = marksheetsToCreate.filter(marksheet => {
+          const isValid = marksheet.rollNumber && marksheet.studentName && marksheet.subjects && marksheet.subjects.length > 0;
+          if (!isValid) {
+            console.warn('Invalid marksheet data:', marksheet);
+          }
+          return isValid;
+        });
+
+        console.log(`Creating ${validMarksheets.length} valid marksheets out of ${marksheetsToCreate.length} total`);
+
         // Create marksheets
-        for (const marksheetData of marksheetsToCreate) {
+        for (const marksheetData of validMarksheets) {
           console.log('Creating marksheet with data:', JSON.stringify(marksheetData, null, 2));
           console.log('Required fields check:', {
             rollNumber: !!marksheetData.rollNumber,
@@ -246,9 +266,12 @@ const GenerateMarksheet: React.FC = () => {
           return;
         }
 
+        console.log('Individual marks data:', individualMarksData);
+        
         const subjectMarks = subjects.map(subject => {
           const subjectData = individualMarksData[subject.name] || {};
           const totalMarks = calculateTotalMarks(subjectData, examType);
+          console.log(`Individual Subject ${subject.name}:`, subjectData, 'Total:', totalMarks);
           
           return {
             id: subject.id,
@@ -274,6 +297,13 @@ const GenerateMarksheet: React.FC = () => {
           academicYear: '2025-26',
           subjects: subjectMarks,
         };
+
+        // Validate individual marksheet data
+        const isValid = marksheetData.rollNumber && marksheetData.studentName && marksheetData.subjects && marksheetData.subjects.length > 0;
+        if (!isValid) {
+          setLocalError('Invalid marksheet data. Please check all fields are filled correctly.');
+          return;
+        }
 
         console.log('Creating individual marksheet with data:', JSON.stringify(marksheetData, null, 2));
         console.log('Required fields check:', {
