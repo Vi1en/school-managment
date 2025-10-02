@@ -45,13 +45,20 @@ const GenerateMarksheet = () => {
 
   const fetchStudentsByClass = async (className) => {
     try {
+      console.log('Fetching students for class:', className);
       const response = await studentsAPI.getAll();
+      console.log('Students API response:', response.data);
+      
       const allStudents = response.data.students || response.data;
+      console.log('All students:', allStudents);
+      
       const classStudents = allStudents.filter(student => student.currentClass === className);
+      console.log('Class students:', classStudents);
+      
       setStudents(classStudents);
     } catch (err) {
-      setError('Error fetching students');
       console.error('Error fetching students:', err);
+      setError('Error fetching students: ' + (err.response?.data?.message || err.message));
     }
   };
 
@@ -316,13 +323,47 @@ const GenerateMarksheet = () => {
           };
         });
 
+        // Validate all marksheets before sending
+        console.log('Validating marksheets before creation...');
+        const validationErrors = [];
+        marksheetsToCreate.forEach((marksheet, index) => {
+          if (!marksheet.rollNumber) validationErrors.push(`Student ${index + 1}: Roll number missing`);
+          if (!marksheet.studentName) validationErrors.push(`Student ${index + 1}: Student name missing`);
+          if (!marksheet.currentClass) validationErrors.push(`Student ${index + 1}: Current class missing`);
+          if (!marksheet.fatherName) validationErrors.push(`Student ${index + 1}: Father name missing`);
+          if (!marksheet.motherName) validationErrors.push(`Student ${index + 1}: Mother name missing`);
+          if (!marksheet.dob) validationErrors.push(`Student ${index + 1}: Date of birth missing`);
+          if (!marksheet.bloodGroup) validationErrors.push(`Student ${index + 1}: Blood group missing`);
+          if (!marksheet.address) validationErrors.push(`Student ${index + 1}: Address missing`);
+          if (!marksheet.phoneNumber) validationErrors.push(`Student ${index + 1}: Phone number missing`);
+          if (!marksheet.subjects || marksheet.subjects.length === 0) {
+            validationErrors.push(`Student ${index + 1}: No subjects found`);
+          }
+        });
+
+        if (validationErrors.length > 0) {
+          setError('Validation errors:\n' + validationErrors.join('\n'));
+          return;
+        }
+
+        console.log('All marksheets validated, creating...');
+
         // Create marksheets for all students
+        let successCount = 0;
+        let errorCount = 0;
+        
         for (const marksheetData of marksheetsToCreate) {
           console.log('Creating marksheet for:', marksheetData.rollNumber);
+          console.log('Marksheet data:', JSON.stringify(marksheetData, null, 2));
+          
           try {
             const response = await marksheetsAPI.create(marksheetData);
             console.log('Marksheet created successfully:', response.data);
+            successCount++;
           } catch (err) {
+            console.error('Error creating marksheet for:', marksheetData.rollNumber, err);
+            console.error('Error response:', err.response?.data);
+            
             if (err.response?.status === 400 && err.response?.data?.message?.includes('already exists')) {
               console.log(`Marksheet for ${marksheetData.rollNumber} already exists, deleting and recreating...`);
               try {
@@ -331,19 +372,24 @@ const GenerateMarksheet = () => {
                 // Create new marksheet
                 const response = await marksheetsAPI.create(marksheetData);
                 console.log('Marksheet recreated successfully:', response.data);
+                successCount++;
               } catch (deleteErr) {
                 console.error('Error deleting/recreating marksheet:', deleteErr);
-                throw deleteErr;
+                errorCount++;
               }
             } else {
-              throw err;
+              errorCount++;
+              console.error('Failed to create marksheet for:', marksheetData.rollNumber);
             }
           }
         }
 
-        // Show success message and navigate
-        alert('Marksheets generated successfully!');
-        navigate('/marksheets');
+        if (errorCount === 0) {
+          alert(`${successCount} marksheets generated successfully!`);
+          navigate('/marksheets');
+        } else {
+          alert(`${successCount} marksheets generated successfully, ${errorCount} failed. Check console for details.`);
+        }
       } catch (err) {
         console.error('Error creating marksheets:', err);
         console.error('Error response data:', err.response?.data);
@@ -436,7 +482,31 @@ const GenerateMarksheet = () => {
           subjects: subjectMarks
         };
 
+        // Validate individual marksheet data
+        console.log('Validating individual marksheet data...');
+        const validationErrors = [];
+        if (!marksheetData.rollNumber) validationErrors.push('Roll number missing');
+        if (!marksheetData.studentName) validationErrors.push('Student name missing');
+        if (!marksheetData.currentClass) validationErrors.push('Current class missing');
+        if (!marksheetData.fatherName) validationErrors.push('Father name missing');
+        if (!marksheetData.motherName) validationErrors.push('Mother name missing');
+        if (!marksheetData.dob) validationErrors.push('Date of birth missing');
+        if (!marksheetData.bloodGroup) validationErrors.push('Blood group missing');
+        if (!marksheetData.address) validationErrors.push('Address missing');
+        if (!marksheetData.phoneNumber) validationErrors.push('Phone number missing');
+        if (!marksheetData.subjects || marksheetData.subjects.length === 0) {
+          validationErrors.push('No subjects found');
+        }
+
+        if (validationErrors.length > 0) {
+          setError('Validation errors:\n' + validationErrors.join('\n'));
+          return;
+        }
+
+        console.log('Individual marksheet validated, creating...');
         console.log('Creating individual marksheet for:', marksheetData.rollNumber);
+        console.log('Marksheet data:', JSON.stringify(marksheetData, null, 2));
+        
         try {
           const response = await marksheetsAPI.create(marksheetData);
           console.log('Marksheet created successfully:', response.data);
@@ -445,7 +515,23 @@ const GenerateMarksheet = () => {
           alert('Marksheet generated successfully!');
           navigate('/marksheets');
         } catch (err) {
-          if (err.response?.status === 400 && err.response?.data?.message?.includes('already exists')) {
+          console.error('Error creating individual marksheet:', err);
+          console.error('Error response:', err.response?.data);
+          console.error('Error status:', err.response?.status);
+          
+          if (err.response?.status === 400) {
+            const errorMessage = err.response.data?.message || 'Validation error';
+            const missingFields = err.response.data?.missingFields || [];
+            if (missingFields.length > 0) {
+              setError(`Missing required fields: ${missingFields.join(', ')}`);
+            } else {
+              setError(errorMessage);
+            }
+          } else if (err.response?.status === 500) {
+            const errorMessage = err.response.data?.message || 'Server error';
+            const errorDetails = err.response.data?.error || 'Unknown error';
+            setError(`Server error: ${errorMessage}. Details: ${errorDetails}`);
+          } else if (err.response?.data?.message?.includes('already exists')) {
             console.log('Marksheet already exists, deleting and recreating...');
             try {
               // Delete existing marksheet
@@ -468,7 +554,7 @@ const GenerateMarksheet = () => {
               return;
             }
           } else {
-            throw err;
+            setError(err.response?.data?.message || err.message || 'Error creating marksheet');
           }
         }
       } catch (err) {
@@ -833,7 +919,7 @@ const GenerateMarksheet = () => {
                                             max="10"
                                             value={marksData[student._id]?.[subjects[currentSubject]?.name]?.UT1 || ''}
                                             onChange={(e) => handleMarkChange(student._id, 'UT1', e.target.value)}
-                                            className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                           />
                                         </td>
                                         <td className="border border-gray-300 px-2 py-1">
@@ -843,7 +929,7 @@ const GenerateMarksheet = () => {
                                             max="10"
                                             value={marksData[student._id]?.[subjects[currentSubject]?.name]?.UT2 || ''}
                                             onChange={(e) => handleMarkChange(student._id, 'UT2', e.target.value)}
-                                            className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                           />
                                         </td>
                                       </>
@@ -856,7 +942,7 @@ const GenerateMarksheet = () => {
                                             max="10"
                                             value={marksData[student._id]?.[subjects[currentSubject]?.name]?.UT3 || ''}
                                             onChange={(e) => handleMarkChange(student._id, 'UT3', e.target.value)}
-                                            className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                           />
                                         </td>
                                         <td className="border border-gray-300 px-2 py-1">
@@ -866,7 +952,7 @@ const GenerateMarksheet = () => {
                                             max="10"
                                             value={marksData[student._id]?.[subjects[currentSubject]?.name]?.UT4 || ''}
                                             onChange={(e) => handleMarkChange(student._id, 'UT4', e.target.value)}
-                                            className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                           />
                                         </td>
                                       </>
@@ -922,7 +1008,7 @@ const GenerateMarksheet = () => {
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT1 || ''}
                                               onChange={(e) => handleIndividualMarkChange('UT1', e.target.value, subjects[currentSubject]?.name)}
-                                              className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                              className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                             />
                                           </td>
                                           <td className="border border-gray-300 px-2 py-1">
@@ -932,7 +1018,7 @@ const GenerateMarksheet = () => {
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT2 || ''}
                                               onChange={(e) => handleIndividualMarkChange('UT2', e.target.value, subjects[currentSubject]?.name)}
-                                              className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                              className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                             />
                                           </td>
                                         </>
@@ -945,7 +1031,7 @@ const GenerateMarksheet = () => {
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT3 || ''}
                                               onChange={(e) => handleIndividualMarkChange('UT3', e.target.value, subjects[currentSubject]?.name)}
-                                              className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                              className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                             />
                                           </td>
                                           <td className="border border-gray-300 px-2 py-1">
@@ -955,7 +1041,7 @@ const GenerateMarksheet = () => {
                                               max="10"
                                               value={individualMarksData[subjects[currentSubject]?.name]?.UT4 || ''}
                                               onChange={(e) => handleIndividualMarkChange('UT4', e.target.value, subjects[currentSubject]?.name)}
-                                              className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                              className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                             />
                                           </td>
                                         </>
@@ -967,7 +1053,7 @@ const GenerateMarksheet = () => {
                                           max="80"
                                           value={individualMarksData[subjects[currentSubject]?.name]?.[examType === 'Half-Yearly' ? 'halfYearly' : 'annual'] || ''}
                                           onChange={(e) => handleIndividualMarkChange(examType === 'Half-Yearly' ? 'halfYearly' : 'annual', e.target.value, subjects[currentSubject]?.name)}
-                                          className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                          className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                         />
                                       </td>
                                       <td className="border border-gray-300 px-2 py-1">
@@ -976,7 +1062,7 @@ const GenerateMarksheet = () => {
                                           min="0"
                                           value={individualStudentSettings.totalDays || 105}
                                           onChange={(e) => handleIndividualStudentSettingChange('totalDays', e.target.value)}
-                                          className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                          className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                         />
                                       </td>
                                       <td className="border border-gray-300 px-2 py-1">
@@ -985,7 +1071,7 @@ const GenerateMarksheet = () => {
                                           min="0"
                                           value={individualStudentSettings.presentDays || 95}
                                           onChange={(e) => handleIndividualStudentSettingChange('presentDays', e.target.value)}
-                                          className="w-full px-2 py-1 text-center border-0 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                          className="w-full px-2 py-1 text-center border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
                                         />
                                       </td>
                                     </tr>

@@ -354,7 +354,7 @@ const processRequest = async (event, context) => {
       }
 
       const students = await Student.find(query).sort({ createdAt: -1 });
-      return createResponse(200, students);
+      return createResponse(200, { students });
     }
 
     if (path === '/api/students' && method === 'POST') {
@@ -541,79 +541,188 @@ const processRequest = async (event, context) => {
     }
 
     if (path === '/api/marksheets' && method === 'POST') {
-      console.log('Marksheet creation request received');
+      console.log('=== MARKSHEET CREATION REQUEST ===');
+      console.log('Request body:', JSON.stringify(body, null, 2));
       
-      const user = authenticateToken(headers);
-      if (!user) {
-        console.log('Authentication failed');
-        return createResponse(401, { message: 'Access token required' });
-      }
-
-      console.log('User authenticated:', user.email);
-
-      const { rollNumber, studentName, examType, academicYear, subjects } = body;
-      
-      console.log('Marksheet data:', { rollNumber, studentName, examType, academicYear, subjectsCount: subjects?.length });
-      
-      if (!rollNumber || !studentName || !examType || !academicYear || !subjects) {
-        console.log('Missing required fields');
-        return createResponse(400, { message: 'Required fields missing' });
-      }
-
-      // Calculate totals and percentage
-      let totalMarks = 0;
-      let maxTotalMarks = 0;
-      
-      subjects.forEach(subject => {
-        totalMarks += subject.marks || 0;
-        maxTotalMarks += subject.maxMarks || 0;
-      });
-
-      const marksheetData = {
-        ...body,
-        totalMarks,
-        maxTotalMarks,
-        percentage: maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0,
-        promotionStatus: (maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0) >= 40 ? 'Promoted' : 'Not Promoted'
-      };
-
-      console.log('Calculated marks:', { totalMarks, maxTotalMarks, percentage: marksheetData.percentage });
-
       try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          console.log('Authentication failed');
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        console.log('User authenticated:', user.email);
+
+        // Validate required fields
+        const { rollNumber, studentName, examType, academicYear, subjects, currentClass, fatherName, motherName, dob, bloodGroup, address, phoneNumber, photo } = body;
+        
+        console.log('Extracted fields:', { 
+          rollNumber, 
+          studentName, 
+          examType, 
+          academicYear, 
+          subjectsCount: subjects?.length,
+          currentClass,
+          fatherName,
+          motherName,
+          dob,
+          bloodGroup,
+          address,
+          phoneNumber,
+          hasPhoto: !!photo
+        });
+        
+        // Validate required fields
+        const requiredFields = { rollNumber, studentName, examType, academicYear, subjects, currentClass, fatherName, motherName, dob, bloodGroup, address, phoneNumber };
+        const missingFields = Object.entries(requiredFields)
+          .filter(([key, value]) => !value)
+          .map(([key]) => key);
+        
+        if (missingFields.length > 0) {
+          console.log('Missing required fields:', missingFields);
+          return createResponse(400, { 
+            message: 'Required fields missing', 
+            missingFields,
+            details: 'Please ensure all student information is provided'
+          });
+        }
+
+        // Validate subjects array
+        if (!Array.isArray(subjects) || subjects.length === 0) {
+          console.log('Invalid subjects array');
+          return createResponse(400, { 
+            message: 'Subjects array is required and must not be empty' 
+          });
+        }
+
+        // Validate and parse subjects data
+        const validatedSubjects = subjects.map((subject, index) => {
+          if (!subject.name || !subject.code) {
+            throw new Error(`Subject ${index + 1} is missing name or code`);
+          }
+          
+          const marks = parseFloat(subject.marks) || 0;
+          const maxMarks = parseFloat(subject.maxMarks) || 100;
+          
+          if (isNaN(marks) || isNaN(maxMarks)) {
+            throw new Error(`Subject ${subject.name} has invalid marks values`);
+          }
+          
+          return {
+            name: String(subject.name).trim(),
+            code: String(subject.code).trim(),
+            marks: Number(marks),
+            maxMarks: Number(maxMarks)
+          };
+        });
+
+        console.log('Validated subjects:', validatedSubjects);
+
+        // Calculate totals and percentage
+        let totalMarks = 0;
+        let maxTotalMarks = 0;
+        
+        validatedSubjects.forEach(subject => {
+          totalMarks += subject.marks;
+          maxTotalMarks += subject.maxMarks;
+        });
+
+        const percentage = maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0;
+        const promotionStatus = percentage >= 40 ? 'Promoted' : 'Not Promoted';
+
+        // Parse date properly
+        let parsedDob;
+        try {
+          parsedDob = new Date(dob);
+          if (isNaN(parsedDob.getTime())) {
+            throw new Error('Invalid date format');
+          }
+        } catch (dateError) {
+          console.error('Date parsing error:', dateError);
+          return createResponse(400, { 
+            message: 'Invalid date format for DOB',
+            error: dateError.message
+          });
+        }
+
+        const marksheetData = {
+          rollNumber: String(rollNumber).trim(),
+          studentName: String(studentName).trim(),
+          fatherName: String(fatherName).trim(),
+          motherName: String(motherName).trim(),
+          dob: parsedDob,
+          currentClass: String(currentClass).trim(),
+          bloodGroup: String(bloodGroup).trim(),
+          address: String(address).trim(),
+          phoneNumber: String(phoneNumber).trim(),
+          photo: photo || null,
+          examType: String(examType).trim(),
+          academicYear: String(academicYear).trim(),
+          subjects: validatedSubjects,
+          totalMarks: Number(totalMarks),
+          maxTotalMarks: Number(maxTotalMarks),
+          percentage: Number(percentage),
+          promotionStatus: promotionStatus
+        };
+
+        console.log('Processed marksheet data:', {
+          rollNumber: marksheetData.rollNumber,
+          studentName: marksheetData.studentName,
+          examType: marksheetData.examType,
+          academicYear: marksheetData.academicYear,
+          subjectsCount: marksheetData.subjects.length,
+          totalMarks: marksheetData.totalMarks,
+          maxTotalMarks: marksheetData.maxTotalMarks,
+          percentage: marksheetData.percentage,
+          promotionStatus: marksheetData.promotionStatus
+        });
+
         // Check for existing marksheet
+        console.log('Checking for existing marksheet...');
         const existingMarksheet = await Marksheet.findOne({
-          rollNumber,
-          examType,
-          academicYear
+          rollNumber: marksheetData.rollNumber,
+          examType: marksheetData.examType,
+          academicYear: marksheetData.academicYear
         });
 
         if (existingMarksheet) {
-          console.log('Updating existing marksheet');
+          console.log('Updating existing marksheet:', existingMarksheet._id);
           const updatedMarksheet = await Marksheet.findOneAndUpdate(
-            { rollNumber, examType, academicYear },
+            { rollNumber: marksheetData.rollNumber, examType: marksheetData.examType, academicYear: marksheetData.academicYear },
             marksheetData,
             { new: true, runValidators: true }
           );
-          console.log('Marksheet updated successfully');
+          console.log('Marksheet updated successfully:', updatedMarksheet._id);
           return createResponse(200, { 
             message: 'Marksheet updated successfully', 
             marksheet: updatedMarksheet 
           });
         } else {
-          console.log('Creating new marksheet');
+          console.log('Creating new marksheet...');
           const marksheet = new Marksheet(marksheetData);
           await marksheet.save();
-          console.log('Marksheet created successfully');
+          console.log('Marksheet created successfully:', marksheet._id);
           return createResponse(201, {
             message: 'Marksheet created successfully',
             marksheet
           });
         }
       } catch (error) {
-        console.error('Database error:', error);
+        console.error('=== MARKSHEET CREATION ERROR ===');
+        console.error('Error type:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        console.error('Request body:', JSON.stringify(body, null, 2));
+        
+        // Return detailed error in development
+        const isDevelopment = process.env.NODE_ENV !== 'production';
         return createResponse(500, {
-          message: 'Database error',
-          error: error.message
+          message: 'Marksheet creation failed',
+          error: error.message,
+          ...(isDevelopment && {
+            details: error.stack,
+            requestBody: body
+          })
         });
       }
     }

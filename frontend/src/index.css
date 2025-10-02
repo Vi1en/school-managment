@@ -562,12 +562,60 @@ body {
   font-size: 1rem;
   transition: all 0.2s ease;
   background: var(--white);
+  color: var(--black);
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--black);
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Input Fields - Ensure Visibility */
+input[type="text"], 
+input[type="number"], 
+input[type="email"], 
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  background: var(--white);
+  color: var(--black);
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus, 
+input[type="number"]:focus, 
+input[type="email"]:focus, 
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--black);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Input Fields */
+table input[type="text"], 
+table input[type="number"] {
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--black);
+  text-align: center;
+}
+
+table input[type="text"]:focus, 
+table input[type="number"]:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .form-label {

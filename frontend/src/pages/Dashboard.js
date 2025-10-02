@@ -81,6 +81,22 @@ const Dashboard = () => {
         window.location.replace('/login');
         return; // Important: return to prevent further execution
       }
+      
+      // Set default stats if API fails
+      setStats({
+        totalStudents: 0,
+        paidStudents: 0,
+        partialPaidStudents: 0,
+        unpaidStudents: 0,
+        failedStudents: 0,
+        passedStudents: 0,
+        graduatedStudents: 0,
+        averageAttendance: 0,
+        feeStats: {
+          totalCollected: 0,
+          totalPending: 0
+        }
+      });
     } finally {
       setLoading(false);
     }
