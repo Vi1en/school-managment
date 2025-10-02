@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuclear Input Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-box {
+            background: #000;
+            color: #fff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🚨 Nuclear Input Test</h1>
+        <p>This test will force black text on white background for all inputs.</p>
+        
+        <div class="test-box">
+            <strong>Test Box:</strong> This should have white text on black background
+        </div>
+        
+        <div class="form-group">
+            <label for="test1">Text Input (should have BLACK text):</label>
+            <input type="text" id="test1" value="BLACK TEXT TEST" placeholder="Type here...">
+        </div>
+        
+        <div class="form-group">
+            <label for="test2">Number Input (should have BLACK text):</label>
+            <input type="number" id="test2" value="123" placeholder="Enter number">
+        </div>
+        
+        <div class="form-group">
+            <label for="test3">Email Input (should have BLACK text):</label>
+            <input type="email" id="test3" value="test@example.com" placeholder="Enter email">
+        </div>
+        
+        <div class="form-group">
+            <label for="test4">Textarea (should have BLACK text):</label>
+            <textarea id="test4" rows="3" placeholder="Type a message...">BLACK TEXT IN TEXTAREA</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="test5">Select (should have BLACK text):</label>
+            <select id="test5">
+                <option value="">Choose an option</option>
+                <option value="option1" selected>Option 1 (Selected)</option>
+                <option value="option2">Option 2</option>
+            </select>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // NUCLEAR INPUT FIX - Force black text on white background
+        function nuclearInputFix() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            console.log('🚨 NUCLEAR FIX: Found', inputs.length, 'input elements');
+            
+            inputs.forEach((input, index) => {
+                // NUCLEAR APPROACH - Force black text on white background
+                input.style.cssText = `
+                    color: #000000 !important;
+                    background-color: #ffffff !important;
+                    border: 1px solid #d1d5db !important;
+                    border-radius: 0.375rem !important;
+                    box-shadow: none !important;
+                    display: block !important;
+                    font-size: 16px !important;
+                    line-height: 1.5 !important;
+                    opacity: 1 !important;
+                    outline: none !important;
+                    padding: 0.5rem 0.75rem !important;
+                    text-shadow: none !important;
+                    visibility: visible !important;
+                    width: 100% !important;
+                    -webkit-text-fill-color: #000000 !important;
+                    -webkit-opacity: 1 !important;
+                    font-family: inherit !important;
+                `;
+                
+                console.log('🔧 NUCLEAR FIX: Applied to input', index + 1, input.type || input.tagName);
+            });
+            
+            console.log('✅ NUCLEAR FIX: Applied to', inputs.length, 'inputs - BLACK TEXT ON WHITE BACKGROUND');
+        }
+        
+        // Run immediately
+        nuclearInputFix();
+        
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', nuclearInputFix);
+        } else {
+            nuclearInputFix();
+        }
+        
+        // Run every 500ms for maximum coverage
+        setInterval(nuclearInputFix, 500);
+        
+        // Check visibility
+        function checkVisibility() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            let visibleCount = 0;
+            let totalCount = inputs.length;
+            
+            inputs.forEach((input, index) => {
+                const computedStyle = window.getComputedStyle(input);
+                const textColor = computedStyle.color;
+                const backgroundColor = computedStyle.backgroundColor;
+                
+                const isVisible = (
+                    textColor === 'rgb(0, 0, 0)' && 
+                    backgroundColor === 'rgb(255, 255, 255)'
+                );
+                
+                if (isVisible) {
+                    visibleCount++;
+                }
+                
+                console.log(`Input ${index + 1}:`, {
+                    element: input.tagName + (input.type ? `[${input.type}]` : ''),
+                    visible: isVisible,
+                    textColor,
+                    backgroundColor
+                });
+            });
+            
+            const percentage = Math.round((visibleCount / totalCount) * 100);
+            const resultDiv = document.getElementById('result');
+            
+            let statusClass = 'error';
+            let statusText = '❌ FAILED';
+            if (percentage >= 90) {
+                statusClass = 'success';
+                statusText = '✅ PASSED';
+            } else if (percentage >= 70) {
+                statusClass = 'error';
+                statusText = '⚠️ PARTIAL';
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="status ${statusClass}">
+                    <strong>${statusText}</strong> - ${visibleCount}/${totalCount} inputs have BLACK text on WHITE background (${percentage}%)
+                </div>
+            `;
+        }
+        
+        // Check on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkVisibility, 1000);
+        });
+        
+        // Check when any input changes
+        document.addEventListener('input', () => {
+            setTimeout(checkVisibility, 100);
+        });
+    </script>
+</body>
+</html>

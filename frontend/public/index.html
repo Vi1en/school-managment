@@ -30,9 +30,9 @@
     <meta http-equiv="Expires" content="0">
     <meta name="cache-buster" content="nuclear-fix-v2">
     
-        <!-- ULTRA-AGGRESSIVE INPUT FIX - MAXIMUM SPECIFICITY -->
+        <!-- NUCLEAR INPUT FIX - FORCE BLACK TEXT ON WHITE BACKGROUND -->
         <style>
-          /* ULTRA-HIGH SPECIFICITY - This will override everything */
+          /* NUCLEAR APPROACH - Force black text on white background */
           html body div#root div input,
           html body div#root div textarea,
           html body div#root div select,
@@ -57,6 +57,15 @@
             -webkit-text-fill-color: #000000 !important;
             -webkit-opacity: 1 !important;
             font-family: inherit !important;
+          }
+          
+          /* FORCE OVERRIDE - This will definitely work */
+          * input, * textarea, * select {
+            color: #000000 !important;
+            background-color: #ffffff !important;
+            -webkit-text-fill-color: #000000 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
           }
           
           /* ALL input types with maximum specificity */
@@ -208,27 +217,29 @@
       
           function forceInputVisibility() {
             const inputs = document.querySelectorAll('input, textarea, select');
-            console.log('🚨 ULTRA-AGGRESSIVE FIX: Found', inputs.length, 'input elements');
+            console.log('🚨 NUCLEAR FIX: Found', inputs.length, 'input elements');
             
             inputs.forEach((input, index) => {
-              // ULTRA-AGGRESSIVE approach - force everything with maximum specificity
-              input.style.setProperty('color', '#000000', 'important');
-              input.style.setProperty('background-color', '#ffffff', 'important');
-              input.style.setProperty('border-color', '#d1d5db', 'important');
-              input.style.setProperty('opacity', '1', 'important');
-              input.style.setProperty('visibility', 'visible', 'important');
-              input.style.setProperty('font-size', '16px', 'important');
-              input.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
-              input.style.setProperty('-webkit-opacity', '1', 'important');
-              input.style.setProperty('text-shadow', 'none', 'important');
-              input.style.setProperty('border', '1px solid #d1d5db', 'important');
-              input.style.setProperty('border-radius', '0.375rem', 'important');
-              input.style.setProperty('padding', '0.5rem 0.75rem', 'important');
-              input.style.setProperty('width', '100%', 'important');
-              input.style.setProperty('display', 'block', 'important');
-              input.style.setProperty('outline', 'none', 'important');
-              input.style.setProperty('box-shadow', 'none', 'important');
-              input.style.setProperty('font-family', 'inherit', 'important');
+              // NUCLEAR APPROACH - Force black text on white background
+              input.style.cssText = `
+                color: #000000 !important;
+                background-color: #ffffff !important;
+                border: 1px solid #d1d5db !important;
+                border-radius: 0.375rem !important;
+                box-shadow: none !important;
+                display: block !important;
+                font-size: 16px !important;
+                line-height: 1.5 !important;
+                opacity: 1 !important;
+                outline: none !important;
+                padding: 0.5rem 0.75rem !important;
+                text-shadow: none !important;
+                visibility: visible !important;
+                width: 100% !important;
+                -webkit-text-fill-color: #000000 !important;
+                -webkit-opacity: 1 !important;
+                font-family: inherit !important;
+              `;
               
               // Force set attributes for maximum compatibility
               input.setAttribute('style', input.getAttribute('style') + '; color: #000000 !important; background-color: #ffffff !important; -webkit-text-fill-color: #000000 !important;');
@@ -239,12 +250,14 @@
               
               // Add event listeners to maintain visibility
               const maintainVisibility = (e) => {
-                e.target.style.setProperty('color', '#000000', 'important');
-                e.target.style.setProperty('background-color', '#ffffff', 'important');
-                e.target.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
-                e.target.style.setProperty('opacity', '1', 'important');
-                e.target.style.setProperty('visibility', 'visible', 'important');
-                e.target.style.setProperty('text-shadow', 'none', 'important');
+                e.target.style.cssText = `
+                  color: #000000 !important;
+                  background-color: #ffffff !important;
+                  -webkit-text-fill-color: #000000 !important;
+                  opacity: 1 !important;
+                  visibility: visible !important;
+                  text-shadow: none !important;
+                `;
               };
               
               // Remove existing listeners to avoid duplicates
@@ -262,11 +275,11 @@
               input.addEventListener('keydown', maintainVisibility);
               
               if (index < 3) {
-                console.log('🔧 Fixed input', index + 1, input.type || input.tagName, 'with ultra-aggressive approach');
+                console.log('🔧 NUCLEAR FIX: Applied to input', index + 1, input.type || input.tagName);
               }
             });
             
-            console.log('✅ ULTRA-AGGRESSIVE FIX: Applied to', inputs.length, 'inputs');
+            console.log('✅ NUCLEAR FIX: Applied to', inputs.length, 'inputs - BLACK TEXT ON WHITE BACKGROUND');
           }
       
       // Run immediately
