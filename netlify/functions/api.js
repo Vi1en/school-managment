@@ -143,41 +143,27 @@ const authenticateToken = (headers) => {
 };
 
 exports.handler = async (event, context) => {
-  // Set timeout warning
-  const startTime = Date.now();
-  console.log('Function started at:', new Date().toISOString());
+  console.log('Function started:', new Date().toISOString());
+  console.log('Event:', JSON.stringify(event, null, 2));
   
-  // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
-    return createResponse(200, {});
-  }
-
-  // Wrap the entire function in a timeout
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => {
-      reject(new Error('Function timeout after 25 seconds'));
-    }, 25000);
-  });
-
   try {
-    return await Promise.race([
-      processRequest(event, context, startTime),
-      timeoutPromise
-    ]);
+    // Handle preflight requests
+    if (event.httpMethod === 'OPTIONS') {
+      return createResponse(200, {});
+    }
+
+    return await processRequest(event, context);
   } catch (error) {
-    const totalTime = Date.now() - startTime;
-    console.error('Function timeout or error:', error.message);
-    console.log(`Function execution time: ${totalTime}ms`);
+    console.error('Function error:', error);
     return createResponse(500, {
-      message: 'Function timeout or error',
+      message: 'Function error',
       error: error.message,
-      executionTime: totalTime
+      stack: error.stack
     });
   }
 };
 
-const processRequest = async (event, context, startTime) => {
-
+const processRequest = async (event, context) => {
   let path = event.path;
   const method = event.httpMethod;
   const headers = event.headers || {};
@@ -555,52 +541,26 @@ const processRequest = async (event, context, startTime) => {
     }
 
     if (path === '/api/marksheets' && method === 'POST') {
+      console.log('Marksheet creation request received');
+      
       const user = authenticateToken(headers);
       if (!user) {
+        console.log('Authentication failed');
         return createResponse(401, { message: 'Access token required' });
       }
 
-      // Check database connection status
-      console.log('Database connection status:', {
-        connected: db ? db.readyState === 1 : false,
-        readyState: db ? db.readyState : 'no connection',
-        host: db ? db.host : 'unknown',
-        name: db ? db.name : 'unknown'
-      });
-
-      // Test database operation with timeout
-      try {
-        console.log('Testing database connection...');
-        const testCount = await Promise.race([
-          Marksheet.countDocuments(),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Database test timeout')), 5000)
-          )
-        ]);
-        console.log('Database test successful - marksheet count:', testCount);
-      } catch (dbError) {
-        console.error('Database test failed:', dbError);
-        return createResponse(500, {
-          message: 'Database connection error',
-          error: dbError.message,
-          details: {
-            readyState: db ? db.readyState : 'no connection',
-            connected: db ? db.readyState === 1 : false
-          }
-        });
-      }
+      console.log('User authenticated:', user.email);
 
       const { rollNumber, studentName, examType, academicYear, subjects } = body;
       
-      console.log('Creating marksheet with data:', { rollNumber, studentName, examType, academicYear, subjects });
-      console.log('Body received:', JSON.stringify(body, null, 2));
+      console.log('Marksheet data:', { rollNumber, studentName, examType, academicYear, subjectsCount: subjects?.length });
       
       if (!rollNumber || !studentName || !examType || !academicYear || !subjects) {
-        console.log('Missing required fields:', { rollNumber: !!rollNumber, studentName: !!studentName, examType: !!examType, academicYear: !!academicYear, subjects: !!subjects });
+        console.log('Missing required fields');
         return createResponse(400, { message: 'Required fields missing' });
       }
 
-      // Calculate totals and percentage first
+      // Calculate totals and percentage
       let totalMarks = 0;
       let maxTotalMarks = 0;
       
@@ -617,128 +577,42 @@ const processRequest = async (event, context, startTime) => {
         promotionStatus: (maxTotalMarks > 0 ? (totalMarks / maxTotalMarks) * 100 : 0) >= 40 ? 'Promoted' : 'Not Promoted'
       };
 
-      // Check for existing marksheet
-      let existingMarksheet;
+      console.log('Calculated marks:', { totalMarks, maxTotalMarks, percentage: marksheetData.percentage });
+
       try {
-        console.log('Checking for existing marksheet...');
-        existingMarksheet = await Marksheet.findOne({
+        // Check for existing marksheet
+        const existingMarksheet = await Marksheet.findOne({
           rollNumber,
           examType,
           academicYear
         });
-        console.log('Existing marksheet check completed:', !!existingMarksheet);
-      } catch (findError) {
-        console.error('Error checking for existing marksheet:', findError);
-        return createResponse(500, {
-          message: 'Database error - failed to check existing marksheet',
-          error: findError.message
-        });
-      }
 
-      if (existingMarksheet) {
-        console.log('Updating existing marksheet for:', rollNumber, examType, academicYear);
-        try {
-          // Update existing marksheet instead of creating new one
-          // Only update the fields that should be updated
-          const updateData = {
-            studentName: marksheetData.studentName,
-            fatherName: marksheetData.fatherName,
-            motherName: marksheetData.motherName,
-            dob: marksheetData.dob,
-            currentClass: marksheetData.currentClass,
-            bloodGroup: marksheetData.bloodGroup,
-            address: marksheetData.address,
-            phoneNumber: marksheetData.phoneNumber,
-            photo: marksheetData.photo,
-            subjects: marksheetData.subjects,
-            totalMarks: marksheetData.totalMarks,
-            maxTotalMarks: marksheetData.maxTotalMarks,
-            percentage: marksheetData.percentage,
-            promotionStatus: marksheetData.promotionStatus
-          };
-
-          // Validate updateData
-          console.log('Update data validation:', {
-            hasStudentName: !!updateData.studentName,
-            hasSubjects: !!updateData.subjects,
-            subjectsLength: updateData.subjects?.length,
-            totalMarks: updateData.totalMarks,
-            maxTotalMarks: updateData.maxTotalMarks,
-            percentage: updateData.percentage
-          });
-
-          // Ensure required fields are present
-          if (!updateData.studentName || !updateData.subjects || !Array.isArray(updateData.subjects)) {
-            console.error('Invalid update data - missing required fields');
-            return createResponse(400, {
-              message: 'Invalid update data - missing required fields',
-              details: {
-                hasStudentName: !!updateData.studentName,
-                hasSubjects: !!updateData.subjects,
-                subjectsIsArray: Array.isArray(updateData.subjects)
-              }
-            });
-          }
-          
-          console.log('Updating marksheet with data:', JSON.stringify(updateData, null, 2));
+        if (existingMarksheet) {
+          console.log('Updating existing marksheet');
           const updatedMarksheet = await Marksheet.findOneAndUpdate(
             { rollNumber, examType, academicYear },
-            updateData,
+            marksheetData,
             { new: true, runValidators: true }
           );
-          console.log('Marksheet updated successfully:', updatedMarksheet._id);
-          return createResponse(200, { message: 'Marksheet updated successfully', marksheet: updatedMarksheet });
-        } catch (error) {
-          console.error('Error updating marksheet:', error);
-          console.error('Error details:', {
-            name: error.name,
-            message: error.message,
-            stack: error.stack,
-            code: error.code
+          console.log('Marksheet updated successfully');
+          return createResponse(200, { 
+            message: 'Marksheet updated successfully', 
+            marksheet: updatedMarksheet 
           });
-          
-          // Try to create a new marksheet if update fails
-          console.log('Update failed, attempting to create new marksheet...');
-          try {
-            const newMarksheet = new Marksheet(marksheetData);
-            await newMarksheet.save();
-            console.log('New marksheet created successfully:', newMarksheet._id);
-            return createResponse(201, {
-              message: 'Marksheet created successfully (update failed)',
-              marksheet: newMarksheet
-            });
-          } catch (createError) {
-            console.error('Error creating new marksheet:', createError);
-            return createResponse(500, {
-              message: 'Error updating and creating marksheet',
-              error: error.message,
-              createError: createError.message,
-              details: {
-                name: error.name,
-                code: error.code,
-                rollNumber,
-                examType,
-                academicYear
-              }
-            });
-          }
+        } else {
+          console.log('Creating new marksheet');
+          const marksheet = new Marksheet(marksheetData);
+          await marksheet.save();
+          console.log('Marksheet created successfully');
+          return createResponse(201, {
+            message: 'Marksheet created successfully',
+            marksheet
+          });
         }
-      }
-
-      try {
-        console.log('Creating new marksheet with data:', JSON.stringify(marksheetData, null, 2));
-        const marksheet = new Marksheet(marksheetData);
-        await marksheet.save();
-        console.log('Marksheet created successfully:', marksheet._id);
-
-        return createResponse(201, {
-          message: 'Marksheet created successfully',
-          marksheet
-        });
       } catch (error) {
-        console.error('Error creating marksheet:', error);
+        console.error('Database error:', error);
         return createResponse(500, {
-          message: 'Error creating marksheet',
+          message: 'Database error',
           error: error.message
         });
       }
@@ -995,12 +869,9 @@ const processRequest = async (event, context, startTime) => {
 
   } catch (error) {
     console.error('API Error:', error);
-    const totalTime = Date.now() - startTime;
-    console.log(`Function execution time: ${totalTime}ms`);
     return createResponse(500, {
       message: 'Server error',
-      error: error.message,
-      executionTime: totalTime
+      error: error.message
     });
   }
 };
