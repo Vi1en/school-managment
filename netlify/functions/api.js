@@ -96,13 +96,35 @@ const MarksheetSchema = new mongoose.Schema({
   attendancePercentage: { type: Number, default: 0 }
 }, { timestamps: true });
 
+const FeeDepositSchema = new mongoose.Schema({
+  studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
+  admissionNumber: { type: String, required: true },
+  month: { type: String, required: true },
+  year: { type: Number, required: true },
+  amount: { type: Number, required: true },
+  paymentMethod: { type: String, default: 'Cash' },
+  depositDate: { type: Date, default: Date.now },
+  remarks: { type: String, default: '' }
+}, { timestamps: true });
+
+const ClassFeeSchema = new mongoose.Schema({
+  className: { type: String, required: true, unique: true },
+  totalFees: { type: Number, required: true },
+  description: { type: String, default: '' },
+  isActive: { type: Boolean, default: true }
+}, { timestamps: true });
+
 // Create indexes for better performance
 MarksheetSchema.index({ rollNumber: 1, examType: 1, academicYear: 1 }, { unique: true });
 StudentSchema.index({ currentClass: 1 });
+FeeDepositSchema.index({ admissionNumber: 1, month: 1, year: 1 });
+ClassFeeSchema.index({ className: 1 });
 
 const Admin = mongoose.models.Admin || mongoose.model('Admin', AdminSchema);
 const Student = mongoose.models.Student || mongoose.model('Student', StudentSchema);
 const Marksheet = mongoose.models.Marksheet || mongoose.model('Marksheet', MarksheetSchema);
+const FeeDeposit = mongoose.models.FeeDeposit || mongoose.model('FeeDeposit', FeeDepositSchema);
+const ClassFee = mongoose.models.ClassFee || mongoose.model('ClassFee', ClassFeeSchema);
 
 // JWT Authentication
 const authenticateToken = (headers) => {
@@ -260,7 +282,24 @@ exports.handler = async (event, context) => {
           return createResponse(401, { message: 'Access token required' });
         }
 
-        const students = await Student.find().sort({ createdAt: -1 });
+        // Get query parameters
+        const query = event.queryStringParameters || {};
+        const searchTerm = query.search;
+
+        let students;
+        if (searchTerm) {
+          // Search by name, admission number, or class
+          students = await Student.find({
+            $or: [
+              { studentName: { $regex: searchTerm, $options: 'i' } },
+              { admissionNumber: { $regex: searchTerm, $options: 'i' } },
+              { currentClass: { $regex: searchTerm, $options: 'i' } }
+            ]
+          }).sort({ createdAt: -1 });
+        } else {
+          students = await Student.find().sort({ createdAt: -1 });
+        }
+
         return createResponse(200, { students });
       } catch (error) {
         console.error('Students fetch error:', error);
@@ -357,6 +396,68 @@ exports.handler = async (event, context) => {
           message: 'Failed to create student', 
           error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
         });
+      }
+    }
+
+    // Dashboard stats endpoint
+    if (path === '/api/students/stats/dashboard' && method === 'GET') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const totalStudents = await Student.countDocuments();
+        
+        // Calculate payment status counts
+        const students = await Student.find({}, 'feeDetails');
+        let paidStudents = 0;
+        let partialPaidStudents = 0;
+        let unpaidStudents = 0;
+        let totalCollected = 0;
+        let totalPending = 0;
+
+        students.forEach(student => {
+          const { totalFee = 0, amountPaid = 0 } = student.feeDetails || {};
+          totalCollected += amountPaid;
+          totalPending += Math.max(0, totalFee - amountPaid);
+
+          if (totalFee === 0) {
+            // No fee set
+            return;
+          } else if (amountPaid >= totalFee) {
+            paidStudents++;
+          } else if (amountPaid > 0) {
+            partialPaidStudents++;
+          } else {
+            unpaidStudents++;
+          }
+        });
+
+        // Calculate academic performance (mock data for now)
+        const passedStudents = Math.floor(totalStudents * 0.8); // 80% pass rate
+        const failedStudents = totalStudents - passedStudents;
+        const graduatedStudents = Math.floor(totalStudents * 0.1); // 10% graduated
+
+        const stats = {
+          totalStudents,
+          paidStudents,
+          partialPaidStudents,
+          unpaidStudents,
+          failedStudents,
+          passedStudents,
+          graduatedStudents,
+          averageAttendance: 95, // Mock data
+          feeStats: {
+            totalCollected,
+            totalPending
+          }
+        };
+
+        return createResponse(200, stats);
+      } catch (error) {
+        console.error('Dashboard stats error:', error);
+        return createResponse(500, { message: 'Failed to fetch dashboard stats', error: error.message });
       }
     }
 
@@ -498,6 +599,240 @@ exports.handler = async (event, context) => {
       } catch (error) {
         console.error('Marksheets fetch error:', error);
         return createResponse(500, { message: 'Failed to fetch marksheets', error: error.message });
+      }
+    }
+
+    // Fee Deposits routes
+    if (path === '/api/fee-deposits' && method === 'GET') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const deposits = await FeeDeposit.find().populate('studentId', 'studentName admissionNumber').sort({ createdAt: -1 });
+        return createResponse(200, { deposits });
+      } catch (error) {
+        console.error('Fee deposits fetch error:', error);
+        return createResponse(500, { message: 'Failed to fetch fee deposits', error: error.message });
+      }
+    }
+
+    if (path === '/api/fee-deposits' && method === 'POST') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const { admissionNumber, month, year, amount, paymentMethod, depositDate, remarks } = parsedBody;
+        
+        if (!admissionNumber || !month || !year || !amount) {
+          return createResponse(400, { message: 'Required fields missing' });
+        }
+
+        // Find student by admission number
+        const student = await Student.findOne({ admissionNumber });
+        if (!student) {
+          return createResponse(400, { message: 'Student not found' });
+        }
+
+        const deposit = new FeeDeposit({
+          studentId: student._id,
+          admissionNumber,
+          month,
+          year: parseInt(year),
+          amount: parseFloat(amount),
+          paymentMethod: paymentMethod || 'Cash',
+          depositDate: depositDate ? new Date(depositDate) : new Date(),
+          remarks: remarks || ''
+        });
+
+        await deposit.save();
+        return createResponse(201, { message: 'Fee deposit created successfully', deposit });
+      } catch (error) {
+        console.error('Fee deposit creation error:', error);
+        return createResponse(500, { message: 'Failed to create fee deposit', error: error.message });
+      }
+    }
+
+    if (path.startsWith('/api/fee-deposits/') && method === 'PUT') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const depositId = path.split('/')[3];
+        const { admissionNumber, month, year, amount, paymentMethod, depositDate, remarks } = parsedBody;
+
+        const deposit = await FeeDeposit.findById(depositId);
+        if (!deposit) {
+          return createResponse(404, { message: 'Fee deposit not found' });
+        }
+
+        // Update deposit
+        deposit.admissionNumber = admissionNumber || deposit.admissionNumber;
+        deposit.month = month || deposit.month;
+        deposit.year = year ? parseInt(year) : deposit.year;
+        deposit.amount = amount ? parseFloat(amount) : deposit.amount;
+        deposit.paymentMethod = paymentMethod || deposit.paymentMethod;
+        deposit.depositDate = depositDate ? new Date(depositDate) : deposit.depositDate;
+        deposit.remarks = remarks !== undefined ? remarks : deposit.remarks;
+
+        await deposit.save();
+        return createResponse(200, { message: 'Fee deposit updated successfully', deposit });
+      } catch (error) {
+        console.error('Fee deposit update error:', error);
+        return createResponse(500, { message: 'Failed to update fee deposit', error: error.message });
+      }
+    }
+
+    if (path.startsWith('/api/fee-deposits/') && method === 'DELETE') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const depositId = path.split('/')[3];
+        const deposit = await FeeDeposit.findByIdAndDelete(depositId);
+        
+        if (!deposit) {
+          return createResponse(404, { message: 'Fee deposit not found' });
+        }
+
+        return createResponse(200, { message: 'Fee deposit deleted successfully' });
+      } catch (error) {
+        console.error('Fee deposit deletion error:', error);
+        return createResponse(500, { message: 'Failed to delete fee deposit', error: error.message });
+      }
+    }
+
+    // Class Fees routes
+    if (path === '/api/class-fees' && method === 'GET') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const classFees = await ClassFee.find().sort({ className: 1 });
+        return createResponse(200, { classFees });
+      } catch (error) {
+        console.error('Class fees fetch error:', error);
+        return createResponse(500, { message: 'Failed to fetch class fees', error: error.message });
+      }
+    }
+
+    if (path === '/api/class-fees' && method === 'POST') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const { className, totalFees, description } = parsedBody;
+        
+        if (!className || !totalFees) {
+          return createResponse(400, { message: 'Class name and total fees are required' });
+        }
+
+        const classFee = new ClassFee({
+          className,
+          totalFees: parseFloat(totalFees),
+          description: description || '',
+          isActive: true
+        });
+
+        await classFee.save();
+        return createResponse(201, { message: 'Class fee created successfully', classFee });
+      } catch (error) {
+        console.error('Class fee creation error:', error);
+        return createResponse(500, { message: 'Failed to create class fee', error: error.message });
+      }
+    }
+
+    if (path.startsWith('/api/class-fees/') && method === 'PUT') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const classFeeId = path.split('/')[3];
+        const { className, totalFees, description, isActive } = parsedBody;
+
+        const classFee = await ClassFee.findById(classFeeId);
+        if (!classFee) {
+          return createResponse(404, { message: 'Class fee not found' });
+        }
+
+        classFee.className = className || classFee.className;
+        classFee.totalFees = totalFees ? parseFloat(totalFees) : classFee.totalFees;
+        classFee.description = description !== undefined ? description : classFee.description;
+        classFee.isActive = isActive !== undefined ? isActive : classFee.isActive;
+
+        await classFee.save();
+        return createResponse(200, { message: 'Class fee updated successfully', classFee });
+      } catch (error) {
+        console.error('Class fee update error:', error);
+        return createResponse(500, { message: 'Failed to update class fee', error: error.message });
+      }
+    }
+
+    if (path.startsWith('/api/class-fees/') && method === 'DELETE') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const classFeeId = path.split('/')[3];
+        const classFee = await ClassFee.findByIdAndDelete(classFeeId);
+        
+        if (!classFee) {
+          return createResponse(404, { message: 'Class fee not found' });
+        }
+
+        return createResponse(200, { message: 'Class fee deleted successfully' });
+      } catch (error) {
+        console.error('Class fee deletion error:', error);
+        return createResponse(500, { message: 'Failed to delete class fee', error: error.message });
+      }
+    }
+
+    if (path.startsWith('/api/class-fees/') && path.endsWith('/apply-to-students') && method === 'POST') {
+      try {
+        const user = authenticateToken(headers);
+        if (!user) {
+          return createResponse(401, { message: 'Access token required' });
+        }
+
+        const classFeeId = path.split('/')[3];
+        const classFee = await ClassFee.findById(classFeeId);
+        
+        if (!classFee) {
+          return createResponse(404, { message: 'Class fee not found' });
+        }
+
+        // Find all students in this class
+        const students = await Student.find({ currentClass: classFee.className });
+        
+        // Update their fee details
+        for (const student of students) {
+          student.feeDetails.totalFee = classFee.totalFees;
+          student.feeDetails.remainingAmount = classFee.totalFees - (student.feeDetails.amountPaid || 0);
+          await student.save();
+        }
+
+        return createResponse(200, { 
+          message: `Class fee applied to ${students.length} students`,
+          studentsUpdated: students.length
+        });
+      } catch (error) {
+        console.error('Apply class fee error:', error);
+        return createResponse(500, { message: 'Failed to apply class fee to students', error: error.message });
       }
     }
 
