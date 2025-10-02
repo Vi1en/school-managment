@@ -143,10 +143,40 @@ const authenticateToken = (headers) => {
 };
 
 exports.handler = async (event, context) => {
+  // Set timeout warning
+  const startTime = Date.now();
+  console.log('Function started at:', new Date().toISOString());
+  
   // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
     return createResponse(200, {});
   }
+
+  // Wrap the entire function in a timeout
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error('Function timeout after 25 seconds'));
+    }, 25000);
+  });
+
+  try {
+    return await Promise.race([
+      processRequest(event, context, startTime),
+      timeoutPromise
+    ]);
+  } catch (error) {
+    const totalTime = Date.now() - startTime;
+    console.error('Function timeout or error:', error.message);
+    console.log(`Function execution time: ${totalTime}ms`);
+    return createResponse(500, {
+      message: 'Function timeout or error',
+      error: error.message,
+      executionTime: totalTime
+    });
+  }
+};
+
+const processRequest = async (event, context, startTime) => {
 
   let path = event.path;
   const method = event.httpMethod;
@@ -538,9 +568,15 @@ exports.handler = async (event, context) => {
         name: db ? db.name : 'unknown'
       });
 
-      // Test database operation
+      // Test database operation with timeout
       try {
-        const testCount = await Marksheet.countDocuments();
+        console.log('Testing database connection...');
+        const testCount = await Promise.race([
+          Marksheet.countDocuments(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Database test timeout')), 5000)
+          )
+        ]);
         console.log('Database test successful - marksheet count:', testCount);
       } catch (dbError) {
         console.error('Database test failed:', dbError);
@@ -959,9 +995,12 @@ exports.handler = async (event, context) => {
 
   } catch (error) {
     console.error('API Error:', error);
+    const totalTime = Date.now() - startTime;
+    console.log(`Function execution time: ${totalTime}ms`);
     return createResponse(500, {
       message: 'Server error',
-      error: error.message
+      error: error.message,
+      executionTime: totalTime
     });
   }
 };
