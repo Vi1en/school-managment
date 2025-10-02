@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { studentsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import DatabaseDiagnostic from '../components/DatabaseDiagnostic';
 
 const Dashboard = () => {
   const { isAuthenticated, admin, token } = useAuth();
@@ -455,6 +456,11 @@ const Dashboard = () => {
             ></div>
           </div>
         </div>
+      </div>
+
+      {/* Database Diagnostic Section */}
+      <div className="mt-8">
+        <DatabaseDiagnostic />
       </div>
     </div>
   );

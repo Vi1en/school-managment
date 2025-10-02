@@ -332,10 +332,15 @@ const processRequest = async (event, context) => {
 
     // Students routes
     if (path === '/api/students' && method === 'GET') {
+      console.log('=== FETCHING STUDENTS ===');
       const user = authenticateToken(headers);
       if (!user) {
+        console.log('Authentication failed for students fetch');
         return createResponse(401, { message: 'Access token required' });
       }
+
+      console.log('User authenticated for students fetch:', user.email);
+      console.log('Database connection status:', db ? db.readyState : 'no connection');
 
       // Handle search query parameter
       const searchQuery = event.queryStringParameters?.search;
@@ -351,10 +356,29 @@ const processRequest = async (event, context) => {
             { motherName: { $regex: searchQuery, $options: 'i' } }
           ]
         };
+        console.log('Search query applied:', searchQuery);
       }
 
-      const students = await Student.find(query).sort({ createdAt: -1 });
-      return createResponse(200, { students });
+      console.log('Query to execute:', query);
+      
+      try {
+        const students = await Student.find(query).sort({ createdAt: -1 });
+        console.log('Students found:', students.length);
+        console.log('First few students:', students.slice(0, 2).map(s => ({
+          id: s._id,
+          admissionNumber: s.admissionNumber,
+          studentName: s.studentName,
+          currentClass: s.currentClass
+        })));
+        
+        return createResponse(200, { students });
+      } catch (error) {
+        console.error('Error fetching students:', error);
+        return createResponse(500, {
+          message: 'Error fetching students',
+          error: error.message
+        });
+      }
     }
 
     if (path === '/api/students' && method === 'POST') {
@@ -364,20 +388,25 @@ const processRequest = async (event, context) => {
       }
 
       try {
-        console.log('Creating student with data:', JSON.stringify(body, null, 2));
+        console.log('=== STUDENT CREATION STARTED ===');
+        console.log('Request body:', JSON.stringify(body, null, 2));
+        console.log('Database connection status:', db ? db.readyState : 'no connection');
         
         const { studentName, currentClass, feeDetails } = body;
         
         if (!studentName || !currentClass) {
+          console.log('Validation failed: missing required fields');
           return createResponse(400, { message: 'Student name and class are required' });
         }
 
         const studentData = { ...body };
+        console.log('Student data before processing:', studentData);
         
         // Generate unique admission number if not provided
         if (!studentData.admissionNumber) {
           const count = await Student.countDocuments();
           studentData.admissionNumber = String(count + 1).padStart(3, '0');
+          console.log('Generated admission number:', studentData.admissionNumber);
         }
         
         // Convert fee fields to numbers if they exist
@@ -385,21 +414,43 @@ const processRequest = async (event, context) => {
           studentData.feeDetails.totalFee = parseFloat(studentData.feeDetails.totalFee) || 0;
           studentData.feeDetails.amountPaid = parseFloat(studentData.feeDetails.amountPaid) || 0;
           studentData.feeDetails.remainingAmount = studentData.feeDetails.totalFee - studentData.feeDetails.amountPaid;
+          console.log('Processed fee details:', studentData.feeDetails);
         }
 
+        console.log('Final student data before save:', studentData);
         const student = new Student(studentData);
+        console.log('Student model created, attempting to save...');
+        
         await student.save();
+        console.log('Student saved successfully with ID:', student._id);
+        console.log('Saved student data:', JSON.stringify(student, null, 2));
 
-        console.log('Student created successfully:', student._id);
+        // Verify the student was actually saved
+        const savedStudent = await Student.findById(student._id);
+        console.log('Verification - student found in database:', !!savedStudent);
+        if (savedStudent) {
+          console.log('Verification - student data:', JSON.stringify(savedStudent, null, 2));
+        }
+
         return createResponse(201, {
           message: 'Student created successfully',
-          student
+          student: savedStudent || student
         });
       } catch (error) {
-        console.error('Error creating student:', error);
+        console.error('=== STUDENT CREATION ERROR ===');
+        console.error('Error type:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        console.error('Request body:', JSON.stringify(body, null, 2));
         return createResponse(500, { 
           message: 'Error creating student',
-          error: error.message 
+          error: error.message,
+          details: {
+            name: error.name,
+            code: error.code,
+            keyPattern: error.keyPattern,
+            keyValue: error.keyValue
+          }
         });
       }
     }
