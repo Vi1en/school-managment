@@ -113,7 +113,7 @@ const AddStudent = () => {
       setLoading(false);
       return;
     }
-    if (!formData.feeDetails.amountPaid || formData.feeDetails.amountPaid < 0) {
+    if (formData.feeDetails.amountPaid < 0) {
       setError('Amount Paid must be 0 or greater');
       setLoading(false);
       return;

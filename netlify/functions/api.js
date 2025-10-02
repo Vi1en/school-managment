@@ -49,13 +49,13 @@ const AdminSchema = new mongoose.Schema({
 const StudentSchema = new mongoose.Schema({
   admissionNumber: { type: String, required: true, unique: true },
   studentName: { type: String, required: true },
-  fatherName: { type: String, required: true },
-  motherName: { type: String, required: true },
-  dob: { type: Date, required: true },
+  fatherName: { type: String, default: '' },
+  motherName: { type: String, default: '' },
+  dob: { type: Date },
   currentClass: { type: String, required: true },
-  bloodGroup: { type: String, required: true },
-  address: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
+  bloodGroup: { type: String, default: '' },
+  address: { type: String, default: '' },
+  phoneNumber: { type: String, default: '' },
   photo: { type: String },
   feeDetails: {
     totalFee: { type: Number, required: true, default: 0 },
@@ -275,28 +275,88 @@ exports.handler = async (event, context) => {
           return createResponse(401, { message: 'Access token required' });
         }
 
+        // Enhanced validation
+        const { admissionNumber, studentName, currentClass, feeDetails } = parsedBody;
+        
+        // Required field validation
+        if (!admissionNumber || !admissionNumber.trim()) {
+          return createResponse(400, { message: 'Admission Number is required' });
+        }
+        if (!studentName || !studentName.trim()) {
+          return createResponse(400, { message: 'Student Name is required' });
+        }
+        if (!currentClass || !currentClass.trim()) {
+          return createResponse(400, { message: 'Current Class is required' });
+        }
+        if (!feeDetails || !feeDetails.totalFee || feeDetails.totalFee <= 0) {
+          return createResponse(400, { message: 'Total Fee must be greater than 0' });
+        }
+
+        // Process and validate data
         const studentData = {
-          ...parsedBody,
+          admissionNumber: admissionNumber.trim(),
+          studentName: studentName.trim(),
+          fatherName: parsedBody.fatherName?.trim() || '',
+          motherName: parsedBody.motherName?.trim() || '',
+          dob: parsedBody.dob ? new Date(parsedBody.dob) : undefined,
+          currentClass: currentClass.trim(),
+          bloodGroup: parsedBody.bloodGroup?.trim() || '',
+          address: parsedBody.address?.trim() || '',
+          phoneNumber: parsedBody.phoneNumber?.trim() || '',
+          photo: parsedBody.photo || '',
           feeDetails: {
-            totalFee: parseFloat(parsedBody.feeDetails?.totalFee) || 0,
-            amountPaid: parseFloat(parsedBody.feeDetails?.amountPaid) || 0,
-            remainingAmount: parseFloat(parsedBody.feeDetails?.totalFee) - parseFloat(parsedBody.feeDetails?.amountPaid) || 0
+            totalFee: parseFloat(feeDetails.totalFee) || 0,
+            amountPaid: parseFloat(feeDetails.amountPaid) || 0,
+            remainingAmount: (parseFloat(feeDetails.totalFee) || 0) - (parseFloat(feeDetails.amountPaid) || 0)
           }
         };
+
+        console.log('Creating student with data:', {
+          admissionNumber: studentData.admissionNumber,
+          studentName: studentData.studentName,
+          currentClass: studentData.currentClass,
+          feeDetails: studentData.feeDetails
+        });
 
         const student = new Student(studentData);
         await student.save();
 
+        console.log('Student created successfully:', student._id);
+
         return createResponse(201, { 
           message: 'Student created successfully',
-          student 
+          student: {
+            _id: student._id,
+            admissionNumber: student.admissionNumber,
+            studentName: student.studentName,
+            currentClass: student.currentClass
+          }
         });
       } catch (error) {
         console.error('Student creation error:', error);
+        console.error('Error details:', {
+          name: error.name,
+          message: error.message,
+          code: error.code,
+          errors: error.errors
+        });
+        
         if (error.code === 11000) {
           return createResponse(400, { message: 'Student with this admission number already exists' });
         }
-        return createResponse(500, { message: 'Failed to create student', error: error.message });
+        
+        if (error.name === 'ValidationError') {
+          const validationErrors = Object.values(error.errors).map(err => `${err.path}: ${err.message}`);
+          return createResponse(400, { 
+            message: 'Validation failed', 
+            errors: validationErrors 
+          });
+        }
+        
+        return createResponse(500, { 
+          message: 'Failed to create student', 
+          error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+        });
       }
     }
 
