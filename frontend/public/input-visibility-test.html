@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Visibility Test - All Forms</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .required {
+            color: red;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Input Visibility Test - All Form Types</h1>
+        <p>This page tests input visibility across all form types in your school management app.</p>
+        
+        <div class="status info">
+            <strong>Instructions:</strong> Type in each field below. If you can see the text you're typing, the fix is working! 
+            If text is invisible, there's still an issue.
+        </div>
+
+        <!-- Basic Input Types -->
+        <div class="test-section">
+            <h3>📝 Basic Input Types</h3>
+            
+            <div class="form-group">
+                <label for="textInput">Text Input <span class="required">*</span></label>
+                <input type="text" id="textInput" name="textInput" value="Test text input" placeholder="Type here...">
+            </div>
+            
+            <div class="form-group">
+                <label for="numberInput">Number Input</label>
+                <input type="number" id="numberInput" name="numberInput" value="123" placeholder="Enter number">
+            </div>
+            
+            <div class="form-group">
+                <label for="emailInput">Email Input</label>
+                <input type="email" id="emailInput" name="emailInput" value="test@example.com" placeholder="Enter email">
+            </div>
+            
+            <div class="form-group">
+                <label for="passwordInput">Password Input</label>
+                <input type="password" id="passwordInput" name="passwordInput" value="password123" placeholder="Enter password">
+            </div>
+            
+            <div class="form-group">
+                <label for="telInput">Phone Input</label>
+                <input type="tel" id="telInput" name="telInput" value="1234567890" placeholder="Enter phone">
+            </div>
+            
+            <div class="form-group">
+                <label for="dateInput">Date Input</label>
+                <input type="date" id="dateInput" name="dateInput" value="2024-01-01">
+            </div>
+        </div>
+
+        <!-- Form Elements -->
+        <div class="test-section">
+            <h3>📋 Form Elements</h3>
+            
+            <div class="form-group">
+                <label for="textareaInput">Textarea</label>
+                <textarea id="textareaInput" name="textareaInput" rows="3" placeholder="Type a message...">This is a test message in textarea</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="selectInput">Select Dropdown</label>
+                <select id="selectInput" name="selectInput">
+                    <option value="">Choose an option</option>
+                    <option value="option1" selected>Option 1 (Selected)</option>
+                    <option value="option2">Option 2</option>
+                    <option value="option3">Option 3</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fileInput">File Input</label>
+                <input type="file" id="fileInput" name="fileInput" accept="image/*">
+            </div>
+        </div>
+
+        <!-- Student Form Simulation -->
+        <div class="test-section">
+            <h3>👨‍🎓 Student Form (Simulated)</h3>
+            
+            <div class="form-group">
+                <label for="admissionNumber">Admission Number <span class="required">*</span></label>
+                <input type="text" id="admissionNumber" name="admissionNumber" value="STU001" placeholder="Enter admission number">
+            </div>
+            
+            <div class="form-group">
+                <label for="studentName">Student Name <span class="required">*</span></label>
+                <input type="text" id="studentName" name="studentName" value="John Doe" placeholder="Enter student name">
+            </div>
+            
+            <div class="form-group">
+                <label for="fatherName">Father's Name</label>
+                <input type="text" id="fatherName" name="fatherName" value="Robert Doe" placeholder="Enter father's name">
+            </div>
+            
+            <div class="form-group">
+                <label for="motherName">Mother's Name</label>
+                <input type="text" id="motherName" name="motherName" value="Jane Doe" placeholder="Enter mother's name">
+            </div>
+            
+            <div class="form-group">
+                <label for="currentClass">Current Class <span class="required">*</span></label>
+                <input type="text" id="currentClass" name="currentClass" value="5" placeholder="Enter class">
+            </div>
+            
+            <div class="form-group">
+                <label for="bloodGroup">Blood Group</label>
+                <select id="bloodGroup" name="bloodGroup">
+                    <option value="">Select Blood Group</option>
+                    <option value="A+" selected>A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" rows="3" placeholder="Enter address">123 Main Street, City, State</textarea>
+            </div>
+        </div>
+
+        <!-- Fee Details -->
+        <div class="test-section">
+            <h3>💰 Fee Details</h3>
+            
+            <div class="form-group">
+                <label for="totalFee">Total Fee (₹) <span class="required">*</span></label>
+                <input type="number" id="totalFee" name="totalFee" value="1000" placeholder="Enter total fee">
+            </div>
+            
+            <div class="form-group">
+                <label for="amountPaid">Amount Paid (₹)</label>
+                <input type="number" id="amountPaid" name="amountPaid" value="500" placeholder="Enter amount paid">
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="test-section">
+            <h3>🧪 Test Results</h3>
+            <div id="testResults">
+                <div class="status info">Click "Run Test" to check input visibility</div>
+            </div>
+            <button onclick="runVisibilityTest()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Run Visibility Test
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function runVisibilityTest() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            let visibleCount = 0;
+            let totalCount = inputs.length;
+            let results = [];
+
+            inputs.forEach((input, index) => {
+                const computedStyle = window.getComputedStyle(input);
+                const textColor = computedStyle.color;
+                const backgroundColor = computedStyle.backgroundColor;
+                const opacity = computedStyle.opacity;
+                const visibility = computedStyle.visibility;
+                const webkitTextFillColor = computedStyle.webkitTextFillColor;
+                
+                // Check if text should be visible
+                const isVisible = (
+                    textColor !== 'rgba(0, 0, 0, 0)' && 
+                    textColor !== 'transparent' &&
+                    opacity !== '0' &&
+                    visibility !== 'hidden' &&
+                    webkitTextFillColor !== 'rgba(0, 0, 0, 0)' &&
+                    webkitTextFillColor !== 'transparent'
+                );
+
+                if (isVisible) {
+                    visibleCount++;
+                }
+
+                results.push({
+                    element: input.tagName + (input.type ? `[${input.type}]` : ''),
+                    name: input.name || input.id || `input-${index}`,
+                    visible: isVisible,
+                    textColor,
+                    backgroundColor,
+                    opacity,
+                    visibility,
+                    webkitTextFillColor
+                });
+            });
+
+            const resultsDiv = document.getElementById('testResults');
+            const percentage = Math.round((visibleCount / totalCount) * 100);
+            
+            let statusClass = 'error';
+            let statusText = '❌ FAILED';
+            if (percentage >= 90) {
+                statusClass = 'success';
+                statusText = '✅ PASSED';
+            } else if (percentage >= 70) {
+                statusClass = 'info';
+                statusText = '⚠️ PARTIAL';
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="status ${statusClass}">
+                    <strong>${statusText}</strong> - ${visibleCount}/${totalCount} inputs visible (${percentage}%)
+                </div>
+                <details style="margin-top: 10px;">
+                    <summary>Detailed Results</summary>
+                    <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px;">${JSON.stringify(results, null, 2)}</pre>
+                </details>
+            `;
+        }
+
+        // Auto-run test on page load
+        window.addEventListener('load', () => {
+            setTimeout(runVisibilityTest, 1000);
+        });
+
+        // Run test when any input changes
+        document.addEventListener('input', () => {
+            setTimeout(runVisibilityTest, 100);
+        });
+    </script>
+</body>
+</html>
