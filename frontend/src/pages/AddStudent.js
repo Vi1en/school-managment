@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentsAPI } from '../services/api';
+import { fixInputVisibility } from '../utils/inputVisibilityFix';
 
 const AddStudent = () => {
   const navigate = useNavigate();
@@ -8,6 +9,20 @@ const AddStudent = () => {
   const [error, setError] = useState('');
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+
+  // Apply input visibility fix when component mounts
+  useEffect(() => {
+    console.log('🔧 AddStudent: Applying input visibility fix...');
+    fixInputVisibility();
+    
+    // Also apply fix after a short delay to catch any late-rendering inputs
+    const timer = setTimeout(() => {
+      console.log('🔧 AddStudent: Re-applying input visibility fix...');
+      fixInputVisibility();
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
   const [formData, setFormData] = useState({
     admissionNumber: '',
     studentName: '',
