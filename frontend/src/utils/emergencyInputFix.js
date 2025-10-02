@@ -5,13 +5,10 @@ console.log('🚨 EMERGENCY INPUT FIX: Starting...');
 
 // Function to force input visibility
 const forceInputVisibility = () => {
-  console.log('🔧 Forcing input visibility...');
-  
   // Find all inputs
   const inputs = document.querySelectorAll('input, textarea, select');
-  console.log(`Found ${inputs.length} input elements`);
   
-  inputs.forEach((input, index) => {
+  inputs.forEach((input) => {
     // Force visibility with setProperty for maximum specificity
     input.style.setProperty('color', '#000000', 'important');
     input.style.setProperty('background-color', '#ffffff', 'important');
@@ -38,13 +35,7 @@ const forceInputVisibility = () => {
     input.addEventListener('blur', maintainVisibility);
     input.addEventListener('input', maintainVisibility);
     input.addEventListener('change', maintainVisibility);
-    
-    if (index < 5) { // Log first 5 for debugging
-      console.log(`✅ Fixed input ${index + 1}:`, input.type || input.tagName, input.name || input.id);
-    }
   });
-  
-  console.log(`✅ Applied emergency fix to ${inputs.length} input elements`);
 };
 
 // Run immediately

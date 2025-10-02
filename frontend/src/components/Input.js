@@ -13,24 +13,20 @@ const Input = ({
 }) => {
   // Force visibility with inline styles that override everything
   const forceVisibleStyles = {
-    color: '#000000 !important',
-    backgroundColor: '#ffffff !important',
-    borderColor: '#d1d5db !important',
-    opacity: '1 !important',
-    visibility: 'visible !important',
-    fontSize: '16px !important',
-    lineHeight: '1.5 !important',
-    padding: '0.5rem 0.75rem !important',
-    borderRadius: '0.375rem !important',
-    width: '100% !important',
-    display: 'block !important',
-    border: '1px solid #d1d5db !important',
-    outline: 'none !important',
-    boxShadow: 'none !important',
-    // Override any CSS variables
-    '--tw-text-opacity': '1 !important',
-    '--tw-bg-opacity': '1 !important',
-    '--tw-border-opacity': '1 !important',
+    color: '#000000',
+    backgroundColor: '#ffffff',
+    borderColor: '#d1d5db',
+    opacity: 1,
+    visibility: 'visible',
+    fontSize: '16px',
+    lineHeight: '1.5',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.375rem',
+    width: '100%',
+    display: 'block',
+    border: '1px solid #d1d5db',
+    outline: 'none',
+    boxShadow: 'none',
   };
 
   const baseClasses = `

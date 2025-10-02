@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { fixInputVisibility } from './utils/inputVisibilityFix';
 import './utils/emergencyInputFix';
-import './styles/definitive-input-fix.css';
-import './styles/input-emergency-fix.css';
-import './styles/input-fix.css';
+import './styles/global-input-fix.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import MobileFirstLayout from './components/MobileFirstLayout';
