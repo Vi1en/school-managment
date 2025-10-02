@@ -68,6 +68,20 @@
             visibility: visible !important;
           }
           
+          /* FORCE ALL TEXT TO BE VISIBLE */
+          h1, h2, h3, h4, h5, h6, p, span, div, label, button, a {
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+          }
+          
+          /* SPECIFIC TEXT ELEMENTS */
+          .text-black, .text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600, .text-gray-500 {
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+          }
+          
           /* ALL input types with maximum specificity */
           input[type="text"], input[type="number"], input[type="email"], 
           input[type="password"], input[type="tel"], input[type="date"], 
@@ -217,7 +231,8 @@
       
           function forceInputVisibility() {
             const inputs = document.querySelectorAll('input, textarea, select');
-            console.log('🚨 NUCLEAR FIX: Found', inputs.length, 'input elements');
+            const textElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div, label, button, a');
+            console.log('🚨 NUCLEAR FIX: Found', inputs.length, 'input elements and', textElements.length, 'text elements');
             
             inputs.forEach((input, index) => {
               // NUCLEAR APPROACH - Force black text on white background
@@ -279,7 +294,19 @@
               }
             });
             
-            console.log('✅ NUCLEAR FIX: Applied to', inputs.length, 'inputs - BLACK TEXT ON WHITE BACKGROUND');
+            // Fix text elements
+            textElements.forEach((element, index) => {
+              element.style.setProperty('color', '#000000', 'important');
+              element.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+              element.style.setProperty('opacity', '1', 'important');
+              element.style.setProperty('visibility', 'visible', 'important');
+              
+              if (index < 5) {
+                console.log('🔧 NUCLEAR FIX: Applied to text element', index + 1, element.tagName);
+              }
+            });
+            
+            console.log('✅ NUCLEAR FIX: Applied to', inputs.length, 'inputs and', textElements.length, 'text elements - ALL BLACK TEXT');
           }
       
       // Run immediately
