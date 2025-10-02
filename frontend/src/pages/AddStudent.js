@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentsAPI } from '../services/api';
 import { fixInputVisibility } from '../utils/inputVisibilityFix';
+import Input from '../components/Input';
 
 const AddStudent = () => {
   const navigate = useNavigate();
@@ -241,14 +242,15 @@ const AddStudent = () => {
                 <label htmlFor="admissionNumber" className="block text-sm font-medium text-gray-700">
                   Admission Number *
                 </label>
-                <input
+                <Input
                   type="text"
                   name="admissionNumber"
                   id="admissionNumber"
                   required
                   value={formData.admissionNumber}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -256,14 +258,15 @@ const AddStudent = () => {
                 <label htmlFor="studentName" className="block text-sm font-medium text-gray-700">
                   Student Name *
                 </label>
-                <input
+                <Input
                   type="text"
                   name="studentName"
                   id="studentName"
                   required
                   value={formData.studentName}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -271,13 +274,14 @@ const AddStudent = () => {
                 <label htmlFor="fatherName" className="block text-sm font-medium text-gray-700">
                   Father's Name
                 </label>
-                <input
+                <Input
                   type="text"
                   name="fatherName"
                   id="fatherName"
                   value={formData.fatherName}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -285,13 +289,14 @@ const AddStudent = () => {
                 <label htmlFor="motherName" className="block text-sm font-medium text-gray-700">
                   Mother's Name
                 </label>
-                <input
+                <Input
                   type="text"
                   name="motherName"
                   id="motherName"
                   value={formData.motherName}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -299,13 +304,14 @@ const AddStudent = () => {
                 <label htmlFor="dob" className="block text-sm font-medium text-gray-700">
                   Date of Birth
                 </label>
-                <input
+                <Input
                   type="date"
                   name="dob"
                   id="dob"
                   value={formData.dob}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -313,13 +319,14 @@ const AddStudent = () => {
                 <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
                   Phone Number
                 </label>
-                <input
+                <Input
                   type="tel"
                   name="phoneNumber"
                   id="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -333,6 +340,7 @@ const AddStudent = () => {
                   value={formData.bloodGroup}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 >
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
@@ -357,6 +365,7 @@ const AddStudent = () => {
                   value={formData.address}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -364,7 +373,7 @@ const AddStudent = () => {
                 <label htmlFor="currentClass" className="block text-sm font-medium text-gray-700">
                   Current Class *
                 </label>
-                <input
+                <Input
                   type="text"
                   name="currentClass"
                   id="currentClass"
@@ -372,7 +381,8 @@ const AddStudent = () => {
                   placeholder="e.g., 5, 6, 7"
                   value={formData.currentClass}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
             </div>
@@ -386,7 +396,7 @@ const AddStudent = () => {
                 <label htmlFor="totalFee" className="block text-sm font-medium text-gray-700">
                   Total Fee (₹)
                 </label>
-                <input
+                <Input
                   type="number"
                   name="feeDetails.totalFee"
                   id="totalFee"
@@ -395,7 +405,8 @@ const AddStudent = () => {
                   required
                   value={formData.feeDetails.totalFee}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
 
@@ -403,7 +414,7 @@ const AddStudent = () => {
                 <label htmlFor="amountPaid" className="block text-sm font-medium text-gray-700">
                   Amount Paid (₹)
                 </label>
-                <input
+                <Input
                   type="number"
                   name="feeDetails.amountPaid"
                   id="amountPaid"
@@ -412,7 +423,8 @@ const AddStudent = () => {
                   required
                   value={formData.feeDetails.amountPaid}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
                 />
               </div>
             </div>

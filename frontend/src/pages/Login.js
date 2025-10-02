@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import Input from '../components/Input';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -49,7 +50,7 @@ const Login = () => {
               <label htmlFor="email" className="sr-only">
                 Email address
               </label>
-              <input
+              <Input
                 id="email"
                 name="email"
                 type="email"
@@ -59,13 +60,14 @@ const Login = () => {
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
+                style={{ color: '#000000', backgroundColor: '#ffffff' }}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
                 Password
               </label>
-              <input
+              <Input
                 id="password"
                 name="password"
                 type="password"
@@ -75,6 +77,7 @@ const Login = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
+                style={{ color: '#000000', backgroundColor: '#ffffff' }}
               />
             </div>
           </div>
