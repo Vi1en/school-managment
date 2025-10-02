@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { fixInputVisibility } from './utils/inputVisibilityFix';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AddStudent from './pages/AddStudent';
@@ -53,6 +54,11 @@ const AppRoutes = () => {
 };
 
 function App() {
+  useEffect(() => {
+    // Apply input visibility fix when app loads
+    fixInputVisibility();
+  }, []);
+
   return (
     <AuthProvider>
       <Router>

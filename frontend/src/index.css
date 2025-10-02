@@ -578,6 +578,7 @@ input[type="email"],
 input[type="password"],
 input[type="tel"],
 input[type="date"],
+input[type="file"],
 textarea,
 select {
   width: 100%;
@@ -585,9 +586,36 @@ select {
   border: 1px solid var(--gray-300);
   border-radius: var(--radius);
   font-size: 1rem;
-  background: var(--white);
-  color: var(--black);
+  background: var(--white) !important;
+  color: var(--black) !important;
   transition: all 0.2s ease;
+}
+
+/* Force text visibility in all inputs */
+input, textarea, select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Specific input field fixes */
+.form-input,
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+input[type="file"] {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+}
+
+/* Placeholder text */
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1;
 }
 
 input[type="text"]:focus, 
@@ -606,16 +634,36 @@ select:focus {
 /* Table Input Fields */
 table input[type="text"], 
 table input[type="number"] {
-  border: 1px solid var(--gray-300);
-  background: var(--white);
-  color: var(--black);
+  border: 1px solid var(--gray-300) !important;
+  background: var(--white) !important;
+  color: var(--black) !important;
   text-align: center;
 }
 
 table input[type="text"]:focus, 
 table input[type="number"]:focus {
-  border-color: #3b82f6;
+  border-color: #3b82f6 !important;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Global input visibility fix */
+* input, * textarea, * select {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Override any conflicting styles */
+input[type="text"]:not([style*="color"]),
+input[type="number"]:not([style*="color"]),
+input[type="email"]:not([style*="color"]),
+input[type="password"]:not([style*="color"]),
+input[type="tel"]:not([style*="color"]),
+input[type="date"]:not([style*="color"]),
+input[type="file"]:not([style*="color"]),
+textarea:not([style*="color"]),
+select:not([style*="color"]) {
+  color: #000000 !important;
+  background-color: #ffffff !important;
 }
 
 .form-label {
