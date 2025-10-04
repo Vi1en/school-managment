@@ -48,15 +48,64 @@ const AddStudent = () => {
     console.log('🔧 AddStudent: Applying nuclear input fix...');
     fixInputVisibility();
     
-    // Apply nuclear fix to native elements
-    const timer = setTimeout(() => {
-      console.log('🔧 AddStudent: Applying nuclear fix to native elements...');
-      if (fileInputRef.current) applyNuclearFix(fileInputRef.current);
-      if (selectRef.current) applyNuclearFix(selectRef.current);
-      if (textareaRef.current) applyNuclearFix(textareaRef.current);
-    }, 100);
+    // Apply nuclear fix to ALL input elements in the form
+    const applyFixToAllInputs = () => {
+      const allInputs = document.querySelectorAll('input, select, textarea');
+      console.log('🔧 AddStudent: Found', allInputs.length, 'input elements to fix');
+      
+      allInputs.forEach((input, index) => {
+        // ULTRA AGGRESSIVE FIX - Force styles with maximum priority
+        input.style.setProperty('color', '#000000', 'important');
+        input.style.setProperty('background-color', '#ffffff', 'important');
+        input.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+        input.style.setProperty('opacity', '1', 'important');
+        input.style.setProperty('visibility', 'visible', 'important');
+        input.style.setProperty('text-shadow', 'none', 'important');
+        
+        // Also apply the nuclear fix
+        applyNuclearFix(input);
+        
+        if (index < 5) {
+          console.log('🔧 AddStudent: Fixed input', index + 1, input.type || input.tagName);
+        }
+      });
+    };
     
-    return () => clearTimeout(timer);
+    // Apply fix immediately and on intervals
+    applyFixToAllInputs();
+    
+    const timer = setTimeout(applyFixToAllInputs, 100);
+    const interval = setInterval(applyFixToAllInputs, 500); // More frequent
+    
+    // MutationObserver to catch dynamically added elements
+    const observer = new MutationObserver((mutations) => {
+      let hasNewInputs = false;
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1 && (node.tagName === 'INPUT' || node.tagName === 'SELECT' || node.tagName === 'TEXTAREA' || 
+              (node.querySelector && node.querySelector('input, select, textarea')))) {
+            hasNewInputs = true;
+          }
+        });
+      });
+      
+      if (hasNewInputs) {
+        console.log('🔧 AddStudent: New inputs detected, applying fix...');
+        setTimeout(applyFixToAllInputs, 50);
+      }
+    });
+    
+    // Start observing
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+      observer.disconnect();
+    };
   }, []);
   const [formData, setFormData] = useState({
     admissionNumber: '',
@@ -263,6 +312,9 @@ const AddStudent = () => {
                   className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                   onFocus={(e) => applyNuclearFix(e.target)}
                   onBlur={(e) => applyNuclearFix(e.target)}
+                  onInput={(e) => applyNuclearFix(e.target)}
+                  onMouseEnter={(e) => applyNuclearFix(e.target)}
+                  onMouseLeave={(e) => applyNuclearFix(e.target)}
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   JPG, PNG, JPEG up to 2MB. Recommended: 2x2 inches (passport size)
@@ -381,6 +433,9 @@ const AddStudent = () => {
                   style={{ color: '#000000', backgroundColor: '#ffffff' }}
                   onFocus={(e) => applyNuclearFix(e.target)}
                   onBlur={(e) => applyNuclearFix(e.target)}
+                  onInput={(e) => applyNuclearFix(e.target)}
+                  onMouseEnter={(e) => applyNuclearFix(e.target)}
+                  onMouseLeave={(e) => applyNuclearFix(e.target)}
                 >
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
@@ -409,6 +464,9 @@ const AddStudent = () => {
                   style={{ color: '#000000', backgroundColor: '#ffffff' }}
                   onFocus={(e) => applyNuclearFix(e.target)}
                   onBlur={(e) => applyNuclearFix(e.target)}
+                  onInput={(e) => applyNuclearFix(e.target)}
+                  onMouseEnter={(e) => applyNuclearFix(e.target)}
+                  onMouseLeave={(e) => applyNuclearFix(e.target)}
                 />
               </div>
 
