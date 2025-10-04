@@ -59,6 +59,14 @@ const ViewStudent = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const getPaymentStatus = (student) => {
+    const { totalFee = 0, amountPaid = 0 } = student.feeDetails || {};
+    if (totalFee === 0) return 'No Fee';
+    if (amountPaid >= totalFee) return 'Paid';
+    if (amountPaid > 0) return 'Partial';
+    return 'Unpaid';
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Pass':
@@ -71,6 +79,8 @@ const ViewStudent = () => {
         return 'bg-yellow-100 text-yellow-800';
       case 'Unpaid':
         return 'bg-red-100 text-red-800';
+      case 'No Fee':
+        return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -280,8 +290,8 @@ const ViewStudent = () => {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Payment Status</dt>
                   <dd className="mt-1">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(student.feeDetails?.paymentStatus)}`}>
-                      {student.feeDetails?.paymentStatus || 'Not set'}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(getPaymentStatus(student))}`}>
+                      {getPaymentStatus(student)}
                     </span>
                   </dd>
                 </div>
