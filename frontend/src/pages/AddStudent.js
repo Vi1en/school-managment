@@ -14,28 +14,16 @@ const AddStudent = () => {
   const selectRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // NUCLEAR FIX - Force black text on white background for native elements
+  // NUCLEAR FIX - Force black text on white background for native elements (less aggressive)
   const applyNuclearFix = (element) => {
     if (element) {
-      element.style.cssText = `
-        color: #000000 !important;
-        background-color: #ffffff !important;
-        border: 1px solid #d1d5db !important;
-        border-radius: 0.375rem !important;
-        box-shadow: none !important;
-        display: block !important;
-        font-size: 16px !important;
-        line-height: 1.5 !important;
-        opacity: 1 !important;
-        outline: none !important;
-        padding: 0.5rem 0.75rem !important;
-        text-shadow: none !important;
-        visibility: visible !important;
-        width: 100% !important;
-        -webkit-text-fill-color: #000000 !important;
-        -webkit-opacity: 1 !important;
-        font-family: inherit !important;
-      `;
+      // Use setProperty instead of cssText to avoid breaking React events
+      element.style.setProperty('color', '#000000', 'important');
+      element.style.setProperty('background-color', '#ffffff', 'important');
+      element.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+      element.style.setProperty('opacity', '1', 'important');
+      element.style.setProperty('visibility', 'visible', 'important');
+      element.style.setProperty('text-shadow', 'none', 'important');
       
       // Add data attributes for tracking
       element.setAttribute('data-force-visible', 'true');
