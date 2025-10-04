@@ -65,8 +65,12 @@ const AddStudent = () => {
         // Also apply the nuclear fix
         applyNuclearFix(input);
         
+        // Ensure input is not disabled and can receive input
+        input.disabled = false;
+        input.readOnly = false;
+        
         if (index < 5) {
-          console.log('🔧 AddStudent: Fixed input', index + 1, input.type || input.tagName);
+          console.log('🔧 AddStudent: Fixed input', index + 1, input.type || input.tagName, 'value:', input.value);
         }
       });
     };
@@ -107,6 +111,12 @@ const AddStudent = () => {
       observer.disconnect();
     };
   }, []);
+
+  // Debug form data changes
+  useEffect(() => {
+    console.log('🔧 AddStudent: Form data updated:', formData);
+  }, [formData]);
+
   const [formData, setFormData] = useState({
     admissionNumber: '',
     studentName: '',
@@ -125,6 +135,7 @@ const AddStudent = () => {
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
+    console.log('🔧 AddStudent: handleChange called', { name, value, type });
     
     if (name.startsWith('feeDetails.')) {
       const feeField = name.split('.')[1];
@@ -174,6 +185,8 @@ const AddStudent = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+
+    console.log('🔧 AddStudent: Form submitted with data:', formData);
 
     // Client-side validation
     if (!formData.admissionNumber.trim()) {
