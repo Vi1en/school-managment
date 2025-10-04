@@ -13,10 +13,10 @@ const Input = ({
 }) => {
   const inputRef = useRef(null);
 
-  // NUCLEAR FIX - Force black text on white background (less aggressive)
+  // ULTRA AGGRESSIVE FIX - Force black text on white background
   const applyNuclearFix = (element) => {
     if (element) {
-      // Use setProperty instead of cssText to avoid breaking React events
+      // Force styles with maximum priority and multiple methods
       element.style.setProperty('color', '#000000', 'important');
       element.style.setProperty('background-color', '#ffffff', 'important');
       element.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
@@ -24,9 +24,19 @@ const Input = ({
       element.style.setProperty('visibility', 'visible', 'important');
       element.style.setProperty('text-shadow', 'none', 'important');
       
+      // Force override any inherited styles
+      element.style.color = '#000000';
+      element.style.backgroundColor = '#ffffff';
+      element.style.webkitTextFillColor = '#000000';
+      
+      // Set attributes to force override
+      element.setAttribute('style', element.getAttribute('style') + '; color: #000000 !important; background-color: #ffffff !important; -webkit-text-fill-color: #000000 !important;');
+      
       // Add data attributes for tracking
       element.setAttribute('data-force-visible', 'true');
       element.setAttribute('data-text-color', '#000000');
+      
+      console.log('🔧 Input: Applied nuclear fix to', element.name || element.id || 'input');
     }
   };
 
