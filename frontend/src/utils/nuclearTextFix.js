@@ -8,7 +8,8 @@ console.log('💥 NUCLEAR TEXT FIX: Starting...');
 // Nuclear function to force text visibility
 const nuclearTextFix = () => {
   const inputs = document.querySelectorAll('input, textarea, select');
-  console.log(`💥 Found ${inputs.length} input elements to fix`);
+  const textElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, label, div');
+  console.log(`💥 Found ${inputs.length} input elements and ${textElements.length} text elements to fix`);
   
   inputs.forEach((input, index) => {
     // NUCLEAR METHOD 1: Remove all existing styles
@@ -123,7 +124,22 @@ const nuclearTextFix = () => {
     }
   });
   
-  console.log(`💥 NUCLEAR FIX applied to ${inputs.length} input elements`);
+  // Also fix all text elements
+  textElements.forEach((element, index) => {
+    // Force black text for all text elements
+    element.style.color = '#000000';
+    element.style.setProperty('color', '#000000', 'important');
+    element.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+    element.style.setProperty('text-shadow', 'none', 'important');
+    element.style.setProperty('opacity', '1', 'important');
+    element.style.setProperty('visibility', 'visible', 'important');
+    
+    if (index < 3) {
+      console.log(`💥 NUCLEAR FIX applied to text element ${index + 1}:`, element.tagName);
+    }
+  });
+  
+  console.log(`💥 NUCLEAR FIX applied to ${inputs.length} input elements and ${textElements.length} text elements`);
 };
 
 // Inject nuclear CSS
@@ -132,6 +148,16 @@ const injectNuclearCSS = () => {
   style.id = 'nuclear-text-fix';
   style.textContent = `
     /* NUCLEAR CSS - OVERRIDES EVERYTHING */
+    /* Force all text elements to be black */
+    h1, h2, h3, h4, h5, h6, p, span, label, div {
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+      text-shadow: none !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    
+    /* Force all input elements to be black */
     input, textarea, select {
       color: #000000 !important;
       background-color: #ffffff !important;

@@ -596,6 +596,53 @@ input.search-input:focus {
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
+/* NUCLEAR TEXT FIX - OVERRIDE ALL GREY TEXT */
+/* This will override ALL grey text including Tailwind CSS */
+html body div#root div div div h1,
+html body div#root div div div h2,
+html body div#root div div div h3,
+html body div#root div div div h4,
+html body div#root div div div h5,
+html body div#root div div div h6,
+html body div#root div div div p,
+html body div#root div div div span,
+html body div#root div div div label,
+html body div#root div div h1,
+html body div#root div div h2,
+html body div#root div div h3,
+html body div#root div div h4,
+html body div#root div div h5,
+html body div#root div div h6,
+html body div#root div div p,
+html body div#root div div span,
+html body div#root div div label,
+html body div#root div h1,
+html body div#root div h2,
+html body div#root div h3,
+html body div#root div h4,
+html body div#root div h5,
+html body div#root div h6,
+html body div#root div p,
+html body div#root div span,
+html body div#root div label,
+html body div h1,
+html body div h2,
+html body div h3,
+html body div h4,
+html body div h5,
+html body div h6,
+html body div p,
+html body div span,
+html body div label,
+h1, h2, h3, h4, h5, h6, p, span, label {
+  /* Force all text to be black */
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* NUCLEAR INPUT FIX - HIGHEST POSSIBLE SPECIFICITY */
 /* This will override EVERYTHING including inline styles */
 html body div#root div div input,
@@ -869,10 +916,11 @@ select {
   background-image: none !important;
 }
 
-/* OVERRIDE ALL TAILWIND AND FRAMEWORK CLASSES */
+/* OVERRIDE ALL TAILWIND AND FRAMEWORK CLASSES - MAKE ALL TEXT BLACK */
 .text-gray-900, .text-gray-700, .text-gray-600, .text-gray-500, .text-gray-400,
 .text-gray-300, .text-gray-200, .text-gray-100, .text-white, .text-black,
 .text-transparent, .text-current, .text-inherit,
+h1, h2, h3, h4, h5, h6, p, span, div, label,
 input.text-gray-900, input.text-gray-700, input.text-gray-600, input.text-gray-500,
 input.text-gray-400, input.text-gray-300, input.text-gray-200, input.text-gray-100,
 input.text-white, input.text-black, input.text-transparent {
