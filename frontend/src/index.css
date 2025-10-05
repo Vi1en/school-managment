@@ -596,8 +596,8 @@ input.search-input:focus {
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
-/* NUCLEAR INPUT FIX - MAXIMUM SPECIFICITY */
-/* Override ALL possible conflicting styles */
+/* COMPREHENSIVE INPUT VISIBILITY FIX - MAXIMUM SPECIFICITY */
+/* Override ALL possible conflicting styles for text visibility and caret */
 html body div#root div input,
 html body div#root div textarea,
 html body div#root div select,
@@ -605,23 +605,38 @@ html body div input,
 html body div textarea,
 html body div select,
 input, textarea, select {
+  /* Text Visibility */
   color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  -webkit-opacity: 1 !important;
+  
+  /* Background and Contrast */
   background-color: #ffffff !important;
+  background: #ffffff !important;
+  
+  /* Border and Styling */
   border: 1px solid #d1d5db !important;
   border-radius: 0.375rem !important;
   box-shadow: none !important;
-  display: block !important;
+  outline: none !important;
+  
+  /* Typography */
   font-size: 16px !important;
   line-height: 1.5 !important;
-  opacity: 1 !important;
-  outline: none !important;
-  padding: 0.5rem 0.75rem !important;
-  text-shadow: none !important;
-  visibility: visible !important;
-  width: 100% !important;
-  -webkit-text-fill-color: #000000 !important;
-  -webkit-opacity: 1 !important;
   font-family: inherit !important;
+  font-weight: normal !important;
+  
+  /* Layout */
+  display: block !important;
+  width: 100% !important;
+  padding: 0.5rem 0.75rem !important;
+  
+  /* Caret/Cursor Visibility */
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
 }
 
 /* All input types with specific styling */
@@ -717,27 +732,126 @@ form .search-input,
   font-family: inherit !important;
 }
 
-/* Focus states - ensure text stays visible */
+/* COMPREHENSIVE FOCUS STATES - ENSURE TEXT AND CARET VISIBILITY */
+html body div#root div input:focus,
+html body div#root div textarea:focus,
+html body div#root div select:focus,
+html body div input:focus,
+html body div textarea:focus,
+html body div select:focus,
 input:focus,
 textarea:focus,
 select:focus {
+  /* Text Visibility */
   color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  -webkit-opacity: 1 !important;
+  
+  /* Background and Contrast */
   background-color: #ffffff !important;
+  background: #ffffff !important;
+  
+  /* Focus Styling */
   border-color: #3b82f6 !important;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
   outline: none !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  -webkit-text-fill-color: #000000 !important;
-  -webkit-opacity: 1 !important;
+  
+  /* Caret/Cursor Visibility */
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
 }
 
-/* Placeholder text - lighter but visible */
+/* PLACEHOLDER TEXT VISIBILITY */
+html body div#root div input::placeholder,
+html body div#root div textarea::placeholder,
+html body div input::placeholder,
+html body div textarea::placeholder,
 input::placeholder,
 textarea::placeholder {
   color: #6b7280 !important;
   opacity: 1 !important;
   -webkit-text-fill-color: #6b7280 !important;
+  -webkit-opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* SPECIFIC INPUT TYPE FIXES */
+/* Text inputs */
+input[type="text"],
+input[type="search"],
+input[type="url"],
+input[type="tel"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
+}
+
+/* Number inputs */
+input[type="number"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
+}
+
+/* Email inputs */
+input[type="email"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
+}
+
+/* Password inputs */
+input[type="password"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
+}
+
+/* Date inputs */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
+}
+
+/* File inputs */
+input[type="file"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Textareas */
+textarea {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+  caret-color: #000000 !important;
+  -webkit-caret-color: #000000 !important;
+  resize: vertical !important;
+}
+
+/* Select dropdowns */
+select {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
 }
 
 /* Override any conflicting classes */
@@ -788,15 +902,40 @@ input[type="radio"] {
   -webkit-text-fill-color: #000000 !important;
 }
 
-/* Mobile-specific fixes */
+/* MOBILE AND TOUCH DEVICE FIXES */
 @media (max-width: 640px) {
+  html body div#root div input,
+  html body div#root div textarea,
+  html body div#root div select,
+  html body div input,
+  html body div textarea,
+  html body div select,
   input, textarea, select {
     font-size: 16px !important; /* Prevents zoom on iOS */
     color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
     background-color: #ffffff !important;
     padding: 0.75rem !important;
     min-height: 44px !important; /* Touch target size */
+    caret-color: #000000 !important;
+    -webkit-caret-color: #000000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    text-shadow: none !important;
+  }
+}
+
+/* TOUCH DEVICE SPECIFIC FIXES */
+@media (hover: none) and (pointer: coarse) {
+  input, textarea, select {
+    font-size: 16px !important;
+    color: #000000 !important;
     -webkit-text-fill-color: #000000 !important;
+    background-color: #ffffff !important;
+    caret-color: #000000 !important;
+    -webkit-caret-color: #000000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprehensive Input Test - ALL Input Areas</title>
+    <title>Comprehensive Input Visibility Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,12 +27,15 @@
             margin-bottom: 5px;
             color: #333;
         }
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
+        .test-section {
             border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
         }
         .status {
             padding: 10px;
@@ -50,32 +53,69 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-        .test-section {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
+        
+        /* COMPREHENSIVE INPUT VISIBILITY FIX - MAXIMUM SPECIFICITY */
+        html body div input,
+        html body div textarea,
+        html body div select,
+        input, textarea, select {
+            /* Text Visibility */
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+            text-shadow: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            -webkit-opacity: 1 !important;
+            
+            /* Background and Contrast */
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            
+            /* Border and Styling */
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.375rem !important;
+            box-shadow: none !important;
+            outline: none !important;
+            
+            /* Typography */
+            font-size: 16px !important;
+            line-height: 1.5 !important;
+            font-family: inherit !important;
+            font-weight: normal !important;
+            
+            /* Layout */
+            display: block !important;
+            width: 100% !important;
+            padding: 0.5rem 0.75rem !important;
+            
+            /* Caret/Cursor Visibility */
+            caret-color: #000000 !important;
+            -webkit-caret-color: #000000 !important;
         }
-        .test-section h3 {
-            margin-top: 0;
-            color: #333;
+        
+        /* Focus states */
+        input:focus, textarea:focus, select:focus {
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+            background-color: #ffffff !important;
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+            caret-color: #000000 !important;
+            -webkit-caret-color: #000000 !important;
         }
-        .radio-group, .checkbox-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .radio-item, .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        
+        /* Placeholder text */
+        input::placeholder, textarea::placeholder {
+            color: #6b7280 !important;
+            opacity: 1 !important;
+            -webkit-text-fill-color: #6b7280 !important;
         }
     </style>
 </head>
 <body>
     <div class="test-container">
-        <h1>🚨 Comprehensive Input Test - ALL Input Areas</h1>
-        <p>This test covers ALL types of input elements used in the school management system.</p>
+        <h1>🔍 Comprehensive Input Visibility Test</h1>
+        <p>This test covers ALL types of input elements to ensure visible text and caret.</p>
         
         <div class="test-section">
             <h3>📝 Text Inputs</h3>
@@ -127,78 +167,22 @@
         </div>
 
         <div class="test-section">
-            <h3>🔘 Radio Buttons</h3>
-            <div class="radio-group">
-                <div class="radio-item">
-                    <input type="radio" id="radio1" name="testRadio" value="option1" checked>
-                    <label for="radio1">Option 1 (Selected)</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="radio2" name="testRadio" value="option2">
-                    <label for="radio2">Option 2</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="radio3" name="testRadio" value="option3">
-                    <label for="radio3">Option 3</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="test-section">
-            <h3>☑️ Checkboxes</h3>
-            <div class="checkbox-group">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check1" checked>
-                    <label for="check1">Checkbox 1 (Checked)</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check2">
-                    <label for="check2">Checkbox 2</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="check3">
-                    <label for="check3">Checkbox 3</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="test-section">
-            <h3>🎯 Special Inputs (Like Marksheet Generator)</h3>
+            <h3>🎯 Special Inputs (Like School Forms)</h3>
             <div class="form-group">
-                <label for="classSelect">Class Selection:</label>
-                <select id="classSelect">
-                    <option value="">Select Class</option>
-                    <option value="9" selected>Class 9</option>
-                    <option value="10">Class 10</option>
-                    <option value="11">Class 11</option>
-                    <option value="12">Class 12</option>
-                </select>
+                <label for="admissionNumber">Admission Number:</label>
+                <input type="text" id="admissionNumber" value="STU001" placeholder="Enter admission number">
             </div>
             <div class="form-group">
-                <label for="examType">Exam Type:</label>
-                <select id="examType">
-                    <option value="Half-Yearly" selected>Half-Yearly</option>
-                    <option value="Annual">Annual</option>
-                    <option value="Unit Test 1">Unit Test 1</option>
-                    <option value="Unit Test 2">Unit Test 2</option>
-                </select>
+                <label for="studentName">Student Name:</label>
+                <input type="text" id="studentName" value="John Doe" placeholder="Enter student name">
             </div>
             <div class="form-group">
-                <label for="academicYear">Academic Year:</label>
-                <input type="text" id="academicYear" value="2025-26" placeholder="Academic Year">
+                <label for="totalFee">Total Fee (₹):</label>
+                <input type="number" id="totalFee" value="1000" placeholder="Enter total fee">
             </div>
             <div class="form-group">
-                <label>Generation Mode:</label>
-                <div class="radio-group">
-                    <div class="radio-item">
-                        <input type="radio" id="bulkMode" name="generationMode" value="bulk" checked>
-                        <label for="bulkMode">Bulk (All Students)</label>
-                    </div>
-                    <div class="radio-item">
-                        <input type="radio" id="individualMode" name="generationMode" value="individual">
-                        <label for="individualMode">Individual</label>
-                    </div>
-                </div>
+                <label for="address">Address:</label>
+                <textarea id="address" rows="3" placeholder="Enter address">123 Main Street, City, State</textarea>
             </div>
         </div>
 
@@ -206,55 +190,52 @@
     </div>
 
     <script>
-        // NUCLEAR INPUT FIX - Force black text on white background
-        function nuclearInputFix() {
+        // Comprehensive JavaScript fix
+        function applyComprehensiveFix() {
             const inputs = document.querySelectorAll('input, textarea, select');
-            console.log('🚨 NUCLEAR FIX: Found', inputs.length, 'input elements');
+            console.log('🔧 Found', inputs.length, 'input elements');
             
             inputs.forEach((input, index) => {
-                // NUCLEAR APPROACH - Force black text on white background
-                input.style.cssText = `
-                    color: #000000 !important;
-                    background-color: #ffffff !important;
-                    border: 1px solid #d1d5db !important;
-                    border-radius: 0.375rem !important;
-                    box-shadow: none !important;
-                    display: block !important;
-                    font-size: 16px !important;
-                    line-height: 1.5 !important;
-                    opacity: 1 !important;
-                    outline: none !important;
-                    padding: 0.5rem 0.75rem !important;
-                    text-shadow: none !important;
-                    visibility: visible !important;
-                    width: 100% !important;
-                    -webkit-text-fill-color: #000000 !important;
-                    -webkit-opacity: 1 !important;
-                    font-family: inherit !important;
-                `;
+                // Force styles with maximum priority
+                const styles = {
+                    color: '#000000',
+                    WebkitTextFillColor: '#000000',
+                    textShadow: 'none',
+                    opacity: '1',
+                    visibility: 'visible',
+                    backgroundColor: '#ffffff',
+                    caretColor: '#000000',
+                    WebkitCaretColor: '#000000'
+                };
                 
-                // Add data attributes for tracking
-                input.setAttribute('data-force-visible', 'true');
-                input.setAttribute('data-text-color', '#000000');
+                Object.entries(styles).forEach(([property, value]) => {
+                    input.style.setProperty(property, value, 'important');
+                });
                 
-                console.log('🔧 NUCLEAR FIX: Applied to input', index + 1, input.type || input.tagName);
+                // Force override any inherited styles
+                input.style.color = '#000000';
+                input.style.backgroundColor = '#ffffff';
+                input.style.webkitTextFillColor = '#000000';
+                input.style.caretColor = '#000000';
+                
+                console.log('🔧 Fixed input', index + 1, input.type || input.tagName);
             });
             
-            console.log('✅ NUCLEAR FIX: Applied to', inputs.length, 'inputs - BLACK TEXT ON WHITE BACKGROUND');
+            console.log('✅ Applied comprehensive fix to', inputs.length, 'inputs');
         }
         
         // Run immediately
-        nuclearInputFix();
+        applyComprehensiveFix();
         
         // Run when DOM is ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', nuclearInputFix);
+            document.addEventListener('DOMContentLoaded', applyComprehensiveFix);
         } else {
-            nuclearInputFix();
+            applyComprehensiveFix();
         }
         
         // Run every 500ms for maximum coverage
-        setInterval(nuclearInputFix, 500);
+        setInterval(applyComprehensiveFix, 500);
         
         // Check visibility
         function checkVisibility() {
@@ -270,6 +251,7 @@
                 const opacity = computedStyle.opacity;
                 const visibility = computedStyle.visibility;
                 const webkitTextFillColor = computedStyle.webkitTextFillColor;
+                const caretColor = computedStyle.caretColor;
                 
                 const isVisible = (
                     textColor === 'rgb(0, 0, 0)' && 
@@ -291,7 +273,8 @@
                     backgroundColor,
                     opacity,
                     visibility,
-                    webkitTextFillColor
+                    webkitTextFillColor,
+                    caretColor
                 });
                 
                 console.log(`Input ${index + 1}:`, results[index]);
@@ -315,11 +298,11 @@
             
             resultDiv.innerHTML = `
                 <div class="status ${statusClass}">
-                    <strong>${statusText}</strong> - ${visibleCount}/${totalCount} inputs have BLACK text on WHITE background (${percentage}%)
+                    <strong>${statusText}</strong> - ${visibleCount}/${totalCount} inputs have visible text and caret (${percentage}%)
                 </div>
                 <div style="margin-top: 10px; font-size: 12px; color: #666;">
                     <strong>Test Results:</strong><br>
-                    ${results.map((r, i) => `${i+1}. ${r.element}: ${r.visible ? '✅' : '❌'} (${r.textColor}, ${r.backgroundColor})`).join('<br>')}
+                    ${results.map((r, i) => `${i+1}. ${r.element}: ${r.visible ? '✅' : '❌'} (text: ${r.textColor}, bg: ${r.backgroundColor}, caret: ${r.caretColor})`).join('<br>')}
                 </div>
             `;
         }
