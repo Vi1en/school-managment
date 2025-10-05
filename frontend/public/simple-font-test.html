@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Font Test</title>
+    <!-- Test with Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        /* Test with Inter font */
+        .inter-font {
+            font-family: 'Inter', Arial, sans-serif;
+            color: #000000;
+            background-color: #ffffff;
+        }
+        
+        /* Test with Arial font */
+        .arial-font {
+            font-family: Arial, sans-serif;
+            color: #000000;
+            background-color: #ffffff;
+        }
+        
+        /* Test with system font */
+        .system-font {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #000000;
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔤 Simple Font Test</h1>
+        <p>This test checks if the issue is with the Google Fonts import.</p>
+        
+        <div class="form-group">
+            <label for="test1">Inter Font (Google Fonts):</label>
+            <input type="text" id="test1" class="inter-font" value="INTER FONT TEST" placeholder="Type here...">
+        </div>
+        
+        <div class="form-group">
+            <label for="test2">Arial Font (System):</label>
+            <input type="text" id="test2" class="arial-font" value="ARIAL FONT TEST" placeholder="Type here...">
+        </div>
+        
+        <div class="form-group">
+            <label for="test3">System Font:</label>
+            <input type="text" id="test3" class="system-font" value="SYSTEM FONT TEST" placeholder="Type here...">
+        </div>
+        
+        <div class="form-group">
+            <label for="test4">No Font Class:</label>
+            <input type="text" id="test4" value="NO FONT CLASS TEST" placeholder="Type here...">
+        </div>
+        
+        <button onclick="checkVisibility()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Check Text Visibility
+        </button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function checkVisibility() {
+            const inputs = document.querySelectorAll('input');
+            let results = [];
+            
+            inputs.forEach((input, index) => {
+                const computedStyle = window.getComputedStyle(input);
+                const rect = input.getBoundingClientRect();
+                
+                const isVisible = (
+                    computedStyle.color === 'rgb(0, 0, 0)' && 
+                    computedStyle.backgroundColor === 'rgb(255, 255, 255)' &&
+                    computedStyle.opacity !== '0' &&
+                    computedStyle.visibility !== 'hidden' &&
+                    computedStyle.webkitTextFillColor !== 'rgba(0, 0, 0, 0)' &&
+                    computedStyle.webkitTextFillColor !== 'transparent'
+                );
+                
+                results.push({
+                    element: input.id || `input-${index + 1}`,
+                    className: input.className || 'no-class',
+                    fontFamily: computedStyle.fontFamily,
+                    color: computedStyle.color,
+                    backgroundColor: computedStyle.backgroundColor,
+                    opacity: computedStyle.opacity,
+                    visibility: computedStyle.visibility,
+                    webkitTextFillColor: computedStyle.webkitTextFillColor,
+                    isVisible: isVisible,
+                    hasText: input.value && input.value.length > 0
+                });
+            });
+            
+            const resultDiv = document.getElementById('results');
+            resultDiv.innerHTML = `
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                    <h3>Results:</h3>
+                    <pre style="font-size: 12px; white-space: pre-wrap;">${JSON.stringify(results, null, 2)}</pre>
+                </div>
+            `;
+            
+            console.log('Font Test Results:', results);
+        }
+        
+        // Run check on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkVisibility, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Visibility Diagnostic Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .diagnostic-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .diagnostic-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .diagnostic-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .diagnostic-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* Test different font scenarios */
+        .test-font-1 { font-family: Arial, sans-serif; }
+        .test-font-2 { font-family: 'Inter', Arial, sans-serif; }
+        .test-font-3 { font-family: system-ui, -apple-system, sans-serif; }
+        .test-font-4 { font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-container">
+        <h1>🔍 Text Visibility Diagnostic Tool</h1>
+        <p>This tool will help identify what's causing the invisible text issue.</p>
+        
+        <div class="diagnostic-section">
+            <h3>🧪 Font Tests</h3>
+            <div class="form-group">
+                <label for="test1">Arial Font:</label>
+                <input type="text" id="test1" class="test-font-1" value="ARIAL FONT TEST" placeholder="Type here...">
+            </div>
+            <div class="form-group">
+                <label for="test2">Inter Font:</label>
+                <input type="text" id="test2" class="test-font-2" value="INTER FONT TEST" placeholder="Type here...">
+            </div>
+            <div class="form-group">
+                <label for="test3">System Font:</label>
+                <input type="text" id="test3" class="test-font-3" value="SYSTEM FONT TEST" placeholder="Type here...">
+            </div>
+            <div class="form-group">
+                <label for="test4">Monospace Font:</label>
+                <input type="text" id="test4" class="test-font-4" value="MONOSPACE FONT TEST" placeholder="Type here...">
+            </div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🔧 Browser Tests</h3>
+            <div class="form-group">
+                <label for="test5">Basic Input:</label>
+                <input type="text" id="test5" value="BASIC INPUT TEST" placeholder="Type here...">
+            </div>
+            <div class="form-group">
+                <label for="test6">Input with Style:</label>
+                <input type="text" id="test6" value="STYLED INPUT TEST" placeholder="Type here..." style="color: #000000; background-color: #ffffff; font-size: 16px;">
+            </div>
+            <div class="form-group">
+                <label for="test7">Input with Inline Style:</label>
+                <input type="text" id="test7" value="INLINE STYLE TEST" placeholder="Type here..." style="color: black !important; background: white !important;">
+            </div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🎯 Action Buttons</h3>
+            <button onclick="runDiagnostic()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                Run Full Diagnostic
+            </button>
+            <button onclick="testFonts()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                Test Font Loading
+            </button>
+            <button onclick="testBrowser()" style="padding: 10px 20px; background: #ffc107; color: black; border: none; border-radius: 4px; cursor: pointer;">
+                Test Browser Features
+            </button>
+        </div>
+
+        <div id="diagnostic-results"></div>
+    </div>
+
+    <script>
+        function runDiagnostic() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            let results = [];
+            let visibleCount = 0;
+            
+            inputs.forEach((input, index) => {
+                const computedStyle = window.getComputedStyle(input);
+                const rect = input.getBoundingClientRect();
+                
+                const diagnostic = {
+                    element: input.tagName + (input.type ? `[${input.type}]` : ''),
+                    id: input.id || 'no-id',
+                    className: input.className || 'no-class',
+                    value: input.value || 'no-value',
+                    
+                    // Computed styles
+                    color: computedStyle.color,
+                    backgroundColor: computedStyle.backgroundColor,
+                    opacity: computedStyle.opacity,
+                    visibility: computedStyle.visibility,
+                    webkitTextFillColor: computedStyle.webkitTextFillColor,
+                    webkitOpacity: computedStyle.webkitOpacity,
+                    textShadow: computedStyle.textShadow,
+                    caretColor: computedStyle.caretColor,
+                    webkitCaretColor: computedStyle.webkitCaretColor,
+                    fontFamily: computedStyle.fontFamily,
+                    fontSize: computedStyle.fontSize,
+                    fontWeight: computedStyle.fontWeight,
+                    
+                    // Inline styles
+                    inlineColor: input.style.color,
+                    inlineBackgroundColor: input.style.backgroundColor,
+                    inlineOpacity: input.style.opacity,
+                    inlineVisibility: input.style.visibility,
+                    inlineWebkitTextFillColor: input.style.webkitTextFillColor,
+                    inlineCaretColor: input.style.caretColor,
+                    
+                    // Attributes
+                    styleAttribute: input.getAttribute('style'),
+                    
+                    // Visibility
+                    isVisible: rect.width > 0 && rect.height > 0,
+                    hasText: input.value && input.value.length > 0
+                };
+                
+                // Check if text should be visible
+                const shouldBeVisible = (
+                    computedStyle.color === 'rgb(0, 0, 0)' && 
+                    computedStyle.backgroundColor === 'rgb(255, 255, 255)' &&
+                    computedStyle.opacity !== '0' &&
+                    computedStyle.visibility !== 'hidden' &&
+                    computedStyle.webkitTextFillColor !== 'rgba(0, 0, 0, 0)' &&
+                    computedStyle.webkitTextFillColor !== 'transparent'
+                );
+                
+                if (shouldBeVisible) {
+                    visibleCount++;
+                }
+                
+                diagnostic.shouldBeVisible = shouldBeVisible;
+                results.push(diagnostic);
+            });
+            
+            const percentage = Math.round((visibleCount / inputs.length) * 100);
+            const resultDiv = document.getElementById('diagnostic-results');
+            
+            let statusClass = 'error';
+            let statusText = '❌ FAILED';
+            if (percentage >= 95) {
+                statusClass = 'success';
+                statusText = '✅ EXCELLENT';
+            } else if (percentage >= 90) {
+                statusClass = 'success';
+                statusText = '✅ PASSED';
+            } else if (percentage >= 70) {
+                statusClass = 'warning';
+                statusText = '⚠️ PARTIAL';
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="diagnostic-section">
+                    <h3>📊 Diagnostic Results</h3>
+                    <div class="status ${statusClass}">
+                        <strong>${statusText}</strong> - ${visibleCount}/${inputs.length} inputs have visible text and caret (${percentage}%)
+                    </div>
+                    <div class="diagnostic-output">${JSON.stringify(results, null, 2)}</div>
+                </div>
+            `;
+            
+            console.log('Diagnostic Results:', results);
+        }
+        
+        function testFonts() {
+            const resultDiv = document.getElementById('diagnostic-results');
+            
+            // Test if Inter font is loaded
+            const interLoaded = document.fonts.check('16px Inter');
+            const arialLoaded = document.fonts.check('16px Arial');
+            const systemLoaded = document.fonts.check('16px system-ui');
+            
+            resultDiv.innerHTML = `
+                <div class="diagnostic-section">
+                    <h3>🔤 Font Loading Test</h3>
+                    <div class="status ${interLoaded ? 'success' : 'error'}">
+                        <strong>Inter Font:</strong> ${interLoaded ? '✅ Loaded' : '❌ Not Loaded'}
+                    </div>
+                    <div class="status ${arialLoaded ? 'success' : 'error'}">
+                        <strong>Arial Font:</strong> ${arialLoaded ? '✅ Loaded' : '❌ Not Loaded'}
+                    </div>
+                    <div class="status ${systemLoaded ? 'success' : 'error'}">
+                        <strong>System Font:</strong> ${systemLoaded ? '✅ Loaded' : '❌ Not Loaded'}
+                    </div>
+                    <div class="status info">
+                        <strong>Browser:</strong> ${navigator.userAgent}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function testBrowser() {
+            const resultDiv = document.getElementById('diagnostic-results');
+            
+            const browserInfo = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine,
+                webkitTextFillColor: CSS.supports('-webkit-text-fill-color', 'black'),
+                caretColor: CSS.supports('caret-color', 'black'),
+                cssVariables: CSS.supports('color', 'var(--test)'),
+                flexbox: CSS.supports('display', 'flex'),
+                grid: CSS.supports('display', 'grid')
+            };
+            
+            resultDiv.innerHTML = `
+                <div class="diagnostic-section">
+                    <h3>🌐 Browser Compatibility Test</h3>
+                    <div class="diagnostic-output">${JSON.stringify(browserInfo, null, 2)}</div>
+                </div>
+            `;
+        }
+        
+        // Run diagnostic on page load
+        window.addEventListener('load', () => {
+            setTimeout(runDiagnostic, 1000);
+        });
+    </script>
+</body>
+</html>
