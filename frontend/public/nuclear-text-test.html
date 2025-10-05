@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuclear Text Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Problematic styles to test override */
+        .problematic {
+            color: transparent !important;
+            background-color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>💥 Nuclear Text Fix Test</h1>
+        <p>This test uses the most aggressive fix possible to make text visible.</p>
+        
+        <div class="form-group">
+            <label for="test1">Search Input:</label>
+            <input type="text" id="test1" placeholder="Type here to search..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test2">Student Name:</label>
+            <input type="text" id="test2" placeholder="Enter student name..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test3">Admission Number:</label>
+            <input type="text" id="test3" placeholder="Enter admission number..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test4">Email:</label>
+            <input type="email" id="test4" placeholder="Enter email..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test5">Password:</label>
+            <input type="password" id="test5" placeholder="Enter password..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test6">Phone Number:</label>
+            <input type="tel" id="test6" placeholder="Enter phone number..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test7">Address:</label>
+            <textarea id="test7" rows="3" placeholder="Enter address..." class="problematic"></textarea>
+        </div>
+        
+        <button onclick="applyNuclearFix()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Apply Nuclear Fix
+        </button>
+        
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        // Nuclear function to force text visibility
+        const nuclearTextFix = () => {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            console.log(`💥 Found ${inputs.length} input elements to fix`);
+            
+            inputs.forEach((input, index) => {
+                // NUCLEAR METHOD 1: Remove all existing styles
+                input.removeAttribute('style');
+                input.removeAttribute('class');
+                
+                // NUCLEAR METHOD 2: Force styles with maximum priority
+                const nuclearStyles = {
+                    color: '#000000',
+                    backgroundColor: '#ffffff',
+                    background: '#ffffff',
+                    webkitTextFillColor: '#000000',
+                    caretColor: '#000000',
+                    webkitCaretColor: '#000000',
+                    opacity: '1',
+                    visibility: 'visible',
+                    textShadow: 'none',
+                    fontSize: '16px',
+                    lineHeight: '1.5',
+                    fontFamily: 'Arial, sans-serif',
+                    fontWeight: 'normal',
+                    border: '2px solid #000000',
+                    borderRadius: '4px',
+                    padding: '10px',
+                    width: '100%',
+                    display: 'block',
+                    outline: 'none',
+                    boxShadow: 'none'
+                };
+                
+                // Apply all styles
+                Object.assign(input.style, nuclearStyles);
+                
+                // NUCLEAR METHOD 3: Force with setProperty
+                Object.entries(nuclearStyles).forEach(([property, value]) => {
+                    input.style.setProperty(property, value, 'important');
+                });
+                
+                // NUCLEAR METHOD 4: Set attributes
+                input.setAttribute('style', `
+                    color: #000000 !important;
+                    background-color: #ffffff !important;
+                    -webkit-text-fill-color: #000000 !important;
+                    caret-color: #000000 !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    text-shadow: none !important;
+                    font-size: 16px !important;
+                    border: 2px solid #000000 !important;
+                    padding: 10px !important;
+                    width: 100% !important;
+                `);
+                
+                // NUCLEAR METHOD 5: Force override any CSS
+                input.style.cssText = `
+                    color: #000000 !important;
+                    background-color: #ffffff !important;
+                    -webkit-text-fill-color: #000000 !important;
+                    caret-color: #000000 !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    text-shadow: none !important;
+                    font-size: 16px !important;
+                    border: 2px solid #000000 !important;
+                    padding: 10px !important;
+                    width: 100% !important;
+                    display: block !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                `;
+                
+                console.log(`💥 NUCLEAR FIX applied to input ${index + 1}:`, input.id || input.type || 'element');
+            });
+            
+            console.log(`💥 NUCLEAR FIX applied to ${inputs.length} input elements`);
+        };
+        
+        function applyNuclearFix() {
+            console.log('💥 Applying nuclear text fix...');
+            nuclearTextFix();
+            
+            const resultDiv = document.getElementById('test-results');
+            resultDiv.innerHTML = `
+                <div class="status success">
+                    <strong>💥 NUCLEAR FIX APPLIED!</strong> - Now try typing in the input fields above. The text you type should be visible in black color with a black border.
+                </div>
+                <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                    <strong>Instructions:</strong><br>
+                    1. Click on any input field above<br>
+                    2. Start typing<br>
+                    3. You should see BLACK TEXT with BLACK BORDER<br>
+                    4. The cursor should also be visible<br>
+                    5. This fix overrides ALL other styles
+                </div>
+            `;
+        }
+        
+        // Run fix on page load
+        window.addEventListener('load', () => {
+            setTimeout(applyNuclearFix, 1000);
+        });
+    </script>
+</body>
+</html>
