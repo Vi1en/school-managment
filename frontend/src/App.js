@@ -2,6 +2,7 @@ import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { emergencyTextFix } from './utils/emergencyTextFix';
+import overrideDarkModeRule from './utils/darkModeOverride';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import MobileFirstLayout from './components/MobileFirstLayout';
@@ -64,6 +65,10 @@ function App() {
     // Apply emergency text fix when app loads
     console.log('🚀 App: Applying emergency text fix...');
     emergencyTextFix();
+    
+    // Apply dark mode override fix
+    console.log('🌙 App: Applying dark mode override fix...');
+    overrideDarkModeRule();
   }, []);
 
   return (
