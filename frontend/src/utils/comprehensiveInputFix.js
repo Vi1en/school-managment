@@ -4,14 +4,14 @@
  */
 
 export const applyComprehensiveInputFix = () => {
-  console.log('🔧 Applying comprehensive input visibility fix...');
+  console.log('🔧 Applying NUCLEAR input visibility fix...');
   
   const fixInputElement = (element) => {
     if (!element) return;
     
-    // Force styles with maximum priority
-    const styles = {
-      // Text Visibility
+    // NUCLEAR APPROACH - Override everything with maximum force
+    const nuclearStyles = {
+      // Text Visibility - NUCLEAR FORCE
       color: '#000000',
       WebkitTextFillColor: '#000000',
       textShadow: 'none',
@@ -19,9 +19,10 @@ export const applyComprehensiveInputFix = () => {
       visibility: 'visible',
       WebkitOpacity: '1',
       
-      // Background and Contrast
+      // Background and Contrast - NUCLEAR FORCE
       backgroundColor: '#ffffff',
       background: '#ffffff',
+      backgroundImage: 'none',
       
       // Border and Styling
       border: '1px solid #d1d5db',
@@ -40,28 +41,37 @@ export const applyComprehensiveInputFix = () => {
       width: '100%',
       padding: '0.5rem 0.75rem',
       
-      // Caret/Cursor Visibility
+      // Caret/Cursor Visibility - NUCLEAR FORCE
       caretColor: '#000000',
       WebkitCaretColor: '#000000'
     };
     
-    // Apply styles with !important
-    Object.entries(styles).forEach(([property, value]) => {
+    // Apply styles with !important - NUCLEAR FORCE
+    Object.entries(nuclearStyles).forEach(([property, value]) => {
       element.style.setProperty(property, value, 'important');
     });
     
-    // Force override any inherited styles
+    // NUCLEAR OVERRIDE - Force set directly on style object
     element.style.color = '#000000';
     element.style.backgroundColor = '#ffffff';
     element.style.webkitTextFillColor = '#000000';
     element.style.caretColor = '#000000';
+    element.style.opacity = '1';
+    element.style.visibility = 'visible';
+    element.style.textShadow = 'none';
+    
+    // NUCLEAR ATTRIBUTE OVERRIDE
+    const currentStyle = element.getAttribute('style') || '';
+    const nuclearStyle = 'color: #000000 !important; background-color: #ffffff !important; -webkit-text-fill-color: #000000 !important; opacity: 1 !important; visibility: visible !important; caret-color: #000000 !important;';
+    element.setAttribute('style', currentStyle + '; ' + nuclearStyle);
     
     // Add data attributes for tracking
     element.setAttribute('data-force-visible', 'true');
     element.setAttribute('data-text-color', '#000000');
     element.setAttribute('data-caret-color', '#000000');
+    element.setAttribute('data-nuclear-fix', 'true');
     
-    console.log('🔧 Fixed input element:', element.tagName, element.type || '');
+    console.log('🔧 NUCLEAR FIX applied to:', element.tagName, element.type || '');
   };
   
   const fixAllInputs = () => {
@@ -145,7 +155,91 @@ export const applyComprehensiveInputFix = () => {
   };
 };
 
-// Auto-apply fix when module is imported
-if (typeof window !== 'undefined') {
-  applyComprehensiveInputFix();
-}
+  // Inject CSS that will override everything
+  const injectNuclearCSS = () => {
+    const style = document.createElement('style');
+    style.id = 'nuclear-input-fix';
+    style.textContent = `
+      /* NUCLEAR CSS INJECTION - HIGHEST POSSIBLE SPECIFICITY */
+      html body div#root div div div input,
+      html body div#root div div div textarea,
+      html body div#root div div div select,
+      html body div#root div div input,
+      html body div#root div div textarea,
+      html body div#root div div select,
+      html body div#root div input,
+      html body div#root div textarea,
+      html body div#root div select,
+      html body div#root input,
+      html body div#root textarea,
+      html body div#root select,
+      html body div div input,
+      html body div div textarea,
+      html body div div select,
+      html body div input,
+      html body div textarea,
+      html body div select,
+      html body input,
+      html body textarea,
+      html body select,
+      html input,
+      html textarea,
+      html select,
+      input, textarea, select {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        text-shadow: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        -webkit-opacity: 1 !important;
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        caret-color: #000000 !important;
+        -webkit-caret-color: #000000 !important;
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        font-family: inherit !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important;
+        padding: 0.5rem 0.75rem !important;
+        width: 100% !important;
+        display: block !important;
+        outline: none !important;
+        box-shadow: none !important;
+      }
+      
+      /* Focus states */
+      input:focus, textarea:focus, select:focus {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        background-color: #ffffff !important;
+        caret-color: #000000 !important;
+        -webkit-caret-color: #000000 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      
+      /* Placeholder text */
+      input::placeholder, textarea::placeholder {
+        color: #6b7280 !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: #6b7280 !important;
+      }
+    `;
+    
+    // Remove existing nuclear CSS if any
+    const existingStyle = document.getElementById('nuclear-input-fix');
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    
+    // Inject the CSS
+    document.head.appendChild(style);
+    console.log('🔧 NUCLEAR CSS injected');
+  };
+
+  // Auto-apply fix when module is imported
+  if (typeof window !== 'undefined') {
+    injectNuclearCSS();
+    applyComprehensiveInputFix();
+  }

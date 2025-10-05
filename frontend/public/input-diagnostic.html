@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Visibility Diagnostic Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .diagnostic-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .diagnostic-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .diagnostic-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .diagnostic-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* Test inputs with different classes */
+        .test-input-1 { color: transparent; }
+        .test-input-2 { color: white; background: white; }
+        .test-input-3 { opacity: 0; }
+        .test-input-4 { visibility: hidden; }
+        .test-input-5 { -webkit-text-fill-color: transparent; }
+        .test-input-6 { color: inherit; }
+        .test-input-7 { color: currentColor; }
+    </style>
+</head>
+<body>
+    <div class="diagnostic-container">
+        <h1>🔍 Input Visibility Diagnostic Tool</h1>
+        <p>This tool will help identify what's causing input visibility issues.</p>
+        
+        <div class="diagnostic-section">
+            <h3>🧪 Test Inputs with Problematic Styles</h3>
+            <div class="form-group">
+                <label for="test1">Transparent Text:</label>
+                <input type="text" id="test1" class="test-input-1" value="TRANSPARENT TEXT" placeholder="Should be invisible">
+            </div>
+            <div class="form-group">
+                <label for="test2">White Text on White Background:</label>
+                <input type="text" id="test2" class="test-input-2" value="WHITE ON WHITE" placeholder="Should be invisible">
+            </div>
+            <div class="form-group">
+                <label for="test3">Zero Opacity:</label>
+                <input type="text" id="test3" class="test-input-3" value="ZERO OPACITY" placeholder="Should be invisible">
+            </div>
+            <div class="form-group">
+                <label for="test4">Hidden Visibility:</label>
+                <input type="text" id="test4" class="test-input-4" value="HIDDEN VISIBILITY" placeholder="Should be invisible">
+            </div>
+            <div class="form-group">
+                <label for="test5">WebKit Transparent Fill:</label>
+                <input type="text" id="test5" class="test-input-5" value="WEBKIT TRANSPARENT" placeholder="Should be invisible">
+            </div>
+            <div class="form-group">
+                <label for="test6">Inherit Color:</label>
+                <input type="text" id="test6" class="test-input-6" value="INHERIT COLOR" placeholder="Should be invisible">
+            </div>
+            <div class="form-group">
+                <label for="test7">Current Color:</label>
+                <input type="text" id="test7" class="test-input-7" value="CURRENT COLOR" placeholder="Should be invisible">
+            </div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🔧 Nuclear Fix Test</h3>
+            <button onclick="applyNuclearFix()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Apply Nuclear Fix
+            </button>
+            <button onclick="runDiagnostic()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                Run Diagnostic
+            </button>
+        </div>
+
+        <div id="diagnostic-results"></div>
+    </div>
+
+    <script>
+        function applyNuclearFix() {
+            console.log('🔧 Applying nuclear fix...');
+            
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach((input, index) => {
+                // Nuclear approach - override everything
+                const nuclearStyles = {
+                    color: '#000000',
+                    WebkitTextFillColor: '#000000',
+                    textShadow: 'none',
+                    opacity: '1',
+                    visibility: 'visible',
+                    WebkitOpacity: '1',
+                    backgroundColor: '#ffffff',
+                    background: '#ffffff',
+                    caretColor: '#000000',
+                    WebkitCaretColor: '#000000'
+                };
+                
+                // Apply with !important
+                Object.entries(nuclearStyles).forEach(([property, value]) => {
+                    input.style.setProperty(property, value, 'important');
+                });
+                
+                // Force override
+                input.style.color = '#000000';
+                input.style.backgroundColor = '#ffffff';
+                input.style.webkitTextFillColor = '#000000';
+                input.style.caretColor = '#000000';
+                input.style.opacity = '1';
+                input.style.visibility = 'visible';
+                
+                // Attribute override
+                const currentStyle = input.getAttribute('style') || '';
+                const nuclearStyle = 'color: #000000 !important; background-color: #ffffff !important; -webkit-text-fill-color: #000000 !important; opacity: 1 !important; visibility: visible !important; caret-color: #000000 !important;';
+                input.setAttribute('style', currentStyle + '; ' + nuclearStyle);
+                
+                console.log(`Fixed input ${index + 1}:`, input.id || input.className);
+            });
+            
+            console.log('✅ Nuclear fix applied to', inputs.length, 'inputs');
+        }
+        
+        function runDiagnostic() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            let results = [];
+            let visibleCount = 0;
+            
+            inputs.forEach((input, index) => {
+                const computedStyle = window.getComputedStyle(input);
+                const rect = input.getBoundingClientRect();
+                
+                const diagnostic = {
+                    element: input.tagName + (input.type ? `[${input.type}]` : ''),
+                    id: input.id || 'no-id',
+                    className: input.className || 'no-class',
+                    value: input.value || 'no-value',
+                    
+                    // Computed styles
+                    color: computedStyle.color,
+                    backgroundColor: computedStyle.backgroundColor,
+                    opacity: computedStyle.opacity,
+                    visibility: computedStyle.visibility,
+                    webkitTextFillColor: computedStyle.webkitTextFillColor,
+                    webkitOpacity: computedStyle.webkitOpacity,
+                    textShadow: computedStyle.textShadow,
+                    caretColor: computedStyle.caretColor,
+                    webkitCaretColor: computedStyle.webkitCaretColor,
+                    
+                    // Inline styles
+                    inlineColor: input.style.color,
+                    inlineBackgroundColor: input.style.backgroundColor,
+                    inlineOpacity: input.style.opacity,
+                    inlineVisibility: input.style.visibility,
+                    inlineWebkitTextFillColor: input.style.webkitTextFillColor,
+                    inlineCaretColor: input.style.caretColor,
+                    
+                    // Attributes
+                    styleAttribute: input.getAttribute('style'),
+                    
+                    // Visibility
+                    isVisible: rect.width > 0 && rect.height > 0,
+                    hasText: input.value && input.value.length > 0
+                };
+                
+                // Check if text should be visible
+                const shouldBeVisible = (
+                    computedStyle.color === 'rgb(0, 0, 0)' && 
+                    computedStyle.backgroundColor === 'rgb(255, 255, 255)' &&
+                    computedStyle.opacity !== '0' &&
+                    computedStyle.visibility !== 'hidden' &&
+                    computedStyle.webkitTextFillColor !== 'rgba(0, 0, 0, 0)' &&
+                    computedStyle.webkitTextFillColor !== 'transparent'
+                );
+                
+                if (shouldBeVisible) {
+                    visibleCount++;
+                }
+                
+                diagnostic.shouldBeVisible = shouldBeVisible;
+                results.push(diagnostic);
+            });
+            
+            const percentage = Math.round((visibleCount / inputs.length) * 100);
+            const resultDiv = document.getElementById('diagnostic-results');
+            
+            let statusClass = 'error';
+            let statusText = '❌ FAILED';
+            if (percentage >= 95) {
+                statusClass = 'success';
+                statusText = '✅ EXCELLENT';
+            } else if (percentage >= 90) {
+                statusClass = 'success';
+                statusText = '✅ PASSED';
+            } else if (percentage >= 70) {
+                statusClass = 'warning';
+                statusText = '⚠️ PARTIAL';
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="diagnostic-section">
+                    <h3>📊 Diagnostic Results</h3>
+                    <div class="status ${statusClass}">
+                        <strong>${statusText}</strong> - ${visibleCount}/${inputs.length} inputs have visible text and caret (${percentage}%)
+                    </div>
+                    <div class="diagnostic-output">${JSON.stringify(results, null, 2)}</div>
+                </div>
+            `;
+            
+            console.log('Diagnostic Results:', results);
+        }
+        
+        // Run diagnostic on page load
+        window.addEventListener('load', () => {
+            setTimeout(runDiagnostic, 1000);
+        });
+    </script>
+</body>
+</html>

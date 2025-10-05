@@ -1,10 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { fixInputVisibility } from './utils/inputVisibilityFix';
 import { applyComprehensiveInputFix } from './utils/comprehensiveInputFix';
-import './utils/emergencyInputFix';
-import './styles/ultra-aggressive-input-fix.css';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import MobileFirstLayout from './components/MobileFirstLayout';
@@ -66,7 +63,6 @@ function App() {
   useEffect(() => {
     // Apply comprehensive input visibility fix when app loads
     console.log('🚀 App: Applying comprehensive input fix...');
-    fixInputVisibility();
     applyComprehensiveInputFix();
   }, []);
 

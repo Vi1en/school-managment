@@ -596,16 +596,31 @@ input.search-input:focus {
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
-/* COMPREHENSIVE INPUT VISIBILITY FIX - MAXIMUM SPECIFICITY */
-/* Override ALL possible conflicting styles for text visibility and caret */
+/* NUCLEAR INPUT FIX - HIGHEST POSSIBLE SPECIFICITY */
+/* This will override EVERYTHING including inline styles */
+html body div#root div div input,
+html body div#root div div textarea,
+html body div#root div div select,
 html body div#root div input,
 html body div#root div textarea,
 html body div#root div select,
+html body div#root input,
+html body div#root textarea,
+html body div#root select,
+html body div div input,
+html body div div textarea,
+html body div div select,
 html body div input,
 html body div textarea,
 html body div select,
+html body input,
+html body textarea,
+html body select,
+html input,
+html textarea,
+html select,
 input, textarea, select {
-  /* Text Visibility */
+  /* Text Visibility - FORCE OVERRIDE EVERYTHING */
   color: #000000 !important;
   -webkit-text-fill-color: #000000 !important;
   text-shadow: none !important;
@@ -613,7 +628,7 @@ input, textarea, select {
   visibility: visible !important;
   -webkit-opacity: 1 !important;
   
-  /* Background and Contrast */
+  /* Background and Contrast - FORCE OVERRIDE */
   background-color: #ffffff !important;
   background: #ffffff !important;
   
@@ -854,11 +869,30 @@ select {
   background-image: none !important;
 }
 
-/* Override any conflicting classes */
+/* OVERRIDE ALL TAILWIND AND FRAMEWORK CLASSES */
 .text-gray-900, .text-gray-700, .text-gray-600, .text-gray-500, .text-gray-400,
-.text-gray-300, .text-gray-200, .text-gray-100, .text-white, .text-black {
+.text-gray-300, .text-gray-200, .text-gray-100, .text-white, .text-black,
+.text-transparent, .text-current, .text-inherit,
+input.text-gray-900, input.text-gray-700, input.text-gray-600, input.text-gray-500,
+input.text-gray-400, input.text-gray-300, input.text-gray-200, input.text-gray-100,
+input.text-white, input.text-black, input.text-transparent {
   color: #000000 !important;
   -webkit-text-fill-color: #000000 !important;
+}
+
+/* OVERRIDE ALL BACKGROUND CLASSES */
+.bg-white, .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-gray-300, .bg-transparent,
+input.bg-white, input.bg-gray-50, input.bg-gray-100, input.bg-gray-200,
+input.bg-gray-300, input.bg-transparent {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* OVERRIDE ALL OPACITY CLASSES */
+.opacity-0, .opacity-25, .opacity-50, .opacity-75, .opacity-100,
+input.opacity-0, input.opacity-25, input.opacity-50, input.opacity-75, input.opacity-100 {
+  opacity: 1 !important;
+  -webkit-opacity: 1 !important;
 }
 
 .bg-white, .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-transparent {
