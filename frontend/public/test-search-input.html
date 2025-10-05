@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Input Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d4d4d4;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: #ffffff;
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            text-shadow: none !important;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #000000;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            text-shadow: none !important;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Search Input Visibility Test</h1>
+        <p>Type in the search input below. If you can see the text you're typing, the fix is working!</p>
+        
+        <div style="margin: 20px 0;">
+            <label for="searchTest">Search Input:</label>
+            <input
+                type="text"
+                id="searchTest"
+                class="search-input"
+                placeholder="Type here to test visibility..."
+                value="Test text - can you see this?"
+            />
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Nuclear JavaScript fix
+        function forceInputVisibility() {
+            const input = document.getElementById('searchTest');
+            if (input) {
+                // Force styles with maximum priority
+                input.style.setProperty('color', '#000000', 'important');
+                input.style.setProperty('background-color', '#ffffff', 'important');
+                input.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+                input.style.setProperty('opacity', '1', 'important');
+                input.style.setProperty('visibility', 'visible', 'important');
+                input.style.setProperty('text-shadow', 'none', 'important');
+                
+                // Force override any inherited styles
+                input.style.color = '#000000';
+                input.style.backgroundColor = '#ffffff';
+                input.style.webkitTextFillColor = '#000000';
+                
+                console.log('🔧 Applied nuclear fix to search input');
+            }
+        }
+        
+        // Run immediately
+        forceInputVisibility();
+        
+        // Run when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', forceInputVisibility);
+        } else {
+            forceInputVisibility();
+        }
+        
+        // Add event listeners to maintain visibility
+        const input = document.getElementById('searchTest');
+        if (input) {
+            const maintainVisibility = (e) => {
+                forceInputVisibility();
+            };
+            
+            input.addEventListener('input', maintainVisibility);
+            input.addEventListener('keyup', maintainVisibility);
+            input.addEventListener('keydown', maintainVisibility);
+            input.addEventListener('paste', maintainVisibility);
+            input.addEventListener('focus', maintainVisibility);
+            input.addEventListener('blur', maintainVisibility);
+        }
+        
+        // Check visibility
+        function checkVisibility() {
+            const input = document.getElementById('searchTest');
+            if (input) {
+                const computedStyle = window.getComputedStyle(input);
+                const textColor = computedStyle.color;
+                const backgroundColor = computedStyle.backgroundColor;
+                const opacity = computedStyle.opacity;
+                const visibility = computedStyle.visibility;
+                const webkitTextFillColor = computedStyle.webkitTextFillColor;
+                
+                const isVisible = (
+                    textColor === 'rgb(0, 0, 0)' && 
+                    backgroundColor === 'rgb(255, 255, 255)' &&
+                    opacity !== '0' &&
+                    visibility !== 'hidden' &&
+                    webkitTextFillColor !== 'rgba(0, 0, 0, 0)' &&
+                    webkitTextFillColor !== 'transparent'
+                );
+                
+                const resultDiv = document.getElementById('result');
+                if (isVisible) {
+                    resultDiv.innerHTML = '<div class="status success">✅ SUCCESS - Text is visible! The fix is working.</div>';
+                } else {
+                    resultDiv.innerHTML = '<div class="status error">❌ FAILED - Text is not visible. Check the console for details.</div>';
+                }
+                
+                console.log('Search input visibility check:', {
+                    isVisible,
+                    textColor,
+                    backgroundColor,
+                    opacity,
+                    visibility,
+                    webkitTextFillColor
+                });
+            }
+        }
+        
+        // Check on page load
+        window.addEventListener('load', () => {
+            setTimeout(checkVisibility, 1000);
+        });
+        
+        // Check when input changes
+        if (input) {
+            input.addEventListener('input', () => {
+                setTimeout(checkVisibility, 100);
+            });
+        }
+    </script>
+</body>
+</html>

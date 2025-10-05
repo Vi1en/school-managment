@@ -19,6 +19,14 @@ const ViewStudent: React.FC = () => {
 
   const student = students.find(s => s.admissionNumber === admissionNumber);
 
+  const getPaymentStatus = (student: any) => {
+    const { totalFee = 0, amountPaid = 0 } = student.feeDetails || {};
+    if (totalFee === 0) return 'No Fee';
+    if (amountPaid >= totalFee) return 'Paid';
+    if (amountPaid > 0) return 'Partial';
+    return 'Unpaid';
+  };
+
   if (!student) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -159,8 +167,8 @@ const ViewStudent: React.FC = () => {
         
         <div className="mt-4">
           <div className="flex items-center justify-center">
-            <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(student.feeDetails.paymentStatus)}`}>
-              {student.feeDetails.paymentStatus.toUpperCase()}
+            <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(getPaymentStatus(student))}`}>
+              {getPaymentStatus(student).toUpperCase()}
             </span>
           </div>
         </div>

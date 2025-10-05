@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { studentsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import DatabaseDiagnostic from '../components/DatabaseDiagnostic';
+import SearchInput from '../components/SearchInput';
 
 const Dashboard = () => {
   const { isAuthenticated, admin, token } = useAuth();
@@ -18,29 +19,34 @@ const Dashboard = () => {
   // NUCLEAR FIX - Force black text on white background for native elements
   const applyNuclearFix = (element) => {
     if (element) {
-      element.style.cssText = `
-        color: #000000 !important;
-        background-color: #ffffff !important;
-        border: 1px solid #d1d5db !important;
-        border-radius: 0.375rem !important;
-        box-shadow: none !important;
-        display: block !important;
-        font-size: 16px !important;
-        line-height: 1.5 !important;
-        opacity: 1 !important;
-        outline: none !important;
-        padding: 0.5rem 0.75rem !important;
-        text-shadow: none !important;
-        visibility: visible !important;
-        width: 100% !important;
-        -webkit-text-fill-color: #000000 !important;
-        -webkit-opacity: 1 !important;
-        font-family: inherit !important;
-      `;
+      // Force styles with maximum priority
+      element.style.setProperty('color', '#000000', 'important');
+      element.style.setProperty('background-color', '#ffffff', 'important');
+      element.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+      element.style.setProperty('opacity', '1', 'important');
+      element.style.setProperty('visibility', 'visible', 'important');
+      element.style.setProperty('text-shadow', 'none', 'important');
+      element.style.setProperty('font-size', '16px', 'important');
+      element.style.setProperty('line-height', '1.5', 'important');
+      element.style.setProperty('padding', '0.75rem 1rem', 'important');
+      element.style.setProperty('border', '1px solid #d4d4d4', 'important');
+      element.style.setProperty('border-radius', '0.5rem', 'important');
+      element.style.setProperty('width', '100%', 'important');
+      element.style.setProperty('display', 'block', 'important');
+      element.style.setProperty('outline', 'none', 'important');
+      element.style.setProperty('box-shadow', 'none', 'important');
+      element.style.setProperty('font-family', 'inherit', 'important');
+      
+      // Force override any inherited styles
+      element.style.color = '#000000';
+      element.style.backgroundColor = '#ffffff';
+      element.style.webkitTextFillColor = '#000000';
       
       // Add data attributes for tracking
       element.setAttribute('data-force-visible', 'true');
       element.setAttribute('data-text-color', '#000000');
+      
+      console.log('🔧 Dashboard: Applied nuclear fix to search input');
     }
   };
 
@@ -151,7 +157,28 @@ const Dashboard = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       console.log('🔧 Dashboard: Applying nuclear fix to search input...');
-      if (searchInputRef.current) applyNuclearFix(searchInputRef.current);
+      if (searchInputRef.current) {
+        applyNuclearFix(searchInputRef.current);
+        
+        // Add event listeners to maintain visibility
+        const input = searchInputRef.current;
+        const maintainVisibility = (e) => {
+          applyNuclearFix(e.target);
+        };
+        
+        input.addEventListener('input', maintainVisibility);
+        input.addEventListener('keyup', maintainVisibility);
+        input.addEventListener('keydown', maintainVisibility);
+        input.addEventListener('paste', maintainVisibility);
+        
+        // Cleanup function
+        return () => {
+          input.removeEventListener('input', maintainVisibility);
+          input.removeEventListener('keyup', maintainVisibility);
+          input.removeEventListener('keydown', maintainVisibility);
+          input.removeEventListener('paste', maintainVisibility);
+        };
+      }
     }, 100);
     
     return () => clearTimeout(timer);
@@ -254,15 +281,11 @@ const Dashboard = () => {
           <h2 className="text-lg font-semibold text-black mb-4">Search Student</h2>
           <form onSubmit={handleSearch} className="flex gap-4">
             <div className="flex-1">
-              <input
+              <SearchInput
                 ref={searchInputRef}
-                type="text"
                 placeholder="Enter admission number or student name to search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-                onFocus={(e) => applyNuclearFix(e.target)}
-                onBlur={(e) => applyNuclearFix(e.target)}
               />
             </div>
             <button

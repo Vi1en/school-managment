@@ -400,12 +400,22 @@ body {
   font-size: 1rem;
   transition: all 0.2s ease;
   background: var(--white);
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: none !important;
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--black);
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: none !important;
 }
 
 .search-button {
