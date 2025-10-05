@@ -60,7 +60,6 @@ const Login = () => {
                 placeholder="Email address"
                 value={formData.email}
                 onChange={handleChange}
-                style={{ color: '#000000', backgroundColor: '#ffffff' }}
               />
             </div>
             <div>
@@ -77,7 +76,6 @@ const Login = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                style={{ color: '#000000', backgroundColor: '#ffffff' }}
               />
             </div>
           </div>

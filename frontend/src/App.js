@@ -2,6 +2,7 @@ import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { applyComprehensiveInputFix } from './utils/comprehensiveInputFix';
+import './utils/ultimateInputFix';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import MobileFirstLayout from './components/MobileFirstLayout';

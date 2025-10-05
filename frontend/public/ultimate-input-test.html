@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Input Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Test problematic styles */
+        .problematic-input {
+            color: transparent !important;
+            background-color: white !important;
+        }
+        .problematic-input-2 {
+            color: white !important;
+            background-color: white !important;
+        }
+        .problematic-input-3 {
+            opacity: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🚨 Ultimate Input Fix Test</h1>
+        <p>This test verifies that the ultimate fix overrides even problematic inline styles.</p>
+        
+        <div class="form-group">
+            <label for="test1">Normal Input:</label>
+            <input type="text" id="test1" value="NORMAL INPUT TEXT" placeholder="Should be visible">
+        </div>
+        
+        <div class="form-group">
+            <label for="test2">Problematic Input (Transparent):</label>
+            <input type="text" id="test2" class="problematic-input" value="TRANSPARENT TEXT" placeholder="Should be visible">
+        </div>
+        
+        <div class="form-group">
+            <label for="test3">Problematic Input (White on White):</label>
+            <input type="text" id="test3" class="problematic-input-2" value="WHITE ON WHITE" placeholder="Should be visible">
+        </div>
+        
+        <div class="form-group">
+            <label for="test4">Problematic Input (Zero Opacity):</label>
+            <input type="text" id="test4" class="problematic-input-3" value="ZERO OPACITY" placeholder="Should be visible">
+        </div>
+        
+        <div class="form-group">
+            <label for="test5">Input with Inline Style:</label>
+            <input type="text" id="test5" value="INLINE STYLE TEXT" placeholder="Should be visible" style="color: transparent; background-color: white;">
+        </div>
+        
+        <div class="form-group">
+            <label for="test6">Email Input:</label>
+            <input type="email" id="test6" value="test@example.com" placeholder="Enter email">
+        </div>
+        
+        <div class="form-group">
+            <label for="test7">Password Input:</label>
+            <input type="password" id="test7" value="password123" placeholder="Enter password">
+        </div>
+        
+        <div class="form-group">
+            <label for="test8">Number Input:</label>
+            <input type="number" id="test8" value="123" placeholder="Enter number">
+        </div>
+        
+        <div class="form-group">
+            <label for="test9">Textarea:</label>
+            <textarea id="test9" rows="3" placeholder="Enter text...">TEXTAREA TEXT</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="test10">Select:</label>
+            <select id="test10">
+                <option value="">Choose option</option>
+                <option value="option1" selected>Option 1 (Selected)</option>
+                <option value="option2">Option 2</option>
+            </select>
+        </div>
+        
+        <button onclick="runTest()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Run Ultimate Fix Test
+        </button>
+        
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        // ULTIMATE INPUT FIX - Overrides everything including inline styles
+        const ultimateInputFix = () => {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            console.log(`🚨 Found ${inputs.length} input elements to fix`);
+            
+            inputs.forEach((input, index) => {
+                // ULTIMATE FORCE - Override everything including inline styles
+                const ultimateStyles = {
+                    color: '#2563eb',
+                    WebkitTextFillColor: '#2563eb',
+                    textShadow: 'none',
+                    opacity: '1',
+                    visibility: 'visible',
+                    WebkitOpacity: '1',
+                    backgroundColor: '#ffffff',
+                    background: '#ffffff',
+                    backgroundImage: 'none',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    boxShadow: 'none',
+                    outline: 'none',
+                    fontSize: '16px',
+                    lineHeight: '1.5',
+                    fontFamily: 'inherit',
+                    fontWeight: 'normal',
+                    display: 'block',
+                    width: '100%',
+                    padding: '0.5rem 0.75rem',
+                    caretColor: '#2563eb',
+                    WebkitCaretColor: '#2563eb'
+                };
+                
+                // Method 1: setProperty with !important
+                Object.entries(ultimateStyles).forEach(([property, value]) => {
+                    input.style.setProperty(property, value, 'important');
+                });
+                
+                // Method 2: Direct style override
+                input.style.color = '#2563eb';
+                input.style.backgroundColor = '#ffffff';
+                input.style.webkitTextFillColor = '#2563eb';
+                input.style.caretColor = '#2563eb';
+                input.style.opacity = '1';
+                input.style.visibility = 'visible';
+                input.style.textShadow = 'none';
+                
+                // Method 3: Attribute override - ULTIMATE FORCE
+                const currentStyle = input.getAttribute('style') || '';
+                const ultimateStyle = 'color: #2563eb !important; background-color: #ffffff !important; -webkit-text-fill-color: #2563eb !important; opacity: 1 !important; visibility: visible !important; caret-color: #2563eb !important; text-shadow: none !important;';
+                input.setAttribute('style', ultimateStyle + '; ' + currentStyle);
+                
+                console.log(`🚨 ULTIMATE FIX applied to input ${index + 1}:`, input.id || input.type || 'element');
+            });
+            
+            console.log(`🚨 ULTIMATE FIX applied to ${inputs.length} input elements`);
+        };
+        
+        function runTest() {
+            console.log('🚨 Running Ultimate Fix Test...');
+            ultimateInputFix();
+            
+            // Check results
+            const inputs = document.querySelectorAll('input, textarea, select');
+            let visibleCount = 0;
+            let results = [];
+            
+            inputs.forEach((input, index) => {
+                const computedStyle = window.getComputedStyle(input);
+                const rect = input.getBoundingClientRect();
+                
+                const isVisible = (
+                    computedStyle.color === 'rgb(37, 99, 235)' && // #2563eb
+                    computedStyle.backgroundColor === 'rgb(255, 255, 255)' &&
+                    computedStyle.opacity !== '0' &&
+                    computedStyle.visibility !== 'hidden' &&
+                    computedStyle.webkitTextFillColor !== 'rgba(0, 0, 0, 0)' &&
+                    computedStyle.webkitTextFillColor !== 'transparent'
+                );
+                
+                if (isVisible) {
+                    visibleCount++;
+                }
+                
+                results.push({
+                    element: input.tagName + (input.type ? `[${input.type}]` : ''),
+                    id: input.id || 'no-id',
+                    visible: isVisible,
+                    color: computedStyle.color,
+                    backgroundColor: computedStyle.backgroundColor,
+                    opacity: computedStyle.opacity,
+                    visibility: computedStyle.visibility,
+                    webkitTextFillColor: computedStyle.webkitTextFillColor,
+                    caretColor: computedStyle.caretColor
+                });
+            });
+            
+            const percentage = Math.round((visibleCount / inputs.length) * 100);
+            const resultDiv = document.getElementById('test-results');
+            
+            let statusClass = 'error';
+            let statusText = '❌ FAILED';
+            if (percentage >= 95) {
+                statusClass = 'success';
+                statusText = '✅ EXCELLENT';
+            } else if (percentage >= 90) {
+                statusClass = 'success';
+                statusText = '✅ PASSED';
+            } else if (percentage >= 70) {
+                statusClass = 'error';
+                statusText = '⚠️ PARTIAL';
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="status ${statusClass}">
+                    <strong>${statusText}</strong> - ${visibleCount}/${inputs.length} inputs have visible text and caret (${percentage}%)
+                </div>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <strong>Test Results:</strong><br>
+                    ${results.map((r, i) => `${i+1}. ${r.element} (${r.id}): ${r.visible ? '✅' : '❌'} (color: ${r.color}, bg: ${r.backgroundColor}, caret: ${r.caretColor})`).join('<br>')}
+                </div>
+            `;
+            
+            console.log('Test Results:', results);
+        }
+        
+        // Run test on page load
+        window.addEventListener('load', () => {
+            setTimeout(runTest, 1000);
+        });
+    </script>
+</body>
+</html>
