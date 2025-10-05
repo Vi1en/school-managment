@@ -100,12 +100,22 @@ const SearchInput = ({
       placeholder={placeholder}
       className={`search-input ${className}`}
       style={{
-        color: '#000000',
-        backgroundColor: '#ffffff',
-        WebkitTextFillColor: '#000000',
-        opacity: 1,
-        visibility: 'visible',
-        textShadow: 'none'
+        color: '#000000 !important',
+        backgroundColor: '#ffffff !important',
+        WebkitTextFillColor: '#000000 !important',
+        opacity: '1 !important',
+        visibility: 'visible !important',
+        textShadow: 'none !important',
+        fontSize: '16px !important',
+        lineHeight: '1.5 !important',
+        padding: '0.75rem 1rem !important',
+        border: '1px solid #d4d4d4 !important',
+        borderRadius: '0.5rem !important',
+        width: '100% !important',
+        display: 'block !important',
+        outline: 'none !important',
+        boxShadow: 'none !important',
+        fontFamily: 'inherit !important'
       }}
       {...props}
     />
