@@ -1,6 +1,19 @@
 /* Modern Black & White Design System */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* CRITICAL: Override any dark mode body color that makes text invisible */
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+  
+  /* Force all text elements to be black in dark mode */
+  h1, h2, h3, h4, h5, h6, p, span, label, div, a, button {
+    color: #000000 !important;
+  }
+}
+
 :root {
   --white: #ffffff;
   --gray-50: #fafafa;
@@ -1023,6 +1036,12 @@ input[type="radio"] {
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
+  /* Override body color to black in dark mode */
+  body {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+  }
+  
   input, textarea, select {
     color: #000000 !important; /* Keep black text for visibility */
     background-color: #ffffff !important; /* Keep white background for visibility */
