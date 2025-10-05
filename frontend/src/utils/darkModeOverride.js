@@ -38,6 +38,16 @@ const overrideDarkModeRule = () => {
       color: #000000 !important;
       background-color: #ffffff !important;
     }
+    
+    /* NUCLEAR OVERRIDE: Remove any color: #fff; rules */
+    * {
+      color: #000000 !important;
+    }
+    
+    /* Specifically override any white text color */
+    body, html, div, span, p, h1, h2, h3, h4, h5, h6, input, textarea, select {
+      color: #000000 !important;
+    }
   `;
   
   // Remove existing override if any
@@ -54,6 +64,13 @@ const overrideDarkModeRule = () => {
   document.body.style.setProperty('color', '#000000', 'important');
   document.body.style.setProperty('background-color', '#ffffff', 'important');
   console.log('🌙 DARK MODE OVERRIDE: Body styles overridden');
+  
+  // Method 2.5: Remove any color: #fff; rules from all elements
+  const allElements = document.querySelectorAll('*');
+  allElements.forEach((element) => {
+    element.style.setProperty('color', '#000000', 'important');
+  });
+  console.log(`🌙 DARK MODE OVERRIDE: Removed color: #fff; from ${allElements.length} elements`);
   
   // Method 3: Override all input elements
   const inputs = document.querySelectorAll('input, textarea, select');
