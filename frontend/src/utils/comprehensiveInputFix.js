@@ -12,8 +12,8 @@ export const applyComprehensiveInputFix = () => {
     // NUCLEAR APPROACH - Override everything with maximum force
     const nuclearStyles = {
       // Text Visibility - NUCLEAR FORCE
-      color: '#000000',
-      WebkitTextFillColor: '#000000',
+      color: '#2563eb',
+      WebkitTextFillColor: '#2563eb',
       textShadow: 'none',
       opacity: '1',
       visibility: 'visible',
@@ -42,8 +42,8 @@ export const applyComprehensiveInputFix = () => {
       padding: '0.5rem 0.75rem',
       
       // Caret/Cursor Visibility - NUCLEAR FORCE
-      caretColor: '#000000',
-      WebkitCaretColor: '#000000'
+      caretColor: '#2563eb',
+      WebkitCaretColor: '#2563eb'
     };
     
     // Apply styles with !important - NUCLEAR FORCE
@@ -52,23 +52,23 @@ export const applyComprehensiveInputFix = () => {
     });
     
     // NUCLEAR OVERRIDE - Force set directly on style object
-    element.style.color = '#000000';
+    element.style.color = '#2563eb';
     element.style.backgroundColor = '#ffffff';
-    element.style.webkitTextFillColor = '#000000';
-    element.style.caretColor = '#000000';
+    element.style.webkitTextFillColor = '#2563eb';
+    element.style.caretColor = '#2563eb';
     element.style.opacity = '1';
     element.style.visibility = 'visible';
     element.style.textShadow = 'none';
     
     // NUCLEAR ATTRIBUTE OVERRIDE
     const currentStyle = element.getAttribute('style') || '';
-    const nuclearStyle = 'color: #000000 !important; background-color: #ffffff !important; -webkit-text-fill-color: #000000 !important; opacity: 1 !important; visibility: visible !important; caret-color: #000000 !important;';
+    const nuclearStyle = 'color: #2563eb !important; background-color: #ffffff !important; -webkit-text-fill-color: #2563eb !important; opacity: 1 !important; visibility: visible !important; caret-color: #2563eb !important;';
     element.setAttribute('style', currentStyle + '; ' + nuclearStyle);
     
     // Add data attributes for tracking
     element.setAttribute('data-force-visible', 'true');
-    element.setAttribute('data-text-color', '#000000');
-    element.setAttribute('data-caret-color', '#000000');
+    element.setAttribute('data-text-color', '#2563eb');
+    element.setAttribute('data-caret-color', '#2563eb');
     element.setAttribute('data-nuclear-fix', 'true');
     
     console.log('🔧 NUCLEAR FIX applied to:', element.tagName, element.type || '');
@@ -186,16 +186,16 @@ export const applyComprehensiveInputFix = () => {
       html textarea,
       html select,
       input, textarea, select {
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
+        color: #2563eb !important;
+        -webkit-text-fill-color: #2563eb !important;
         text-shadow: none !important;
         opacity: 1 !important;
         visibility: visible !important;
         -webkit-opacity: 1 !important;
         background-color: #ffffff !important;
         background: #ffffff !important;
-        caret-color: #000000 !important;
-        -webkit-caret-color: #000000 !important;
+        caret-color: #2563eb !important;
+        -webkit-caret-color: #2563eb !important;
         font-size: 16px !important;
         line-height: 1.5 !important;
         font-family: inherit !important;
@@ -210,11 +210,11 @@ export const applyComprehensiveInputFix = () => {
       
       /* Focus states */
       input:focus, textarea:focus, select:focus {
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
+        color: #2563eb !important;
+        -webkit-text-fill-color: #2563eb !important;
         background-color: #ffffff !important;
-        caret-color: #000000 !important;
-        -webkit-caret-color: #000000 !important;
+        caret-color: #2563eb !important;
+        -webkit-caret-color: #2563eb !important;
         opacity: 1 !important;
         visibility: visible !important;
       }

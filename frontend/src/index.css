@@ -404,8 +404,8 @@ input.search-input {
   font-size: 16px !important;
   transition: all 0.2s ease !important;
   background: #ffffff !important;
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   opacity: 1 !important;
   visibility: visible !important;
   text-shadow: none !important;
@@ -424,8 +424,8 @@ input.search-input:focus {
   outline: none !important;
   border-color: #000000 !important;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1) !important;
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   opacity: 1 !important;
   visibility: visible !important;
   text-shadow: none !important;
@@ -621,8 +621,8 @@ html textarea,
 html select,
 input, textarea, select {
   /* Text Visibility - FORCE OVERRIDE EVERYTHING */
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   text-shadow: none !important;
   opacity: 1 !important;
   visibility: visible !important;
@@ -650,8 +650,8 @@ input, textarea, select {
   padding: 0.5rem 0.75rem !important;
   
   /* Caret/Cursor Visibility */
-  caret-color: #000000 !important;
-  -webkit-caret-color: #000000 !important;
+  caret-color: #2563eb !important;
+  -webkit-caret-color: #2563eb !important;
 }
 
 /* All input types with specific styling */
@@ -758,8 +758,8 @@ input:focus,
 textarea:focus,
 select:focus {
   /* Text Visibility */
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   text-shadow: none !important;
   opacity: 1 !important;
   visibility: visible !important;
@@ -775,8 +775,8 @@ select:focus {
   outline: none !important;
   
   /* Caret/Cursor Visibility */
-  caret-color: #000000 !important;
-  -webkit-caret-color: #000000 !important;
+  caret-color: #2563eb !important;
+  -webkit-caret-color: #2563eb !important;
 }
 
 /* PLACEHOLDER TEXT VISIBILITY */
@@ -799,8 +799,8 @@ input[type="text"],
 input[type="search"],
 input[type="url"],
 input[type="tel"] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
   caret-color: #000000 !important;
   -webkit-caret-color: #000000 !important;
@@ -808,8 +808,8 @@ input[type="tel"] {
 
 /* Number inputs */
 input[type="number"] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
   caret-color: #000000 !important;
   -webkit-caret-color: #000000 !important;
@@ -817,8 +817,8 @@ input[type="number"] {
 
 /* Email inputs */
 input[type="email"] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
   caret-color: #000000 !important;
   -webkit-caret-color: #000000 !important;
@@ -826,8 +826,8 @@ input[type="email"] {
 
 /* Password inputs */
 input[type="password"] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
   caret-color: #000000 !important;
   -webkit-caret-color: #000000 !important;
@@ -837,8 +837,8 @@ input[type="password"] {
 input[type="date"],
 input[type="time"],
 input[type="datetime-local"] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
   caret-color: #000000 !important;
   -webkit-caret-color: #000000 !important;
@@ -846,15 +846,15 @@ input[type="datetime-local"] {
 
 /* File inputs */
 input[type="file"] {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
 }
 
 /* Textareas */
 textarea {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
   caret-color: #000000 !important;
   -webkit-caret-color: #000000 !important;
@@ -863,8 +863,8 @@ textarea {
 
 /* Select dropdowns */
 select {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
   background-color: #ffffff !important;
   background-image: none !important;
 }
@@ -876,8 +876,8 @@ select {
 input.text-gray-900, input.text-gray-700, input.text-gray-600, input.text-gray-500,
 input.text-gray-400, input.text-gray-300, input.text-gray-200, input.text-gray-100,
 input.text-white, input.text-black, input.text-transparent {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #2563eb !important;
+  -webkit-text-fill-color: #2563eb !important;
 }
 
 /* OVERRIDE ALL BACKGROUND CLASSES */
