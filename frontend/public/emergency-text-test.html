@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Text Fix Test</title>
+    <style>
+        /* This CSS will be removed by the emergency fix */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: transparent; /* This should be overridden */
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            color: transparent; /* This should be overridden */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: transparent; /* This should be overridden */
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Problematic styles that should be overridden */
+        .problematic {
+            color: transparent !important;
+            background-color: white !important;
+            opacity: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="problematic">🚨 Emergency Text Fix Test</h1>
+        <p class="problematic">This test removes ALL CSS and forces everything to be visible.</p>
+        
+        <div class="form-group">
+            <label for="test1" class="problematic">Search Input:</label>
+            <input type="text" id="test1" placeholder="Type here to search..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test2" class="problematic">Student Name:</label>
+            <input type="text" id="test2" placeholder="Enter student name..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test3" class="problematic">Admission Number:</label>
+            <input type="text" id="test3" placeholder="Enter admission number..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test4" class="problematic">Email:</label>
+            <input type="email" id="test4" placeholder="Enter email..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test5" class="problematic">Password:</label>
+            <input type="password" id="test5" placeholder="Enter password..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test6" class="problematic">Phone Number:</label>
+            <input type="tel" id="test6" placeholder="Enter phone number..." class="problematic">
+        </div>
+        
+        <div class="form-group">
+            <label for="test7" class="problematic">Address:</label>
+            <textarea id="test7" rows="3" placeholder="Enter address..." class="problematic"></textarea>
+        </div>
+        
+        <button onclick="applyEmergencyFix()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Apply Emergency Fix
+        </button>
+        
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        // Emergency function to force ALL text visible
+        const emergencyTextFix = () => {
+            // Get ALL elements on the page
+            const allElements = document.querySelectorAll('*');
+            console.log(`🚨 Found ${allElements.length} elements to fix`);
+            
+            allElements.forEach((element, index) => {
+                // EMERGENCY METHOD 1: Remove ALL classes and styles
+                element.removeAttribute('class');
+                element.removeAttribute('style');
+                
+                // EMERGENCY METHOD 2: Force visible styles
+                element.style.cssText = `
+                    color: #000000 !important;
+                    background-color: #ffffff !important;
+                    -webkit-text-fill-color: #000000 !important;
+                    caret-color: #000000 !important;
+                    opacity: 1 !important;
+                    visibility: visible !important;
+                    text-shadow: none !important;
+                    font-size: 16px !important;
+                    line-height: 1.5 !important;
+                    font-family: Arial, sans-serif !important;
+                    font-weight: normal !important;
+                    border: 1px solid #000000 !important;
+                    padding: 5px !important;
+                    margin: 2px !important;
+                    display: block !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                `;
+                
+                // EMERGENCY METHOD 3: Force with setProperty
+                element.style.setProperty('color', '#000000', 'important');
+                element.style.setProperty('background-color', '#ffffff', 'important');
+                element.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+                element.style.setProperty('opacity', '1', 'important');
+                element.style.setProperty('visibility', 'visible', 'important');
+                element.style.setProperty('text-shadow', 'none', 'important');
+                
+                // EMERGENCY METHOD 4: Direct style assignment
+                element.style.color = '#000000';
+                element.style.backgroundColor = '#ffffff';
+                element.style.webkitTextFillColor = '#000000';
+                element.style.opacity = '1';
+                element.style.visibility = 'visible';
+                element.style.textShadow = 'none';
+                
+                if (index < 5) {
+                    console.log(`🚨 EMERGENCY FIX applied to element ${index + 1}:`, element.tagName);
+                }
+            });
+            
+            console.log(`🚨 EMERGENCY FIX applied to ${allElements.length} elements`);
+        };
+        
+        // Remove ALL existing CSS
+        const removeAllCSS = () => {
+            // Remove all stylesheets
+            const stylesheets = document.querySelectorAll('link[rel="stylesheet"], style');
+            stylesheets.forEach(stylesheet => {
+                if (stylesheet.id !== 'emergency-text-fix') {
+                    stylesheet.remove();
+                }
+            });
+            
+            console.log('🚨 Removed all existing CSS');
+        };
+        
+        function applyEmergencyFix() {
+            console.log('🚨 Applying emergency text fix...');
+            
+            // Remove all CSS first
+            removeAllCSS();
+            
+            // Apply emergency fix
+            emergencyTextFix();
+            
+            const resultDiv = document.getElementById('test-results');
+            resultDiv.innerHTML = `
+                <div class="status success">
+                    <strong>🚨 EMERGENCY FIX APPLIED!</strong> - All CSS has been removed and all text should now be visible in black with black borders.
+                </div>
+                <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                    <strong>Instructions:</strong><br>
+                    1. All CSS has been removed from the page<br>
+                    2. All text should now be BLACK with BLACK BORDERS<br>
+                    3. Click on any input field and start typing<br>
+                    4. You should see BLACK TEXT appearing as you type<br>
+                    5. This is the most aggressive fix possible
+                </div>
+            `;
+        }
+        
+        // Run fix on page load
+        window.addEventListener('load', () => {
+            setTimeout(applyEmergencyFix, 1000);
+        });
+    </script>
+</body>
+</html>

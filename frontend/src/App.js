@@ -1,7 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { nuclearTextFix } from './utils/nuclearTextFix';
+import { emergencyTextFix } from './utils/emergencyTextFix';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import MobileFirstLayout from './components/MobileFirstLayout';
@@ -61,9 +61,9 @@ const AppRoutes = () => {
 
 function App() {
   useEffect(() => {
-    // Apply nuclear text fix when app loads
-    console.log('🚀 App: Applying nuclear text fix...');
-    nuclearTextFix();
+    // Apply emergency text fix when app loads
+    console.log('🚀 App: Applying emergency text fix...');
+    emergencyTextFix();
   }, []);
 
   return (
