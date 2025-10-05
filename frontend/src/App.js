@@ -1,8 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { applyComprehensiveInputFix } from './utils/comprehensiveInputFix';
-import './utils/ultimateInputFix';
+import { makeTextVisible } from './utils/visibleTextFix';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingSpinner from './components/LoadingSpinner';
 import MobileFirstLayout from './components/MobileFirstLayout';
@@ -62,9 +61,9 @@ const AppRoutes = () => {
 
 function App() {
   useEffect(() => {
-    // Apply comprehensive input visibility fix when app loads
-    console.log('🚀 App: Applying comprehensive input fix...');
-    applyComprehensiveInputFix();
+    // Apply simple visible text fix when app loads
+    console.log('🚀 App: Applying visible text fix...');
+    makeTextVisible();
   }, []);
 
   return (

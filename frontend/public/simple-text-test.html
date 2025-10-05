@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Text Visibility Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Simple Text Visibility Test</h1>
+        <p>Type in these input fields to test if the text you type is visible.</p>
+        
+        <div class="form-group">
+            <label for="test1">Search Input:</label>
+            <input type="text" id="test1" placeholder="Type here to search..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <div class="form-group">
+            <label for="test2">Student Name:</label>
+            <input type="text" id="test2" placeholder="Enter student name..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <div class="form-group">
+            <label for="test3">Admission Number:</label>
+            <input type="text" id="test3" placeholder="Enter admission number..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <div class="form-group">
+            <label for="test4">Email:</label>
+            <input type="email" id="test4" placeholder="Enter email..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <div class="form-group">
+            <label for="test5">Password:</label>
+            <input type="password" id="test5" placeholder="Enter password..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <div class="form-group">
+            <label for="test6">Phone Number:</label>
+            <input type="tel" id="test6" placeholder="Enter phone number..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        
+        <div class="form-group">
+            <label for="test7">Address:</label>
+            <textarea id="test7" rows="3" placeholder="Enter address..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+        </div>
+        
+        <button onclick="applyFix()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Apply Text Visibility Fix
+        </button>
+        
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        // Simple function to make input text visible
+        const makeTextVisible = () => {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            console.log(`🔍 Found ${inputs.length} input elements to make visible`);
+            
+            inputs.forEach((input, index) => {
+                // Simple, direct fix - black text on white background
+                input.style.color = '#000000';
+                input.style.backgroundColor = '#ffffff';
+                input.style.webkitTextFillColor = '#000000';
+                input.style.caretColor = '#000000';
+                input.style.opacity = '1';
+                input.style.visibility = 'visible';
+                input.style.textShadow = 'none';
+                
+                // Force with !important
+                input.style.setProperty('color', '#000000', 'important');
+                input.style.setProperty('background-color', '#ffffff', 'important');
+                input.style.setProperty('-webkit-text-fill-color', '#000000', 'important');
+                input.style.setProperty('caret-color', '#000000', 'important');
+                input.style.setProperty('opacity', '1', 'important');
+                input.style.setProperty('visibility', 'visible', 'important');
+                input.style.setProperty('text-shadow', 'none', 'important');
+                
+                console.log(`🔍 Made text visible for input ${index + 1}:`, input.id || input.type || 'element');
+            });
+            
+            console.log(`🔍 Made text visible for ${inputs.length} input elements`);
+        };
+        
+        function applyFix() {
+            console.log('🔍 Applying text visibility fix...');
+            makeTextVisible();
+            
+            const resultDiv = document.getElementById('test-results');
+            resultDiv.innerHTML = `
+                <div class="status success">
+                    <strong>✅ Fix Applied!</strong> - Now try typing in the input fields above. The text you type should be visible in black color.
+                </div>
+                <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                    <strong>Instructions:</strong><br>
+                    1. Click on any input field above<br>
+                    2. Start typing<br>
+                    3. You should see black text appearing as you type<br>
+                    4. The cursor should also be visible
+                </div>
+            `;
+        }
+        
+        // Run fix on page load
+        window.addEventListener('load', () => {
+            setTimeout(applyFix, 1000);
+        });
+    </script>
+</body>
+</html>
